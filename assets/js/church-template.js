@@ -58,12 +58,12 @@
       icon: "briefcase",
       items: [
         { label: "Church Profile", href: "church-profile.html" },
-        { label: "Church Structure", href: "church-profile.html#structure" },
-        { label: "Branches", href: "church-profile.html#branches" },
-        { label: "Districts", href: "church-profile.html#districts" },
-        { label: "Sub-Districts / Zones", href: "church-profile.html#zones" },
-        { label: "Homecells", href: "church-profile.html#homecells" },
-        { label: "Church Units", href: "church-profile.html#units" }
+        { label: "Church Structure", href: "church-structure.html" },
+        { label: "Branches", href: "branches.html" },
+        { label: "Districts", href: "districts.html" },
+        { label: "Sub-Districts / Zones", href: "zones.html" },
+        { label: "Homecells", href: "homecells.html" },
+        { label: "Church Units", href: "church-units.html" }
       ]
     },
     {
@@ -72,11 +72,11 @@
       icon: "queue-list",
       items: [
         { label: "Members", href: "members.html" },
-        { label: "First Timers", href: "members.html#first-timers" },
-        { label: "New Converts", href: "members.html#new-converts" },
-        { label: "Re-Dedications", href: "members.html#rededications" },
-        { label: "Workers / Leaders", href: "members.html#workers" },
-        { label: "Users", href: "members.html#users" }
+        { label: "First Timers", href: "first-timers.html" },
+        { label: "New Converts", href: "new-converts.html" },
+        { label: "Re-Dedications", href: "rededications.html" },
+        { label: "Workers / Leaders", href: "workers.html" },
+        { label: "Users", href: "users.html" }
       ]
     },
     {
@@ -84,12 +84,12 @@
       id: "leadership-management",
       icon: "gift",
       items: [
-        { label: "Pastors", href: "leadership.html" },
-        { label: "District Pastors", href: "leadership.html#district-pastors" },
-        { label: "District Ministers", href: "leadership.html#district-ministers" },
-        { label: "Zone Ministers", href: "leadership.html#zone-ministers" },
-        { label: "Homecell Leaders", href: "leadership.html#homecell-leaders" },
-        { label: "Assignments", href: "leadership.html#assignments" }
+        { label: "Pastors", href: "pastors.html" },
+        { label: "District Pastors", href: "district-pastors.html" },
+        { label: "District Ministers", href: "district-ministers.html" },
+        { label: "Zone Ministers", href: "zone-ministers.html" },
+        { label: "Homecell Leaders", href: "homecell-leaders.html" },
+        { label: "Assignments", href: "assignments.html" }
       ]
     },
     {
@@ -97,11 +97,11 @@
       id: "follow-up-growth",
       icon: "briefcase-advance",
       items: [
-        { label: "Hospitality Unit", href: "follow-up.html" },
-        { label: "Callers Squad", href: "follow-up.html#callers" },
-        { label: "Counselling Unit", href: "follow-up.html#counselling" },
-        { label: "Believers Foundation Class", href: "follow-up.html#foundation" },
-        { label: "Homecell Office", href: "follow-up.html#homecell-office" }
+        { label: "Hospitality Unit", href: "hospitality-unit.html" },
+        { label: "Callers Squad", href: "callers-squad.html" },
+        { label: "Counselling Unit", href: "counselling-unit.html" },
+        { label: "Believers Foundation Class", href: "foundation-class.html" },
+        { label: "Homecell Office", href: "homecell-office.html" }
       ]
     },
     {
@@ -109,12 +109,12 @@
       id: "reports-group",
       icon: "chart",
       items: [
-        { label: "Attendance Reports", href: "reports.html" },
-        { label: "Homecell Reports", href: "reports.html#homecell-reports" },
-        { label: "Growth Reports", href: "reports.html#growth" },
-        { label: "Retention Reports", href: "reports.html#retention" },
-        { label: "Baptism Reports", href: "reports.html#baptism" },
-        { label: "Foundation Class Reports", href: "reports.html#foundation-reports" }
+        { label: "Attendance Reports", href: "attendance-reports.html" },
+        { label: "Homecell Reports", href: "homecell-reports.html" },
+        { label: "Growth Reports", href: "growth-reports.html" },
+        { label: "Retention Reports", href: "retention-reports.html" },
+        { label: "Baptism Reports", href: "baptism-reports.html" },
+        { label: "Foundation Class Reports", href: "foundation-class-reports.html" }
       ]
     },
     {
@@ -122,7 +122,8 @@
       id: "access-control",
       icon: "table",
       items: [
-        { label: "Roles & Permissions", href: "access-control.html" }
+        { label: "Roles", href: "roles.html" },
+        { label: "Permissions", href: "permissions.html" }
       ]
     },
     {
@@ -130,7 +131,9 @@
       id: "system-group",
       icon: "document-text",
       items: [
-        { label: "Settings & Audit", href: "settings.html" }
+        { label: "Settings", href: "settings.html" },
+        { label: "Audit Logs", href: "audit-logs.html" },
+        { label: "Support", href: "support.html" }
       ]
     }
   ];
@@ -204,7 +207,7 @@
           ${groupsHtml}
           <li class="menu-title"><span>Support</span></li>
           <li class="no-sub">
-            <a href="settings.html#support">
+            <a href="support.html">
               ${icon("chat-bubble")}
               Support
             </a>

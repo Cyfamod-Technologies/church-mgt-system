@@ -5,18 +5,16 @@
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
     <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="Church administration pages using the ki-admin template." name="description">
-    <meta content="church administration" name="keywords">
+    <meta content="Church management section page using the ki-admin template." name="description">
+    <meta content="church management" name="keywords">
     <meta content="la-themes" name="author">
     <link href="assets/images/logo/favicon.png" rel="icon" type="image/x-icon">
     <link href="assets/images/logo/favicon.png" rel="shortcut icon" type="image/x-icon">
-    <title>Church Administration</title>
-
+    <title>Church Management</title>
     <link href="assets/vendor/animation/animate.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com" rel="preconnect">
     <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
-    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap"
-          rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
     <link href="assets/vendor/flag-icons-master/flag-icon.css" rel="stylesheet" type="text/css">
     <link href="assets/vendor/tabler-icons/tabler-icons.css" rel="stylesheet" type="text/css">
     <link href="assets/vendor/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
@@ -25,185 +23,21 @@
     <link href="assets/css/responsive.css" rel="stylesheet" type="text/css">
 </head>
 
-<body data-title="Church Administration" data-subtitle="Church profile, structure, branches, districts, zones, homecells and units.">
+<body data-section-key="church-profile">
 <div class="app-wrapper">
     <div class="loader-wrapper"><div class="loader_24"></div></div>
     <nav id="church-nav"></nav>
     <div class="app-content">
         <div class="">
             <header class="header-main" id="church-header"></header>
-            <main>
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-12" id="profile">
-                            <div class="card">
-                                <div class="card-header d-flex justify-content-between align-items-center">
-                                    <h5 class="mb-0">Church Profile</h5>
-                                    <a class="btn btn-primary btn-sm" href="#">Edit Church Profile</a>
-                                </div>
-                                <div class="card-body">
-                                    <form class="app-form">
-                                        <div class="row">
-                                            <div class="col-md-6 mb-3">
-                                                <label class="form-label">Church Name</label>
-                                                <input class="form-control" type="text" value="Living Faith Central">
-                                            </div>
-                                            <div class="col-md-6 mb-3">
-                                                <label class="form-label">Church Code</label>
-                                                <input class="form-control" type="text" value="LFC-LAG-001">
-                                            </div>
-                                            <div class="col-md-6 mb-3">
-                                                <label class="form-label">State</label>
-                                                <input class="form-control" type="text" value="Lagos">
-                                            </div>
-                                            <div class="col-md-6 mb-3">
-                                                <label class="form-label">Phone Number</label>
-                                                <input class="form-control" type="text" value="+234 801 234 5678">
-                                            </div>
-                                            <div class="col-md-6 mb-3">
-                                                <label class="form-label">Email</label>
-                                                <input class="form-control" type="email" value="info@livingfaithcentral.org">
-                                            </div>
-                                            <div class="col-md-6 mb-3">
-                                                <label class="form-label">Pastor in Charge</label>
-                                                <input class="form-control" type="text" value="Pst. Samuel Adeyemi">
-                                            </div>
-                                            <div class="col-12">
-                                                <label class="form-label">Address</label>
-                                                <textarea class="form-control" rows="3">12 Covenant Avenue, Lekki Phase 1</textarea>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-4" id="structure">
-                            <div class="card">
-                                <div class="card-header"><h5 class="mb-0">Church Structure</h5></div>
-                                <div class="card-body">
-                                    <ul class="list-group">
-                                        <li class="list-group-item">State Church</li>
-                                        <li class="list-group-item">District Church</li>
-                                        <li class="list-group-item">Zonal Church</li>
-                                        <li class="list-group-item">Area Church</li>
-                                        <li class="list-group-item">Church Branch</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-8" id="branches">
-                            <div class="card">
-                                <div class="card-header d-flex justify-content-between align-items-center">
-                                    <h5 class="mb-0">Branches</h5>
-                                    <a class="btn btn-primary btn-sm" href="#">Add Branch</a>
-                                </div>
-                                <div class="card-body">
-                                    <div class="table-responsive app-scroll">
-                                        <table class="table table-bottom-border align-middle mb-0">
-                                            <thead>
-                                            <tr>
-                                                <th>Branch Name</th>
-                                                <th>State</th>
-                                                <th>Pastor in Charge</th>
-                                                <th>Status</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr><td>Lekki Central</td><td>Lagos</td><td>Pst. Samuel Adeyemi</td><td><span class="badge text-light-success">Active</span></td></tr>
-                                            <tr><td>Ajah Outreach</td><td>Lagos</td><td>Pst. Florence Balogun</td><td><span class="badge text-light-success">Active</span></td></tr>
-                                            <tr><td>Chevron Branch</td><td>Lagos</td><td>Pst. David Nnadi</td><td><span class="badge text-light-warning">Review</span></td></tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-6" id="districts">
-                            <div class="card">
-                                <div class="card-header"><h5 class="mb-0">Districts</h5></div>
-                                <div class="card-body">
-                                    <div class="table-responsive">
-                                        <table class="table table-bottom-border align-middle mb-0">
-                                            <thead>
-                                            <tr><th>District</th><th>Pastor</th><th>Minister</th><th>Status</th></tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr><td>District 1</td><td>Pst. Chika Okafor</td><td>Min. Ruth Eze</td><td><span class="badge text-light-success">Covered</span></td></tr>
-                                            <tr><td>District 4</td><td>Unassigned</td><td>Min. Tunde Bello</td><td><span class="badge text-light-danger">Pastor Gap</span></td></tr>
-                                            <tr><td>District 9</td><td>Pst. Efe Ighalo</td><td>Unassigned</td><td><span class="badge text-light-warning">Minister Gap</span></td></tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-6" id="zones">
-                            <div class="card">
-                                <div class="card-header"><h5 class="mb-0">Sub-Districts / Zones</h5></div>
-                                <div class="card-body">
-                                    <div class="table-responsive">
-                                        <table class="table table-bottom-border align-middle mb-0">
-                                            <thead>
-                                            <tr><th>Name</th><th>District</th><th>Coordinator</th><th>Status</th></tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr><td>Admiralty Zone</td><td>District 1</td><td>Dcn. Ruth Eze</td><td><span class="badge text-light-success">Assigned</span></td></tr>
-                                            <tr><td>Chevron Zone</td><td>District 4</td><td>Unassigned</td><td><span class="badge text-light-danger">Gap</span></td></tr>
-                                            <tr><td>Ikota Zone</td><td>District 7</td><td>Bro. Ifeanyi Obi</td><td><span class="badge text-light-primary">Stable</span></td></tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-7" id="homecells">
-                            <div class="card">
-                                <div class="card-header"><h5 class="mb-0">Homecells</h5></div>
-                                <div class="card-body">
-                                    <div class="table-responsive">
-                                        <table class="table table-bottom-border align-middle mb-0">
-                                            <thead>
-                                            <tr><th>Homecell</th><th>District</th><th>Leader</th><th>Meeting</th><th>Members</th></tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr><td>Grace Cell</td><td>District 1</td><td>Sis. Nkiru James</td><td>Wed, 6:30 PM</td><td>31</td></tr>
-                                            <tr><td>Victory Cell</td><td>District 4</td><td>Bro. Ayo Alabi</td><td>Thu, 7:00 PM</td><td>22</td></tr>
-                                            <tr><td>Dominion Cell</td><td>District 9</td><td>Unassigned</td><td>Tue, 6:00 PM</td><td>18</td></tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-5" id="units">
-                            <div class="card">
-                                <div class="card-header"><h5 class="mb-0">Church Units</h5></div>
-                                <div class="card-body">
-                                    <ul class="list-group">
-                                        <li class="list-group-item d-flex justify-content-between"><span>Technical</span><span class="badge text-light-primary">26 Members</span></li>
-                                        <li class="list-group-item d-flex justify-content-between"><span>Choir</span><span class="badge text-light-success">42 Members</span></li>
-                                        <li class="list-group-item d-flex justify-content-between"><span>Ushering</span><span class="badge text-light-warning">Needs Head</span></li>
-                                        <li class="list-group-item d-flex justify-content-between"><span>Media</span><span class="badge text-light-primary">Active</span></li>
-                                        <li class="list-group-item d-flex justify-content-between"><span>Children Church</span><span class="badge text-light-success">Active</span></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </main>
+            <main id="church-section-root"></main>
         </div>
     </div>
 </div>
-
 <script src="assets/js/jquery-3.6.3.min.js"></script>
 <script src="assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
 <script src="assets/vendor/simplebar/simplebar.js"></script>
+<script src="assets/js/church-section-pages.js"></script>
 <script src="assets/js/church-template.js"></script>
 <script src="assets/js/script.js"></script>
 </body>

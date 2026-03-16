@@ -45,11 +45,10 @@
 
   const navGroups = [
     {
-      title: "Overview",
-      id: "overview-group",
-      icon: "home",
+      title: "Dashboard",
+      icon: "stack",
+      directHref: "dashboard.html",
       items: [
-        { label: "Entry Flow", href: "index.html" },
         { label: "Dashboard", href: "dashboard.html" }
       ]
     },
@@ -153,6 +152,17 @@
     if (!nav) return;
 
     const groupsHtml = navGroups.map((group) => {
+      if (group.directHref) {
+        return `
+          <li class="no-sub ${isActive(group.directHref) ? "active" : ""}">
+            <a href="${group.directHref}">
+              ${icon(group.icon)}
+              ${group.title}
+            </a>
+          </li>
+        `;
+      }
+
       const groupOpen = group.items.some((item) => isActive(item.href));
 
       return `
@@ -171,7 +181,7 @@
     nav.innerHTML = `
       <div class="app-logo">
         <a class="logo d-inline-block" href="dashboard.html">
-          <img alt="logo" src="assets/images/logo/1.png">
+          <!-- <img alt="logo" src="assets/images/logo/1.png"> -->
         </a>
 
         <span class="bg-light-primary toggle-semi-nav d-flex-center">

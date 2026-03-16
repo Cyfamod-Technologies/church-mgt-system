@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="People management using the ki-admin template." name="description">
+    <meta content="members management" name="keywords">
+    <meta content="la-themes" name="author">
+    <link href="assets/images/logo/favicon.png" rel="icon" type="image/x-icon">
+    <link href="assets/images/logo/favicon.png" rel="shortcut icon" type="image/x-icon">
+    <title>People Management</title>
+    <link href="assets/vendor/animation/animate.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <link href="assets/vendor/flag-icons-master/flag-icon.css" rel="stylesheet" type="text/css">
+    <link href="assets/vendor/tabler-icons/tabler-icons.css" rel="stylesheet" type="text/css">
+    <link href="assets/vendor/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="assets/vendor/simplebar/simplebar.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/style.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/responsive.css" rel="stylesheet" type="text/css">
+</head>
+
+<body data-title="People Management" data-subtitle="Members, first timers, new converts, re-dedications, workers and users.">
+<div class="app-wrapper">
+    <div class="loader-wrapper"><div class="loader_24"></div></div>
+    <nav id="church-nav"></nav>
+    <div class="app-content">
+        <div class="">
+            <header class="header-main" id="church-header"></header>
+            <main>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-12" id="members">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0">Members</h5>
+                                    <div class="d-flex gap-2">
+                                        <a class="btn btn-sm btn-primary" href="#">Add Member</a>
+                                        <a class="btn btn-sm btn-light-primary" href="#">Update Milestones</a>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3 d-flex flex-wrap gap-2">
+                                        <span class="badge text-light-primary">All Members</span>
+                                        <span class="badge text-light-success">No Homecell</span>
+                                        <span class="badge text-light-warning">No Foundation Class</span>
+                                        <span class="badge text-light-danger">No Water Baptism</span>
+                                    </div>
+                                    <div class="table-responsive app-scroll">
+                                        <table class="table table-bottom-border align-middle mb-0">
+                                            <thead>
+                                            <tr>
+                                                <th>Full Name</th>
+                                                <th>Phone</th>
+                                                <th>Date Joined</th>
+                                                <th>Homecell</th>
+                                                <th>Unit</th>
+                                                <th>Status</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr><td>Mercy Akinola</td><td>+234 803 114 9000</td><td>2026-03-15</td><td>Unassigned</td><td>Choir</td><td><span class="badge text-light-warning">Assign Homecell</span></td></tr>
+                                            <tr><td>John Nwachukwu</td><td>+234 802 444 1122</td><td>2026-02-18</td><td>Grace Cell</td><td>Protocol</td><td><span class="badge text-light-primary">Growing</span></td></tr>
+                                            <tr><td>Faith Johnson</td><td>+234 809 222 6733</td><td>2025-11-06</td><td>Victory Cell</td><td>Ushering</td><td><span class="badge text-light-success">Active</span></td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6" id="first-timers">
+                            <div class="card">
+                                <div class="card-header"><h5 class="mb-0">First Timers</h5></div>
+                                <div class="card-body">
+                                    <ul class="list-group">
+                                        <li class="list-group-item d-flex justify-content-between"><span>Sarah Omole</span><span class="badge text-light-warning">Move to Members</span></li>
+                                        <li class="list-group-item d-flex justify-content-between"><span>Chinedu Nneji</span><span class="badge text-light-primary">Tracking</span></li>
+                                        <li class="list-group-item d-flex justify-content-between"><span>Joy Bassey</span><span class="badge text-light-success">Ready</span></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6" id="new-converts">
+                            <div class="card">
+                                <div class="card-header"><h5 class="mb-0">New Converts</h5></div>
+                                <div class="card-body">
+                                    <ul class="list-group">
+                                        <li class="list-group-item">Favour Eke - Counsellor assigned, class scheduled</li>
+                                        <li class="list-group-item">Daniel Afolabi - Water baptism pending</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6" id="rededications">
+                            <div class="card">
+                                <div class="card-header"><h5 class="mb-0">Re-Dedications</h5></div>
+                                <div class="card-body">
+                                    <ul class="list-group">
+                                        <li class="list-group-item">Peter Edet - Counsellor and homecell assignment pending</li>
+                                        <li class="list-group-item">Rita Oko - Follow-up scheduled</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6" id="workers">
+                            <div class="card">
+                                <div class="card-header"><h5 class="mb-0">Workers / Leaders</h5></div>
+                                <div class="card-body">
+                                    <ul class="list-group">
+                                        <li class="list-group-item">Pastors</li>
+                                        <li class="list-group-item">District Pastors</li>
+                                        <li class="list-group-item">District Ministers</li>
+                                        <li class="list-group-item">Zone Ministers</li>
+                                        <li class="list-group-item">Homecell Leaders</li>
+                                        <li class="list-group-item">Unit Heads</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12" id="users">
+                            <div class="card">
+                                <div class="card-header"><h5 class="mb-0">Users</h5></div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-bottom-border align-middle mb-0">
+                                            <thead>
+                                            <tr><th>Full Name</th><th>Email</th><th>Role</th><th>Assigned Area</th><th>Status</th></tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr><td>Adebisi Oladele</td><td>admin@livingfaithcentral.org</td><td>Admin</td><td>Main Church</td><td><span class="badge text-light-success">Active</span></td></tr>
+                                            <tr><td>Ruth Eze</td><td>ruth.eze@livingfaithcentral.org</td><td>District Minister</td><td>District 1</td><td><span class="badge text-light-primary">Active</span></td></tr>
+                                            <tr><td>Samuel Ogunleye</td><td>samuel.ogunleye@livingfaithcentral.org</td><td>Homecell Office Admin</td><td>Homecell Office</td><td><span class="badge text-light-warning">Reset Password</span></td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</div>
+<script src="assets/js/jquery-3.6.3.min.js"></script>
+<script src="assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
+<script src="assets/vendor/simplebar/simplebar.js"></script>
+<script src="assets/js/church-template.js"></script>
+<script src="assets/js/script.js"></script>
+</body>
+
+</html>

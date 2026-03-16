@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="Settings using the ki-admin template." name="description">
+    <meta content="settings, audit logs" name="keywords">
+    <meta content="la-themes" name="author">
+    <link href="assets/images/logo/favicon.png" rel="icon" type="image/x-icon">
+    <link href="assets/images/logo/favicon.png" rel="shortcut icon" type="image/x-icon">
+    <title>Settings</title>
+    <link href="assets/vendor/animation/animate.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <link href="assets/vendor/flag-icons-master/flag-icon.css" rel="stylesheet" type="text/css">
+    <link href="assets/vendor/tabler-icons/tabler-icons.css" rel="stylesheet" type="text/css">
+    <link href="assets/vendor/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="assets/vendor/simplebar/simplebar.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/style.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/responsive.css" rel="stylesheet" type="text/css">
+</head>
+
+<body data-title="Settings & Audit" data-subtitle="General settings, system settings, notifications, audit logs and support.">
+<div class="app-wrapper">
+    <div class="loader-wrapper"><div class="loader_24"></div></div>
+    <nav id="church-nav"></nav>
+    <div class="app-content">
+        <div class="">
+            <header class="header-main" id="church-header"></header>
+            <main>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-lg-7" id="general">
+                            <div class="card">
+                                <div class="card-header"><h5 class="mb-0">General Settings</h5></div>
+                                <div class="card-body">
+                                    <form class="app-form">
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3"><label class="form-label">Church Name</label><input class="form-control" type="text" value="Living Faith Central"></div>
+                                            <div class="col-md-6 mb-3"><label class="form-label">Time Zone</label><input class="form-control" type="text" value="Africa/Lagos"></div>
+                                            <div class="col-md-6 mb-3"><label class="form-label">Contact Information</label><input class="form-control" type="text" value="+234 801 234 5678"></div>
+                                            <div class="col-md-6 mb-3"><label class="form-label">Default Language</label><input class="form-control" type="text" value="English"></div>
+                                            <div class="col-12"><label class="form-label">Address</label><textarea class="form-control" rows="3">12 Covenant Avenue, Lekki Phase 1</textarea></div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-5">
+                            <div class="card">
+                                <div class="card-header"><h5 class="mb-0">System Settings</h5></div>
+                                <div class="card-body">
+                                    <ul class="list-group">
+                                        <li class="list-group-item">Member ID format: LFC-{YEAR}-{SEQUENCE}</li>
+                                        <li class="list-group-item">Dashboard settings enabled</li>
+                                        <li class="list-group-item">Default role setup completed</li>
+                                        <li class="list-group-item">Notification settings active</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <div class="card">
+                                <div class="card-header"><h5 class="mb-0">Unit & Homecell Settings</h5></div>
+                                <div class="card-body">
+                                    <ul class="list-group">
+                                        <li class="list-group-item">Church units are active and assignable</li>
+                                        <li class="list-group-item">Homecell numbering format: District-Zone-Sequence</li>
+                                        <li class="list-group-item">Auto assignment rules: prototype only</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <div class="card">
+                                <div class="card-header"><h5 class="mb-0">Notification Settings</h5></div>
+                                <div class="card-body">
+                                    <div class="form-check form-switch mb-3">
+                                        <input class="form-check-input" id="smsSetting" type="checkbox" checked>
+                                        <label class="form-check-label" for="smsSetting">SMS notifications</label>
+                                    </div>
+                                    <div class="form-check form-switch mb-3">
+                                        <input class="form-check-input" id="emailSetting" type="checkbox" checked>
+                                        <label class="form-check-label" for="emailSetting">Email notifications</label>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" id="inappSetting" type="checkbox" checked>
+                                        <label class="form-check-label" for="inappSetting">In-app notifications</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-8" id="audit">
+                            <div class="card">
+                                <div class="card-header"><h5 class="mb-0">Audit Logs</h5></div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-bottom-border align-middle mb-0">
+                                            <thead><tr><th>User</th><th>Action</th><th>Module</th><th>Date</th><th>Time</th></tr></thead>
+                                            <tbody>
+                                            <tr><td>Adebisi Oladele</td><td>User created</td><td>Users</td><td>2026-03-16</td><td>09:14</td></tr>
+                                            <tr><td>Ruth Eze</td><td>Member updated</td><td>Members</td><td>2026-03-16</td><td>08:47</td></tr>
+                                            <tr><td>Samuel Ogunleye</td><td>Homecell assigned</td><td>Assignments</td><td>2026-03-15</td><td>17:33</td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4" id="support">
+                            <div class="card">
+                                <div class="card-header"><h5 class="mb-0">Support</h5></div>
+                                <div class="card-body">
+                                    <p class="mb-2">Operational support: help@churchflow.local</p>
+                                    <p class="mb-0">Use this area for admin assistance, access issues and training support.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</div>
+<script src="assets/js/jquery-3.6.3.min.js"></script>
+<script src="assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
+<script src="assets/vendor/simplebar/simplebar.js"></script>
+<script src="assets/js/church-template.js"></script>
+<script src="assets/js/script.js"></script>
+</body>
+
+</html>

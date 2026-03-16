@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="Church dashboard using the ki-admin template." name="description">
+    <meta content="church dashboard" name="keywords">
+    <meta content="la-themes" name="author">
+    <link href="assets/images/logo/favicon.png" rel="icon" type="image/x-icon">
+    <link href="assets/images/logo/favicon.png" rel="shortcut icon" type="image/x-icon">
+    <title>Church Dashboard</title>
+
+    <link href="assets/vendor/animation/animate.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap"
+          rel="stylesheet">
+    <link href="assets/vendor/flag-icons-master/flag-icon.css" rel="stylesheet" type="text/css">
+    <link href="assets/vendor/tabler-icons/tabler-icons.css" rel="stylesheet" type="text/css">
+    <link href="assets/vendor/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="assets/vendor/simplebar/simplebar.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/style.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/responsive.css" rel="stylesheet" type="text/css">
+</head>
+
+<body data-title="Admin Dashboard" data-subtitle="Summary cards, quick actions and recent church activity.">
+<div class="app-wrapper">
+    <div class="loader-wrapper">
+        <div class="loader_24"></div>
+    </div>
+
+    <nav id="church-nav"></nav>
+
+    <div class="app-content">
+        <div class="">
+            <header class="header-main" id="church-header"></header>
+
+            <main>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                                        <div>
+                                            <h4 class="mb-1">Living Faith Central Dashboard</h4>
+                                            <p class="text-secondary mb-0">Top summary cards, quick actions and recent operational activity from the PDF flow.</p>
+                                        </div>
+                                        <div class="d-flex gap-2 flex-wrap">
+                                            <a class="btn btn-primary" href="members.html">Add Member</a>
+                                            <a class="btn btn-outline-primary" href="members.html#users">Add User</a>
+                                            <a class="btn btn-light-primary" href="church-profile.html#districts">Create District</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 col-xxl-3">
+                            <div class="card overview-details-box b-s-3-primary">
+                                <div class="card-body">
+                                    <p class="text-dark f-w-600 mb-1">Total Members</p>
+                                    <h3 class="text-primary mb-0">2,864</h3>
+                                    <span class="badge text-light-primary mt-2">+118 this month</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-xxl-3">
+                            <div class="card overview-details-box b-s-3-success">
+                                <div class="card-body">
+                                    <p class="text-dark f-w-600 mb-1">First Timers</p>
+                                    <h3 class="text-success mb-0">126</h3>
+                                    <span class="badge text-light-success mt-2">34 pending follow-up</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-xxl-3">
+                            <div class="card overview-details-box b-s-3-danger">
+                                <div class="card-body">
+                                    <p class="text-dark f-w-600 mb-1">New Converts</p>
+                                    <h3 class="text-danger mb-0">64</h3>
+                                    <span class="badge text-light-danger mt-2">18 in foundation class</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-xxl-3">
+                            <div class="card overview-details-box b-s-3-warning">
+                                <div class="card-body">
+                                    <p class="text-dark f-w-600 mb-1">Members Without Homecell</p>
+                                    <h3 class="text-warning mb-0">94</h3>
+                                    <span class="badge text-light-warning mt-2">Homecell Office priority</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-8">
+                            <div class="card equal-card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Quick Actions</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row g-3">
+                                        <div class="col-md-4"><a class="btn btn-light-primary w-100" href="members.html">Add Member</a></div>
+                                        <div class="col-md-4"><a class="btn btn-light-success w-100" href="members.html#first-timers">Register First Timer</a></div>
+                                        <div class="col-md-4"><a class="btn btn-light-danger w-100" href="leadership.html">Add Pastor</a></div>
+                                        <div class="col-md-4"><a class="btn btn-light-warning w-100" href="church-profile.html#districts">Create District</a></div>
+                                        <div class="col-md-4"><a class="btn btn-light-info w-100" href="church-profile.html#zones">Create Zone</a></div>
+                                        <div class="col-md-4"><a class="btn btn-light-secondary w-100" href="leadership.html#assignments">Assign Leader</a></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4" id="notifications">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Notifications</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <h6 class="mb-1">Pending foundation class</h6>
+                                        <p class="text-secondary mb-0">149 members have not completed foundation class.</p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <h6 class="mb-1">Pending assignments</h6>
+                                        <p class="text-secondary mb-0">District 4 needs a district pastor and Chevron Zone needs a coordinator.</p>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Recent follow-up tasks</h6>
+                                        <p class="text-secondary mb-0">12 first timers are ready to move into members.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-7">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Recent Members</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive app-scroll">
+                                        <table class="table table-bottom-border align-middle mb-0">
+                                            <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Date Joined</th>
+                                                <th>Homecell</th>
+                                                <th>Foundation</th>
+                                                <th>Status</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr>
+                                                <td>Mercy Akinola</td>
+                                                <td>2026-03-15</td>
+                                                <td>Unassigned</td>
+                                                <td>Pending</td>
+                                                <td><span class="badge text-light-warning">Needs Homecell</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>John Nwachukwu</td>
+                                                <td>2026-03-14</td>
+                                                <td>Grace Cell</td>
+                                                <td>Enrolled</td>
+                                                <td><span class="badge text-light-primary">In Progress</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Faith Johnson</td>
+                                                <td>2026-03-13</td>
+                                                <td>Victory Cell</td>
+                                                <td>Completed</td>
+                                                <td><span class="badge text-light-success">Active</span></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-5">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Recent Attendance Reports</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between">
+                                            <span>Sunday Service Attendance</span>
+                                            <span class="text-primary">3,402</span>
+                                        </div>
+                                        <p class="text-secondary mb-0">Submitted by Operations Admin</p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between">
+                                            <span>Homecell Attendance</span>
+                                            <span class="text-success">2,116</span>
+                                        </div>
+                                        <p class="text-secondary mb-0">3 homecells yet to submit.</p>
+                                    </div>
+                                    <div>
+                                        <div class="d-flex justify-content-between">
+                                            <span>Unit Attendance</span>
+                                            <span class="text-danger">512</span>
+                                        </div>
+                                        <p class="text-secondary mb-0">Technical, choir and protocol reviewed.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</div>
+
+<script src="assets/js/jquery-3.6.3.min.js"></script>
+<script src="assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
+<script src="assets/vendor/simplebar/simplebar.js"></script>
+<script src="assets/js/church-template.js"></script>
+<script src="assets/js/script.js"></script>
+</body>
+
+</html>

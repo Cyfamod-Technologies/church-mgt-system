@@ -1,5 +1,10 @@
 (function () {
   const currentPage = (location.pathname.split("/").pop() || "index.html").split("#")[0];
+  const pageAliases = {
+    "church-profile-edit.html": "church-profile.html",
+    "service-schedule-edit.html": "service-schedule.html"
+  };
+  const normalizedPage = pageAliases[currentPage] || currentPage;
   const sessionKey = "lfc_session";
   const session = getSession();
 
@@ -179,7 +184,7 @@
   }
 
   function isActive(href) {
-    return href.split("#")[0] === currentPage;
+    return href.split("#")[0] === normalizedPage;
   }
 
   function buildNav() {

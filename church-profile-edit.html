@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="Edit church profile, leadership contacts and profile settings." name="description">
+    <meta content="edit church profile" name="keywords">
+    <meta content="la-themes" name="author">
+    <link href="assets/images/logo/favicon.png" rel="icon" type="image/x-icon">
+    <link href="assets/images/logo/favicon.png" rel="shortcut icon" type="image/x-icon">
+    <title>Edit Church Profile</title>
+    <link href="assets/vendor/animation/animate.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <link href="assets/vendor/flag-icons-master/flag-icon.css" rel="stylesheet" type="text/css">
+    <link href="assets/vendor/tabler-icons/tabler-icons.css" rel="stylesheet" type="text/css">
+    <link href="assets/vendor/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="assets/vendor/simplebar/simplebar.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/style.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/responsive.css" rel="stylesheet" type="text/css">
+</head>
+
+<body data-title="Edit Church Profile" data-subtitle="Update registration details without touching service schedule configuration.">
+<div class="app-wrapper">
+    <div class="loader-wrapper"><div class="loader_24"></div></div>
+    <nav id="church-nav"></nav>
+    <div class="app-content">
+        <div class="">
+            <header class="header-main" id="church-header"></header>
+            <main>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                                        <div>
+                                            <h4 class="mb-1">Edit Church Profile</h4>
+                                            <p class="text-secondary mb-0">Update church information, pastor record, admin contact and finance setting.</p>
+                                        </div>
+                                        <div class="d-flex gap-2 flex-wrap">
+                                            <a class="btn btn-outline-secondary" href="church-profile.html">
+                                                <i class="ti ti-arrow-left me-1"></i>Back to View
+                                            </a>
+                                            <a class="btn btn-outline-primary" href="service-schedule.html">
+                                                <i class="ti ti-calendar me-1"></i>Service Schedule
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="alert alert-danger d-none" id="churchProfileEditAlert" role="alert"></div>
+                        </div>
+
+                        <div class="col-12">
+                            <form id="churchProfileEditForm">
+                                <div class="row">
+                                    <div class="col-lg-8">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h5 class="mb-0">Church Information</h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="mb-3">
+                                                            <label class="form-label" for="churchName">Church Name</label>
+                                                            <input class="form-control" id="churchName" type="text">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="mb-3">
+                                                            <label class="form-label" for="churchCode">Church Code</label>
+                                                            <input class="form-control" id="churchCode" type="text">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="mb-3">
+                                                            <label class="form-label" for="churchState">State</label>
+                                                            <select class="form-select" id="churchState">
+                                                                <option value="">Select state</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="mb-3">
+                                                            <label class="form-label" for="churchCity">City</label>
+                                                            <input class="form-control" id="churchCity" type="text">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="mb-3">
+                                                            <label class="form-label" for="churchLga">LGA / District Area</label>
+                                                            <select class="form-select" id="churchLga">
+                                                                <option value="">Select LGA</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <div class="mb-3">
+                                                            <label class="form-label" for="churchAddress">Address</label>
+                                                            <textarea class="form-control" id="churchAddress" rows="2"></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="mb-3">
+                                                            <label class="form-label" for="churchEmail">Church Email</label>
+                                                            <input class="form-control" id="churchEmail" type="email">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="mb-3">
+                                                            <label class="form-label" for="churchPhone">Church Phone</label>
+                                                            <input class="form-control" id="churchPhone" type="text">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h5 class="mb-0">Pastor In Charge</h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="mb-3">
+                                                            <label class="form-label" for="pastorName">Full Name</label>
+                                                            <input class="form-control" id="pastorName" type="text">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="mb-3">
+                                                            <label class="form-label" for="pastorPhone">Phone Number</label>
+                                                            <input class="form-control" id="pastorPhone" type="text">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="mb-3">
+                                                            <label class="form-label" for="pastorEmail">Email</label>
+                                                            <input class="form-control" id="pastorEmail" type="email">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h5 class="mb-0">Primary Admin</h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <input id="adminId" type="hidden">
+                                                <div class="mb-3">
+                                                    <label class="form-label" for="adminName">Full Name</label>
+                                                    <input class="form-control" id="adminName" type="text">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label" for="adminEmail">Email</label>
+                                                    <input class="form-control" id="adminEmail" type="email">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label" for="adminPhone">Phone Number</label>
+                                                    <input class="form-control" id="adminPhone" type="text">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label" for="adminPassword">New Password</label>
+                                                    <input class="form-control" id="adminPassword" placeholder="Leave blank to keep current password" type="password">
+                                                </div>
+                                                <div class="mb-0">
+                                                    <label class="form-label" for="adminPasswordConfirmation">Confirm New Password</label>
+                                                    <input class="form-control" id="adminPasswordConfirmation" type="password">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h5 class="mb-0">Settings</h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" id="financeEnabled" type="checkbox">
+                                                    <label class="form-check-label" for="financeEnabled">Enable finance tracking</label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h5 class="mb-0">Actions</h5>
+                                            </div>
+                                            <div class="card-body d-grid gap-2">
+                                                <button class="btn btn-primary" id="saveChurchProfileButton" type="submit">
+                                                    <i class="ti ti-device-floppy me-1"></i>Save Changes
+                                                </button>
+                                                <a class="btn btn-outline-secondary" href="church-profile.html">Cancel</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</div>
+<script src="assets/js/jquery-3.6.3.min.js"></script>
+<script src="assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
+<script src="assets/vendor/simplebar/simplebar.js"></script>
+<script src="assets/js/app-config.js"></script>
+<script src="assets/js/app-api.js"></script>
+<script src="assets/js/church-template.js"></script>
+<script src="assets/js/script.js"></script>
+<script>
+const churchProfileEditSession = window.LFC_API.getSession();
+const activeProfileChurch = churchProfileEditSession ? churchProfileEditSession.church : null;
+const profileEditForm = document.getElementById('churchProfileEditForm');
+const profileEditAlert = document.getElementById('churchProfileEditAlert');
+const stateSelect = document.getElementById('churchState');
+const lgaSelect = document.getElementById('churchLga');
+const saveButton = document.getElementById('saveChurchProfileButton');
+
+if (!activeProfileChurch || !activeProfileChurch.id) {
+    window.location.replace('sign_in.html');
+    throw new Error('Missing active church session.');
+}
+
+function showError(message) {
+    profileEditAlert.textContent = message;
+    profileEditAlert.classList.remove('d-none');
+}
+
+function hideError() {
+    profileEditAlert.classList.add('d-none');
+    profileEditAlert.textContent = '';
+}
+
+function populateSelect(selectElement, options, placeholder) {
+    selectElement.innerHTML = `<option value="">${placeholder}</option>`;
+
+    options.forEach(function (option) {
+        const optionElement = document.createElement('option');
+        optionElement.value = option.id || option.slug || option.name;
+        optionElement.textContent = option.name;
+        if (option.slug) {
+            optionElement.dataset.slug = option.slug;
+        }
+        selectElement.appendChild(optionElement);
+    });
+}
+
+function fillForm(church) {
+    const admin = (church.users || []).find(function (user) {
+        return user.role === 'church_admin';
+    }) || (church.users || [])[0] || null;
+
+    document.getElementById('churchName').value = church.name || '';
+    document.getElementById('churchCode').value = church.code || '';
+    document.getElementById('churchCity').value = church.city || '';
+    document.getElementById('churchAddress').value = church.address || '';
+    document.getElementById('churchEmail').value = church.email || '';
+    document.getElementById('churchPhone').value = church.phone || '';
+    document.getElementById('pastorName').value = church.pastor_name || '';
+    document.getElementById('pastorPhone').value = church.pastor_phone || '';
+    document.getElementById('pastorEmail').value = church.pastor_email || '';
+    document.getElementById('financeEnabled').checked = Boolean(church.finance_enabled);
+
+    if (admin) {
+        document.getElementById('adminId').value = admin.id || '';
+        document.getElementById('adminName').value = admin.name || '';
+        document.getElementById('adminEmail').value = admin.email || '';
+        document.getElementById('adminPhone').value = admin.phone || '';
+    }
+}
+
+async function loadStates(selectedStateName, selectedLgaName) {
+    const response = await window.LFC_API.request('locations/states');
+    populateSelect(stateSelect, response.data, 'Select state');
+
+    if (!selectedStateName) {
+        return;
+    }
+
+    const matchingStateOption = Array.from(stateSelect.options).find(function (option) {
+        return option.textContent.trim().toLowerCase() === selectedStateName.trim().toLowerCase();
+    });
+
+    if (matchingStateOption) {
+        matchingStateOption.selected = true;
+        await loadLgas(matchingStateOption.dataset.slug, selectedLgaName);
+    }
+}
+
+async function loadLgas(stateSlug, selectedLgaName) {
+    populateSelect(lgaSelect, [], stateSlug ? 'Loading LGAs...' : 'Select LGA');
+
+    if (!stateSlug) {
+        return;
+    }
+
+    const response = await window.LFC_API.request('locations/lgas?state_slug=' + encodeURIComponent(stateSlug));
+    populateSelect(lgaSelect, response.data, 'Select LGA');
+
+    if (!selectedLgaName) {
+        return;
+    }
+
+    const matchingLgaOption = Array.from(lgaSelect.options).find(function (option) {
+        return option.textContent.trim().toLowerCase() === selectedLgaName.trim().toLowerCase();
+    });
+
+    if (matchingLgaOption) {
+        matchingLgaOption.selected = true;
+    }
+}
+
+function buildPayload() {
+    const stateOption = stateSelect.options[stateSelect.selectedIndex];
+    const lgaOption = lgaSelect.options[lgaSelect.selectedIndex];
+    const selectedState = stateOption && stateOption.value ? stateOption.textContent.trim() : null;
+    const selectedLga = lgaOption && lgaOption.value ? lgaOption.textContent.trim() : null;
+
+    return {
+        church: {
+            name: document.getElementById('churchName').value.trim(),
+            code: document.getElementById('churchCode').value.trim() || null,
+            address: document.getElementById('churchAddress').value.trim() || null,
+            city: document.getElementById('churchCity').value.trim() || null,
+            state: selectedState,
+            district_area: selectedLga,
+            email: document.getElementById('churchEmail').value.trim() || null,
+            phone: document.getElementById('churchPhone').value.trim() || null,
+            status: 'active'
+        },
+        pastor: {
+            name: document.getElementById('pastorName').value.trim(),
+            phone: document.getElementById('pastorPhone').value.trim(),
+            email: document.getElementById('pastorEmail').value.trim() || null
+        },
+        settings: {
+            finance_enabled: document.getElementById('financeEnabled').checked
+        },
+        admin: {
+            id: Number(document.getElementById('adminId').value || 0) || null,
+            name: document.getElementById('adminName').value.trim(),
+            email: document.getElementById('adminEmail').value.trim(),
+            phone: document.getElementById('adminPhone').value.trim(),
+            password: document.getElementById('adminPassword').value || null,
+            password_confirmation: document.getElementById('adminPasswordConfirmation').value || null
+        }
+    };
+}
+
+async function loadProfile() {
+    const response = await window.LFC_API.request('churches/' + encodeURIComponent(activeProfileChurch.id));
+    const church = response.data;
+
+    fillForm(church);
+    await loadStates(church.state, church.district_area);
+}
+
+stateSelect.addEventListener('change', function () {
+    const option = stateSelect.options[stateSelect.selectedIndex];
+    loadLgas(option ? option.dataset.slug : '', null).catch(function (error) {
+        showError(error.message);
+    });
+});
+
+profileEditForm.addEventListener('submit', async function (event) {
+    event.preventDefault();
+    hideError();
+    saveButton.disabled = true;
+    saveButton.innerHTML = '<i class="ti ti-loader me-1"></i>Saving...';
+
+    try {
+        const response = await window.LFC_API.request('churches/' + encodeURIComponent(activeProfileChurch.id) + '/profile', {
+            method: 'PUT',
+            body: buildPayload()
+        });
+
+        window.LFC_API.saveSession({
+            user: response.data.admin,
+            church: response.data.church
+        });
+
+        window.location.href = 'church-profile.html?updated=1';
+    } catch (error) {
+        showError(error.message);
+    } finally {
+        saveButton.disabled = false;
+        saveButton.innerHTML = '<i class="ti ti-device-floppy me-1"></i>Save Changes';
+    }
+});
+
+loadProfile().catch(function (error) {
+    showError(error.message);
+});
+</script>
+</body>
+
+</html>

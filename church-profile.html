@@ -5,12 +5,12 @@
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
     <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="Church management section page using the ki-admin template." name="description">
-    <meta content="church management" name="keywords">
+    <meta content="Church profile overview with registration details, admin contact and schedule summary." name="description">
+    <meta content="church profile, church setup" name="keywords">
     <meta content="la-themes" name="author">
     <link href="assets/images/logo/favicon.png" rel="icon" type="image/x-icon">
     <link href="assets/images/logo/favicon.png" rel="shortcut icon" type="image/x-icon">
-    <title>Church Management</title>
+    <title>Church Profile</title>
     <link href="assets/vendor/animation/animate.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com" rel="preconnect">
     <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
@@ -23,23 +23,272 @@
     <link href="assets/css/responsive.css" rel="stylesheet" type="text/css">
 </head>
 
-<body data-section-key="church-profile">
+<body data-title="Church Profile" data-subtitle="View registration details, leadership contacts and current church settings.">
 <div class="app-wrapper">
     <div class="loader-wrapper"><div class="loader_24"></div></div>
     <nav id="church-nav"></nav>
     <div class="app-content">
         <div class="">
             <header class="header-main" id="church-header"></header>
-            <main id="church-section-root"></main>
+            <main>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                                        <div>
+                                            <h4 class="mb-1">Church Profile</h4>
+                                            <p class="text-secondary mb-0">Everything captured during registration, separated from the service schedule editor.</p>
+                                        </div>
+                                        <div class="d-flex gap-2 flex-wrap">
+                                            <a class="btn btn-primary" href="church-profile-edit.html">
+                                                <i class="ti ti-edit me-1"></i>Edit Profile
+                                            </a>
+                                            <a class="btn btn-outline-secondary" href="service-schedule.html">
+                                                <i class="ti ti-calendar me-1"></i>Service Schedule
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="alert alert-success d-none" id="churchProfileSuccess" role="alert"></div>
+                            <div class="alert alert-danger d-none" id="churchProfileAlert" role="alert"></div>
+                        </div>
+
+                        <div class="col-lg-8">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0">Church Information</h5>
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        <span class="badge bg-light-primary" id="churchStatusBadge">Loading...</span>
+                                        <span class="badge bg-light-secondary" id="churchCreatedBadge">Created: --</span>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <div class="border rounded p-3 h-100">
+                                                <span class="text-secondary small d-block mb-1">Church Name</span>
+                                                <strong id="churchNameValue">--</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="border rounded p-3 h-100">
+                                                <span class="text-secondary small d-block mb-1">Church Code</span>
+                                                <strong id="churchCodeValue">--</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="border rounded p-3 h-100">
+                                                <span class="text-secondary small d-block mb-1">State</span>
+                                                <strong id="churchStateValue">--</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="border rounded p-3 h-100">
+                                                <span class="text-secondary small d-block mb-1">City</span>
+                                                <strong id="churchCityValue">--</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="border rounded p-3 h-100">
+                                                <span class="text-secondary small d-block mb-1">LGA / District Area</span>
+                                                <strong id="churchLgaValue">--</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="border rounded p-3 h-100">
+                                                <span class="text-secondary small d-block mb-1">Address</span>
+                                                <strong id="churchAddressValue">--</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="border rounded p-3 h-100">
+                                                <span class="text-secondary small d-block mb-1">Email</span>
+                                                <strong id="churchEmailValue">--</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="border rounded p-3 h-100">
+                                                <span class="text-secondary small d-block mb-1">Phone</span>
+                                                <strong id="churchPhoneValue">--</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Pastor In Charge</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row g-3">
+                                        <div class="col-md-4">
+                                            <div class="border rounded p-3 h-100">
+                                                <span class="text-secondary small d-block mb-1">Full Name</span>
+                                                <strong id="pastorNameValue">--</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="border rounded p-3 h-100">
+                                                <span class="text-secondary small d-block mb-1">Phone</span>
+                                                <strong id="pastorPhoneValue">--</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="border rounded p-3 h-100">
+                                                <span class="text-secondary small d-block mb-1">Email</span>
+                                                <strong id="pastorEmailValue">--</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Primary Admin</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="border rounded p-3 mb-3">
+                                        <span class="text-secondary small d-block mb-1">Full Name</span>
+                                        <strong id="adminNameValue">--</strong>
+                                    </div>
+                                    <div class="border rounded p-3 mb-3">
+                                        <span class="text-secondary small d-block mb-1">Email</span>
+                                        <strong id="adminEmailValue">--</strong>
+                                    </div>
+                                    <div class="border rounded p-3">
+                                        <span class="text-secondary small d-block mb-1">Phone</span>
+                                        <strong id="adminPhoneValue">--</strong>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Settings</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center border rounded p-3 mb-3">
+                                        <span>Finance Tracking</span>
+                                        <span class="badge" id="financeStatusBadge">--</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center border rounded p-3">
+                                        <span>Special Services</span>
+                                        <span class="badge" id="specialServicesStatusBadge">--</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </main>
         </div>
     </div>
 </div>
 <script src="assets/js/jquery-3.6.3.min.js"></script>
 <script src="assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
 <script src="assets/vendor/simplebar/simplebar.js"></script>
-<script src="assets/js/church-section-pages.js"></script>
+<script src="assets/js/app-config.js"></script>
+<script src="assets/js/app-api.js"></script>
 <script src="assets/js/church-template.js"></script>
 <script src="assets/js/script.js"></script>
+<script>
+const churchProfileSession = window.LFC_API.getSession();
+const activeChurch = churchProfileSession ? churchProfileSession.church : null;
+const profileAlert = document.getElementById('churchProfileAlert');
+const profileSuccess = document.getElementById('churchProfileSuccess');
+
+if (!activeChurch || !activeChurch.id) {
+    window.location.replace('sign_in.html');
+    throw new Error('Missing active church session.');
+}
+
+function setText(id, value, fallback) {
+    document.getElementById(id).textContent = value || fallback || '--';
+}
+
+function setBadge(id, enabled) {
+    const badge = document.getElementById(id);
+    badge.textContent = enabled ? 'Enabled' : 'Disabled';
+    badge.className = 'badge ' + (enabled ? 'bg-light-success text-success' : 'bg-light-danger text-danger');
+}
+
+function showError(message) {
+    profileAlert.textContent = message;
+    profileAlert.classList.remove('d-none');
+}
+
+function showSuccess(message) {
+    profileSuccess.textContent = message;
+    profileSuccess.classList.remove('d-none');
+}
+
+function formatDate(value) {
+    if (!value) {
+        return '--';
+    }
+
+    return new Date(value).toLocaleDateString();
+}
+
+function fillProfile(church) {
+    const admin = (church.users || []).find(function (user) {
+        return user.role === 'church_admin';
+    }) || (church.users || [])[0] || null;
+
+    setText('churchNameValue', church.name);
+    setText('churchCodeValue', church.code);
+    setText('churchStateValue', church.state);
+    setText('churchCityValue', church.city);
+    setText('churchLgaValue', church.district_area);
+    setText('churchAddressValue', church.address);
+    setText('churchEmailValue', church.email);
+    setText('churchPhoneValue', church.phone);
+    setText('pastorNameValue', church.pastor_name);
+    setText('pastorPhoneValue', church.pastor_phone);
+    setText('pastorEmailValue', church.pastor_email);
+    setText('adminNameValue', admin ? admin.name : null);
+    setText('adminEmailValue', admin ? admin.email : null);
+    setText('adminPhoneValue', admin ? admin.phone : null);
+    setBadge('financeStatusBadge', Boolean(church.finance_enabled));
+    setBadge('specialServicesStatusBadge', Boolean(church.special_services_enabled));
+    setText('churchStatusBadge', 'Status: ' + (church.status || 'active'));
+    setText('churchCreatedBadge', 'Created: ' + formatDate(church.created_at));
+}
+
+async function loadProfile() {
+    const response = await window.LFC_API.request('churches/' + encodeURIComponent(activeChurch.id));
+    const church = response.data;
+
+    fillProfile(church);
+    window.LFC_API.saveSession({
+        user: churchProfileSession.user,
+        church: {
+            ...churchProfileSession.church,
+            ...church
+        }
+    });
+}
+
+const params = new URLSearchParams(window.location.search);
+if (params.get('updated') === '1') {
+    showSuccess('Church profile updated successfully.');
+}
+
+loadProfile().catch(function (error) {
+    showError(error.message);
+});
+</script>
 </body>
 
 </html>

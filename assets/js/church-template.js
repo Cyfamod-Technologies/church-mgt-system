@@ -63,8 +63,8 @@
       ]
     },
     {
-      title: "Weekly Operations",
-      id: "weekly-ops",
+      title: "Operations",
+      id: "operations",
       icon: "stack",
       items: [
         { label: "Record Attendance", href: "attendance.html" },

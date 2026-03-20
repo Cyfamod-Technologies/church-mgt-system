@@ -259,12 +259,21 @@
         { label: "Awaiting Assignment", value: "16", note: "New member queue" }
       ]
     },
-    "attendance-reports": {
-      title: "Attendance Reports",
-      subtitle: "Sunday service, homecell and unit attendance reporting.",
-      actions: [{ label: "Export Attendance", href: "#", variant: "primary" }],
+    "operations": {
+      title: "Operations",
+      subtitle: "Attendance, first timers, new converts, and rededications records.",
+      actions: [
+        { label: "Export Records", href: "#", variant: "primary" },
+        { label: "View Weekly", href: "#", variant: "light-primary" },
+        { label: "View Monthly", href: "#", variant: "light-primary" }
+      ],
+      stats: [
+        { label: "Highest Attendance", value: "3,402", note: "This period" },
+        { label: "Average Attendance", value: "2,876", note: "This period" },
+        { label: "Total Attendance", value: "11,504", note: "This period" }
+      ],
       table: {
-        title: "Attendance Reports",
+        title: "Operations Records",
         headers: ["Report", "Date", "Total", "Status"],
         rows: [
           ["Sunday Service", "2026-03-15", "3,402", "Submitted"],

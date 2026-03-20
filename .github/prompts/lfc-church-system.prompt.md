@@ -103,7 +103,7 @@ Organize pages to match actual church workflow:
 - Service schedule configuration
 - Branches management
 
-### 2. Weekly Operations
+### 2. Operations
 - Attendance recording (Sunday → Wednesday → WOSE)
 - First timers entry
 - New converts entry

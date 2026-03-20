@@ -189,9 +189,13 @@ let calcScrollValue = () => {
     const $progressValue = document.getElementsByClassName("progress-value")[0];
     const docElement = document.documentElement;
 
+    if (!$scrollProgress) {
+        return;
+    }
+
     const pos = docElement.scrollTop;
     const calcHeight = docElement.scrollHeight - docElement.clientHeight;
-    const scrollValue = Math.round((pos * 100) / calcHeight);
+    const scrollValue = calcHeight > 0 ? Math.round((pos * 100) / calcHeight) : 0;
 
     if (pos > 100) {
         $scrollProgress.style.display = 'grid';
@@ -199,9 +203,12 @@ let calcScrollValue = () => {
         $scrollProgress.style.display = 'none';
     }
 
-    $scrollProgress.addEventListener("click", () => {
-        docElement.scrollTop = 0;
-    });
+    if (!$scrollProgress.dataset.boundScrollTop) {
+        $scrollProgress.addEventListener("click", () => {
+            docElement.scrollTop = 0;
+        });
+        $scrollProgress.dataset.boundScrollTop = 'true';
+    }
 
     $scrollProgress.style.background = `conic-gradient(rgba(var(--primary), 1) ${scrollValue}%, rgba(var(--primary), 1) ${scrollValue}%)`;
 };

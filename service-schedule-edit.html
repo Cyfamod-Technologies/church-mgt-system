@@ -305,13 +305,63 @@ function renderCustomServices(services) {
                 </div>
                 <div class="row mt-3">
                     <div class="col-12">
-                        <label class="form-label">Recurrence Detail</label>
-                        <input class="form-control custom-service-recurrence-detail" type="text" value="${service.recurrence_detail || ''}" placeholder="${service.recurrence_type === 'monthly' ? 'e.g. Last Friday of every month' : service.recurrence_type === 'yearly' ? 'e.g. December 31' : service.recurrence_type === 'one_time' ? 'e.g. 2026-12-31' : 'Optional for weekly services'}">
+                        <label class="form-label custom-service-recurrence-label">Recurrence Detail${isRecurrenceDetailRequired(service.recurrence_type || 'weekly') ? ' <span class="text-danger">*</span>' : ''}</label>
+                        <input class="form-control custom-service-recurrence-detail" type="text" value="${service.recurrence_detail || ''}" placeholder="${getRecurrencePlaceholder(service.recurrence_type || 'weekly')}" ${isRecurrenceDetailRequired(service.recurrence_type || 'weekly') ? 'required' : ''}>
+                        <small class="text-muted custom-service-recurrence-help">${getRecurrenceHelpText(service.recurrence_type || 'weekly')}</small>
                     </div>
                 </div>
             </div>
         `;
     }).join('');
+}
+
+function getRecurrencePlaceholder(recurrenceType) {
+    if (recurrenceType === 'monthly') {
+        return 'e.g. Last Friday of every month';
+    }
+
+    if (recurrenceType === 'yearly') {
+        return 'e.g. December 31';
+    }
+
+    if (recurrenceType === 'one_time') {
+        return 'e.g. 2026-12-31';
+    }
+
+    return 'Optional for weekly services';
+}
+
+function getRecurrenceHelpText(recurrenceType) {
+    if (recurrenceType === 'monthly') {
+        return 'Describe how it repeats each month.';
+    }
+
+    if (recurrenceType === 'yearly') {
+        return 'Enter the specific annual date or season for this service.';
+    }
+
+    if (recurrenceType === 'one_time') {
+        return 'Enter the exact one-time date for this service.';
+    }
+
+    return 'Leave this blank for a simple weekly service, or use it for extra notes.';
+}
+
+function isRecurrenceDetailRequired(recurrenceType) {
+    return recurrenceType === 'monthly' || recurrenceType === 'yearly' || recurrenceType === 'one_time';
+}
+
+function updateCustomServiceRecurrenceUI(item) {
+    const recurrenceTypeInput = item.querySelector('.custom-service-recurrence-type');
+    const recurrenceDetailInput = item.querySelector('.custom-service-recurrence-detail');
+    const recurrenceLabel = item.querySelector('.custom-service-recurrence-label');
+    const recurrenceHelp = item.querySelector('.custom-service-recurrence-help');
+    const recurrenceType = recurrenceTypeInput.value || 'weekly';
+
+    recurrenceLabel.innerHTML = 'Recurrence Detail' + (isRecurrenceDetailRequired(recurrenceType) ? ' <span class="text-danger">*</span>' : '');
+    recurrenceDetailInput.placeholder = getRecurrencePlaceholder(recurrenceType);
+    recurrenceDetailInput.required = isRecurrenceDetailRequired(recurrenceType);
+    recurrenceHelp.textContent = getRecurrenceHelpText(recurrenceType);
 }
 
 function readCustomServices() {
@@ -433,6 +483,36 @@ function buildPayload() {
     };
 }
 
+function validateCustomServices() {
+    const services = Array.from(document.querySelectorAll('.custom-service-item'));
+
+    for (let index = 0; index < services.length; index += 1) {
+        const item = services[index];
+        const label = item.querySelector('.custom-service-label').value.trim() || ('Other Service ' + (index + 1));
+        const recurrenceType = item.querySelector('.custom-service-recurrence-type').value;
+        const recurrenceDetail = item.querySelector('.custom-service-recurrence-detail').value.trim();
+
+        if (isRecurrenceDetailRequired(recurrenceType) && !recurrenceDetail) {
+            throw new Error(label + ': add a recurrence detail for ' + recurrenceType.replace('_', '-') + ' services.');
+        }
+    }
+}
+
+function saveScheduleSession(church) {
+    window.LFC_API.saveSession({
+        user: serviceScheduleSession.user,
+        church: {
+            ...serviceScheduleSession.church,
+            ...church
+        },
+        branch: serviceScheduleSession.branch || null
+    });
+}
+
+function redirectToScheduleView() {
+    window.location.replace('service-schedule.html?updated=1');
+}
+
 async function loadServiceSchedule() {
     hideError();
 
@@ -440,13 +520,7 @@ async function loadServiceSchedule() {
     const church = response.data;
 
     fillForm(church);
-    window.LFC_API.saveSession({
-        user: serviceScheduleSession.user,
-        church: {
-            ...serviceScheduleSession.church,
-            ...church
-        }
-    });
+    saveScheduleSession(church);
 }
 
 document.getElementById('sundayServiceCount').addEventListener('change', function () {
@@ -478,6 +552,19 @@ customServicesContainer.addEventListener('click', function (event) {
     renderCustomServices(nextServices);
 });
 
+customServicesContainer.addEventListener('change', function (event) {
+    if (!event.target.classList.contains('custom-service-recurrence-type')) {
+        return;
+    }
+
+    const item = event.target.closest('.custom-service-item');
+    if (!item) {
+        return;
+    }
+
+    updateCustomServiceRecurrenceUI(item);
+});
+
 reloadScheduleButton.addEventListener('click', function () {
     loadServiceSchedule().catch(function (error) {
         showError(error.message);
@@ -491,17 +578,15 @@ scheduleForm.addEventListener('submit', async function (event) {
     saveScheduleButton.innerHTML = '<i class="ti ti-loader me-1"></i>Saving...';
 
     try {
+        validateCustomServices();
+
         const response = await window.LFC_API.request('churches/' + encodeURIComponent(activeScheduleChurch.id) + '/service-schedules', {
             method: 'PUT',
             body: buildPayload()
         });
 
-        window.LFC_API.saveSession({
-            user: serviceScheduleSession.user,
-            church: response.data.church
-        });
-
-        window.location.href = 'service-schedule.html?updated=1';
+        saveScheduleSession(response.data.church);
+        redirectToScheduleView();
     } catch (error) {
         showError(error.message);
     } finally {

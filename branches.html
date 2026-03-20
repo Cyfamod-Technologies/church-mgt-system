@@ -5,13 +5,12 @@
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
     <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="Manage church branches - add, tag, and organize branch relationships." name="description">
+    <meta content="Manage church branches, tags, hierarchy, and reassignment history." name="description">
     <meta content="church branches" name="keywords">
     <meta content="la-themes" name="author">
     <link href="assets/images/logo/favicon.png" rel="icon" type="image/x-icon">
     <link href="assets/images/logo/favicon.png" rel="shortcut icon" type="image/x-icon">
     <title>Branches - LFC</title>
-
     <link href="assets/vendor/animation/animate.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com" rel="preconnect">
     <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
@@ -24,7 +23,7 @@
     <link href="assets/css/responsive.css" rel="stylesheet" type="text/css">
 </head>
 
-<body data-title="Branches" data-subtitle="Add and manage your church branches with custom tags and assignments.">
+<body data-title="Branches" data-subtitle="Create branches, tag them, reassign them, and track which church or admin moved them.">
 <div class="app-wrapper">
     <div class="loader-wrapper"><div class="loader_24"></div></div>
     <nav id="church-nav"></nav>
@@ -34,20 +33,19 @@
             <main>
                 <div class="container-fluid">
                     <div class="row">
-                        <!-- Page Header -->
                         <div class="col-12">
                             <div class="card">
                                 <div class="card-body">
-                                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
                                         <div>
                                             <h4 class="mb-1">Church Branches</h4>
-                                            <p class="text-secondary mb-0">Add branches with custom tags (District, Zone, Sub-District, etc.) and manage their relationships.</p>
+                                            <p class="text-secondary mb-0">Create branches, tag them as District, Zone, Sub-District, Area, or custom labels, assign a local admin to each branch, then reassign them under churches or other branches while keeping full creator and reassignment visibility.</p>
                                         </div>
                                         <div class="d-flex gap-2 flex-wrap">
-                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBranchModal">
+                                            <button class="btn btn-primary" id="openAddBranchButton" type="button">
                                                 <i class="ti ti-plus me-1"></i>Add Branch
                                             </button>
-                                            <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#manageTagsModal">
+                                            <button class="btn btn-outline-secondary" id="openManageTagsButton" type="button">
                                                 <i class="ti ti-tags me-1"></i>Manage Tags
                                             </button>
                                         </div>
@@ -56,13 +54,17 @@
                             </div>
                         </div>
 
-                        <!-- Stats -->
+                        <div class="col-12">
+                            <div class="alert alert-success d-none" id="branchesSuccessAlert" role="alert"></div>
+                            <div class="alert alert-danger d-none" id="branchesErrorAlert" role="alert"></div>
+                        </div>
+
                         <div class="col-md-4">
                             <div class="card overview-details-box b-s-3-primary">
                                 <div class="card-body">
                                     <p class="text-dark f-w-600 mb-1">Total Branches</p>
-                                    <h3 class="text-primary mb-0">8</h3>
-                                    <span class="badge text-light-primary mt-2">Under your church</span>
+                                    <h3 class="text-primary mb-0" id="totalBranchesStat">0</h3>
+                                    <span class="badge text-light-primary mt-2">Created by your church</span>
                                 </div>
                             </div>
                         </div>
@@ -70,8 +72,8 @@
                             <div class="card overview-details-box b-s-3-success">
                                 <div class="card-body">
                                     <p class="text-dark f-w-600 mb-1">Direct Branches</p>
-                                    <h3 class="text-success mb-0">3</h3>
-                                    <span class="badge text-light-success mt-2">Directly under you</span>
+                                    <h3 class="text-success mb-0" id="directBranchesStat">0</h3>
+                                    <span class="badge text-light-success mt-2">Currently under your church</span>
                                 </div>
                             </div>
                         </div>
@@ -79,25 +81,21 @@
                             <div class="card overview-details-box b-s-3-warning">
                                 <div class="card-body">
                                     <p class="text-dark f-w-600 mb-1">Sub-Branches</p>
-                                    <h3 class="text-warning mb-0">5</h3>
-                                    <span class="badge text-light-warning mt-2">Under other branches</span>
+                                    <h3 class="text-warning mb-0" id="subBranchesStat">0</h3>
+                                    <span class="badge text-light-warning mt-2">Currently under another branch</span>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Branches List -->
                         <div class="col-12">
                             <div class="card">
-                                <div class="card-header d-flex justify-content-between align-items-center">
-                                    <h5 class="mb-0">Your Branches</h5>
-                                    <div class="d-flex gap-2">
-                                        <select class="form-select form-select-sm" style="width: auto;" id="filterByTag">
+                                <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                    <h5 class="mb-0">Branch Registry</h5>
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        <select class="form-select form-select-sm" id="filterByTag" style="width: 220px;">
                                             <option value="">All Tags</option>
-                                            <option value="district">District</option>
-                                            <option value="zone">Zone</option>
-                                            <option value="sub-district">Sub-District</option>
                                         </select>
-                                        <input type="text" class="form-control form-control-sm" placeholder="Search branches..." style="width: 200px;">
+                                        <input class="form-control form-control-sm" id="branchSearchInput" placeholder="Search branches..." style="width: 220px;" type="text">
                                     </div>
                                 </div>
                                 <div class="card-body">
@@ -108,174 +106,17 @@
                                                     <th>Branch Name</th>
                                                     <th>Tag</th>
                                                     <th>Assigned Under</th>
+                                                    <th>Created By</th>
+                                                    <th>Last Reassigned</th>
                                                     <th>Pastor in Charge</th>
                                                     <th>Location</th>
                                                     <th>Status</th>
                                                     <th>Actions</th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
-                                                <!-- Direct Branch - Lekki -->
+                                            <tbody id="branchesTableBody">
                                                 <tr>
-                                                    <td>
-                                                        <strong><i class="ti ti-building-community me-1 text-primary"></i>Lekki Branch</strong>
-                                                    </td>
-                                                    <td><span class="badge bg-primary">District</span></td>
-                                                    <td>
-                                                        <span class="text-muted"><i class="ti ti-home me-1"></i>Your Church (Direct)</span>
-                                                    </td>
-                                                    <td>Pst. Samuel Adeyemi</td>
-                                                    <td>Lekki, Lagos</td>
-                                                    <td><span class="badge bg-success">Active</span></td>
-                                                    <td>
-                                                        <div class="dropdown">
-                                                            <button class="btn btn-sm btn-light-secondary dropdown-toggle" data-bs-toggle="dropdown">
-                                                                Actions
-                                                            </button>
-                                                            <ul class="dropdown-menu">
-                                                                <li><a class="dropdown-item" href="#"><i class="ti ti-eye me-2"></i>View Details</a></li>
-                                                                <li><a class="dropdown-item" href="#"><i class="ti ti-edit me-2"></i>Edit</a></li>
-                                                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#assignBranchModal"><i class="ti ti-arrows-transfer-down me-2"></i>Reassign</a></li>
-                                                                <li><hr class="dropdown-divider"></li>
-                                                                <li><a class="dropdown-item text-danger" href="#"><i class="ti ti-unlink me-2"></i>Detach</a></li>
-                                                            </ul>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <!-- Sub-Branch under Lekki -->
-                                                <tr class="bg-light">
-                                                    <td class="ps-4">
-                                                        <i class="ti ti-corner-down-right me-1 text-muted"></i>Admiralty Branch
-                                                    </td>
-                                                    <td><span class="badge bg-success">Zone</span></td>
-                                                    <td>
-                                                        <span class="text-primary"><i class="ti ti-building-community me-1"></i>Lekki Branch</span>
-                                                    </td>
-                                                    <td>Pst. Chika Okafor</td>
-                                                    <td>Admiralty Way, Lekki</td>
-                                                    <td><span class="badge bg-success">Active</span></td>
-                                                    <td>
-                                                        <div class="dropdown">
-                                                            <button class="btn btn-sm btn-light-secondary dropdown-toggle" data-bs-toggle="dropdown">
-                                                                Actions
-                                                            </button>
-                                                            <ul class="dropdown-menu">
-                                                                <li><a class="dropdown-item" href="#"><i class="ti ti-eye me-2"></i>View Details</a></li>
-                                                                <li><a class="dropdown-item" href="#"><i class="ti ti-edit me-2"></i>Edit</a></li>
-                                                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#assignBranchModal"><i class="ti ti-arrows-transfer-down me-2"></i>Reassign</a></li>
-                                                                <li><hr class="dropdown-divider"></li>
-                                                                <li><a class="dropdown-item text-danger" href="#"><i class="ti ti-unlink me-2"></i>Detach</a></li>
-                                                            </ul>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <!-- Another sub-branch under Lekki -->
-                                                <tr class="bg-light">
-                                                    <td class="ps-4">
-                                                        <i class="ti ti-corner-down-right me-1 text-muted"></i>Chevron Branch
-                                                    </td>
-                                                    <td><span class="badge bg-success">Zone</span></td>
-                                                    <td>
-                                                        <span class="text-primary"><i class="ti ti-building-community me-1"></i>Lekki Branch</span>
-                                                    </td>
-                                                    <td>Pst. Florence Balogun</td>
-                                                    <td>Chevron Drive, Lekki</td>
-                                                    <td><span class="badge bg-success">Active</span></td>
-                                                    <td>
-                                                        <div class="dropdown">
-                                                            <button class="btn btn-sm btn-light-secondary dropdown-toggle" data-bs-toggle="dropdown">
-                                                                Actions
-                                                            </button>
-                                                            <ul class="dropdown-menu">
-                                                                <li><a class="dropdown-item" href="#"><i class="ti ti-eye me-2"></i>View Details</a></li>
-                                                                <li><a class="dropdown-item" href="#"><i class="ti ti-edit me-2"></i>Edit</a></li>
-                                                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#assignBranchModal"><i class="ti ti-arrows-transfer-down me-2"></i>Reassign</a></li>
-                                                                <li><hr class="dropdown-divider"></li>
-                                                                <li><a class="dropdown-item text-danger" href="#"><i class="ti ti-unlink me-2"></i>Detach</a></li>
-                                                            </ul>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <!-- Direct Branch - Ajah -->
-                                                <tr>
-                                                    <td>
-                                                        <strong><i class="ti ti-building-community me-1 text-primary"></i>Ajah Branch</strong>
-                                                    </td>
-                                                    <td><span class="badge bg-primary">District</span></td>
-                                                    <td>
-                                                        <span class="text-muted"><i class="ti ti-home me-1"></i>Your Church (Direct)</span>
-                                                    </td>
-                                                    <td>Pst. Efe Ighalo</td>
-                                                    <td>Ajah, Lagos</td>
-                                                    <td><span class="badge bg-success">Active</span></td>
-                                                    <td>
-                                                        <div class="dropdown">
-                                                            <button class="btn btn-sm btn-light-secondary dropdown-toggle" data-bs-toggle="dropdown">
-                                                                Actions
-                                                            </button>
-                                                            <ul class="dropdown-menu">
-                                                                <li><a class="dropdown-item" href="#"><i class="ti ti-eye me-2"></i>View Details</a></li>
-                                                                <li><a class="dropdown-item" href="#"><i class="ti ti-edit me-2"></i>Edit</a></li>
-                                                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#assignBranchModal"><i class="ti ti-arrows-transfer-down me-2"></i>Reassign</a></li>
-                                                                <li><hr class="dropdown-divider"></li>
-                                                                <li><a class="dropdown-item text-danger" href="#"><i class="ti ti-unlink me-2"></i>Detach</a></li>
-                                                            </ul>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <!-- Sub under Ajah -->
-                                                <tr class="bg-light">
-                                                    <td class="ps-4">
-                                                        <i class="ti ti-corner-down-right me-1 text-muted"></i>Sangotedo Branch
-                                                    </td>
-                                                    <td><span class="badge bg-warning">Sub-District</span></td>
-                                                    <td>
-                                                        <span class="text-primary"><i class="ti ti-building-community me-1"></i>Ajah Branch</span>
-                                                    </td>
-                                                    <td>Pst. David Nnadi</td>
-                                                    <td>Sangotedo, Lagos</td>
-                                                    <td><span class="badge bg-success">Active</span></td>
-                                                    <td>
-                                                        <div class="dropdown">
-                                                            <button class="btn btn-sm btn-light-secondary dropdown-toggle" data-bs-toggle="dropdown">
-                                                                Actions
-                                                            </button>
-                                                            <ul class="dropdown-menu">
-                                                                <li><a class="dropdown-item" href="#"><i class="ti ti-eye me-2"></i>View Details</a></li>
-                                                                <li><a class="dropdown-item" href="#"><i class="ti ti-edit me-2"></i>Edit</a></li>
-                                                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#assignBranchModal"><i class="ti ti-arrows-transfer-down me-2"></i>Reassign</a></li>
-                                                                <li><hr class="dropdown-divider"></li>
-                                                                <li><a class="dropdown-item text-danger" href="#"><i class="ti ti-unlink me-2"></i>Detach</a></li>
-                                                            </ul>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <!-- Direct Branch - Ikeja -->
-                                                <tr>
-                                                    <td>
-                                                        <strong><i class="ti ti-building-community me-1 text-primary"></i>Ikeja Branch</strong>
-                                                    </td>
-                                                    <td><span class="badge bg-info">Area</span></td>
-                                                    <td>
-                                                        <span class="text-muted"><i class="ti ti-home me-1"></i>Your Church (Direct)</span>
-                                                    </td>
-                                                    <td>Pst. Michael Akinpelu</td>
-                                                    <td>Ikeja, Lagos</td>
-                                                    <td><span class="badge bg-success">Active</span></td>
-                                                    <td>
-                                                        <div class="dropdown">
-                                                            <button class="btn btn-sm btn-light-secondary dropdown-toggle" data-bs-toggle="dropdown">
-                                                                Actions
-                                                            </button>
-                                                            <ul class="dropdown-menu">
-                                                                <li><a class="dropdown-item" href="#"><i class="ti ti-eye me-2"></i>View Details</a></li>
-                                                                <li><a class="dropdown-item" href="#"><i class="ti ti-edit me-2"></i>Edit</a></li>
-                                                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#assignBranchModal"><i class="ti ti-arrows-transfer-down me-2"></i>Reassign</a></li>
-                                                                <li><hr class="dropdown-divider"></li>
-                                                                <li><a class="dropdown-item text-danger" href="#"><i class="ti ti-unlink me-2"></i>Detach</a></li>
-                                                            </ul>
-                                                        </div>
-                                                    </td>
+                                                    <td class="text-center text-muted py-4" colspan="9">Loading branches...</td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -284,11 +125,10 @@
                             </div>
                         </div>
 
-                        <!-- Quick Info -->
                         <div class="col-12">
-                            <div class="alert alert-info">
+                            <div class="alert alert-info mb-0">
                                 <i class="ti ti-info-circle me-2"></i>
-                                <strong>How it works:</strong> When you add a branch, it's automatically under your church. You can then <strong>reassign</strong> it to be under another branch (e.g., assign a Zone under a District). Use <strong>Detach</strong> to remove a branch from its parent without deleting it.
+                                <strong>How it works:</strong> A branch is first created under the church that created it. It can have its own local admin, and later it can be reassigned under another church or branch. The system keeps the original creator, the current parent, and the church/admin that last reassigned it.
                             </div>
                         </div>
                     </div>
@@ -298,177 +138,257 @@
     </div>
 </div>
 
-<!-- Add Branch Modal -->
-<div class="modal fade" id="addBranchModal" tabindex="-1">
+<div class="modal fade" id="branchFormModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title"><i class="ti ti-plus me-2"></i>Add New Branch</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <h5 class="modal-title" id="branchFormModalTitle">Add New Branch</h5>
+                <button class="btn-close" data-bs-dismiss="modal" type="button"></button>
             </div>
             <div class="modal-body">
                 <div class="alert alert-light border mb-3">
                     <i class="ti ti-info-circle me-1"></i>
-                    This branch will be added under <strong>your church</strong>. You can reassign it to another branch later.
+                    New branches are created under <strong>your church</strong> first, can have their own local admin, and can be reassigned later.
                 </div>
-                <form>
+                <form id="branchForm">
+                    <input id="branchIdInput" type="hidden">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label class="form-label">Branch Name <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" placeholder="e.g. Lekki Branch, Ikeja Church">
+                                <label class="form-label" for="branchNameInput">Branch Name <span class="text-danger">*</span></label>
+                                <input class="form-control" id="branchNameInput" placeholder="e.g. Lekki Branch, Church A" type="text">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label class="form-label">Tag / Label <span class="text-danger">*</span></label>
-                                <select class="form-select" id="branchTag">
-                                    <option value="">Select a tag...</option>
-                                    <option value="district">District</option>
-                                    <option value="zone">Zone</option>
-                                    <option value="sub-district">Sub-District</option>
-                                    <option value="area">Area</option>
-                                    <option value="local">Local</option>
-                                    <option value="custom">+ Add Custom Tag</option>
-                                </select>
-                                <small class="text-muted">Tag helps identify the type of branch</small>
+                                <label class="form-label" for="branchCodeInput">Branch Code</label>
+                                <input class="form-control" id="branchCodeInput" placeholder="Leave blank to auto-generate" type="text">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label" for="branchTagInput">Tag / Label <span class="text-danger">*</span></label>
+                                <select class="form-select" id="branchTagInput"></select>
+                                <small class="text-muted">Tag helps identify if this is a District, Zone, Sub-District, Area, or custom type.</small>
                             </div>
                         </div>
                         <div class="col-md-6 d-none" id="customTagField">
                             <div class="mb-3">
-                                <label class="form-label">Custom Tag Name</label>
-                                <input type="text" class="form-control" placeholder="e.g. Province, County, Cell">
+                                <label class="form-label" for="customTagNameInput">Custom Tag Name</label>
+                                <input class="form-control" id="customTagNameInput" placeholder="e.g. Province, Cell, Satellite" type="text">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label class="form-label">Pastor in Charge</label>
-                                <input type="text" class="form-control" placeholder="Pastor's full name">
+                                <label class="form-label" for="branchPastorInput">Pastor in Charge</label>
+                                <input class="form-control" id="branchPastorInput" placeholder="Pastor's full name" type="text">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label class="form-label">State / Region</label>
-                                <input type="text" class="form-control" placeholder="e.g. Lagos, Abuja">
+                                <label class="form-label" for="branchPastorPhoneInput">Pastor Phone</label>
+                                <input class="form-control" id="branchPastorPhoneInput" placeholder="+234 801 234 5678" type="text">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label class="form-label">City / Area</label>
-                                <input type="text" class="form-control" placeholder="e.g. Lekki, Ikeja">
+                                <label class="form-label" for="branchPastorEmailInput">Pastor Email</label>
+                                <input class="form-control" id="branchPastorEmailInput" placeholder="pastor@church.org" type="email">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label" for="branchStatusInput">Status</label>
+                                <select class="form-select" id="branchStatusInput">
+                                    <option value="active">Active</option>
+                                    <option value="review">Review</option>
+                                    <option value="inactive">Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label" for="branchStateInput">State / Region</label>
+                                <select class="form-select" id="branchStateInput">
+                                    <option value="">Select state</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label" for="branchCityInput">City / Area <span class="text-muted">(Optional)</span></label>
+                                <input class="form-control" id="branchCityInput" placeholder="e.g. Lekki, Gwarinpa, Rumuokwuta" type="text">
+                                <small class="text-muted">Use this for the town, estate, axis, or neighborhood inside the selected LGA.</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label" for="branchDistrictAreaInput">District / LGA</label>
+                                <select class="form-select" id="branchDistrictAreaInput">
+                                    <option value="">Select state first</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label" for="branchPhoneInput">Branch Phone</label>
+                                <input class="form-control" id="branchPhoneInput" placeholder="+234 801 234 5678" type="text">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label" for="branchEmailInput">Branch Email</label>
+                                <input class="form-control" id="branchEmailInput" placeholder="branch@email.com" type="email">
                             </div>
                         </div>
                         <div class="col-12">
-                            <div class="mb-3">
-                                <label class="form-label">Full Address</label>
-                                <textarea class="form-control" rows="2" placeholder="Complete church address"></textarea>
+                            <div class="mb-0">
+                                <label class="form-label" for="branchAddressInput">Full Address</label>
+                                <textarea class="form-control" id="branchAddressInput" placeholder="Complete church address" rows="2"></textarea>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label">Phone Number</label>
-                                <input type="text" class="form-control" placeholder="+234 801 234 5678">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label">Email</label>
-                                <input type="email" class="form-control" placeholder="branch@email.com">
+                        <div class="col-12 mt-4">
+                            <div class="border rounded p-3">
+                                <h6 class="mb-1">Local Branch Admin</h6>
+                                <p class="text-secondary small mb-3">This admin can log in and manage the branch as its own local church workspace.</p>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="branchAdminNameInput">Admin Name</label>
+                                            <input class="form-control" id="branchAdminNameInput" placeholder="Branch admin full name" type="text">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="branchAdminEmailInput">Admin Email</label>
+                                            <input class="form-control" id="branchAdminEmailInput" placeholder="branch-admin@church.org" type="email">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="branchAdminPhoneInput">Admin Phone</label>
+                                            <input class="form-control" id="branchAdminPhoneInput" placeholder="+234 801 234 5678" type="text">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="branchAdminPasswordInput">Admin Password</label>
+                                            <input class="form-control" id="branchAdminPasswordInput" placeholder="Minimum 8 characters" type="password">
+                                            <small class="text-muted">Required when creating a branch admin. Leave blank on edit to keep the existing password.</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-0">
+                                            <label class="form-label" for="branchAdminPasswordConfirmationInput">Confirm Password</label>
+                                            <input class="form-control" id="branchAdminPasswordConfirmationInput" placeholder="Repeat password" type="password">
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary">
-                    <i class="ti ti-plus me-1"></i>Add Branch
+                <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Cancel</button>
+                <button class="btn btn-primary" id="saveBranchButton" type="button">
+                    <i class="ti ti-device-floppy me-1"></i>Save Branch
                 </button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Assign/Reassign Branch Modal -->
 <div class="modal fade" id="assignBranchModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title"><i class="ti ti-arrows-transfer-down me-2"></i>Reassign Branch</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <button class="btn-close" data-bs-dismiss="modal" type="button"></button>
             </div>
             <div class="modal-body">
-                <div class="mb-3">
-                    <label class="form-label">Branch to Reassign</label>
-                    <input type="text" class="form-control" value="Admiralty Branch" readonly>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Current Assignment</label>
-                    <input type="text" class="form-control" value="Lekki Branch (District)" readonly>
-                </div>
-                <hr>
-                <div class="mb-3">
-                    <label class="form-label">Assign Under <span class="text-danger">*</span></label>
-                    <select class="form-select">
-                        <option value="">Select new parent...</option>
-                        <option value="direct">Your Church (Direct)</option>
-                        <option value="lekki">Lekki Branch (District)</option>
-                        <option value="ajah">Ajah Branch (District)</option>
-                        <option value="ikeja">Ikeja Branch (Area)</option>
-                    </select>
-                    <small class="text-muted">Select which branch this should be under</small>
-                </div>
-                <div class="alert alert-warning">
+                <form id="reassignBranchForm">
+                    <input id="reassignBranchIdInput" type="hidden">
+                    <div class="mb-3">
+                        <label class="form-label" for="reassignBranchNameInput">Branch to Reassign</label>
+                        <input class="form-control" id="reassignBranchNameInput" readonly type="text">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="currentAssignmentInput">Current Assignment</label>
+                        <input class="form-control" id="currentAssignmentInput" readonly type="text">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="assignParentTypeInput">Assign Under</label>
+                        <select class="form-select" id="assignParentTypeInput">
+                            <option value="">Select new parent...</option>
+                        </select>
+                        <small class="text-muted">You can assign under a church or another branch.</small>
+                    </div>
+                    <div class="mb-0">
+                        <label class="form-label" for="reassignNoteInput">Note</label>
+                        <textarea class="form-control" id="reassignNoteInput" placeholder="Why are you moving this branch?" rows="2"></textarea>
+                    </div>
+                </form>
+                <div class="alert alert-warning mt-3 mb-0">
                     <i class="ti ti-alert-triangle me-1"></i>
-                    <strong>Note:</strong> Reassigning will move this branch and all its sub-branches under the new parent.
+                    <strong>Note:</strong> Reassigning changes the branch's current parent, but the original creator church remains preserved.
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary">Reassign Branch</button>
+                <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Cancel</button>
+                <button class="btn btn-primary" id="confirmReassignButton" type="button">Reassign Branch</button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Manage Tags Modal -->
 <div class="modal fade" id="manageTagsModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title"><i class="ti ti-tags me-2"></i>Manage Branch Tags</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <button class="btn-close" data-bs-dismiss="modal" type="button"></button>
             </div>
             <div class="modal-body">
-                <p class="text-muted mb-3">Tags help categorize your branches. Add custom tags to match your church's terminology.</p>
-                
+                <p class="text-muted mb-3">Tags help categorize branches. Default tags stay available, while custom tags belong to your church.</p>
                 <div class="mb-3">
                     <label class="form-label">Available Tags</label>
-                    <div class="d-flex flex-wrap gap-2 mb-3" id="tagsList">
-                        <span class="badge bg-primary p-2">District <button class="btn-close btn-close-white ms-2" style="font-size: 0.5rem;"></button></span>
-                        <span class="badge bg-success p-2">Zone <button class="btn-close btn-close-white ms-2" style="font-size: 0.5rem;"></button></span>
-                        <span class="badge bg-warning p-2">Sub-District <button class="btn-close btn-close-white ms-2" style="font-size: 0.5rem;"></button></span>
-                        <span class="badge bg-info p-2">Area <button class="btn-close btn-close-white ms-2" style="font-size: 0.5rem;"></button></span>
-                        <span class="badge bg-secondary p-2">Local <button class="btn-close btn-close-white ms-2" style="font-size: 0.5rem;"></button></span>
-                    </div>
+                    <div class="d-flex flex-wrap gap-2" id="tagsList"></div>
                 </div>
-                
-                <div class="mb-3">
-                    <label class="form-label">Add New Tag</label>
+                <div class="mb-0">
+                    <label class="form-label" for="newTagInput">Add New Tag</label>
                     <div class="input-group">
-                        <input type="text" class="form-control" placeholder="e.g. Province, County, Cell" id="newTagInput">
-                        <button class="btn btn-primary" type="button" onclick="addNewTag()">
+                        <input class="form-control" id="newTagInput" placeholder="e.g. Province, County, Cell" type="text">
+                        <button class="btn btn-primary" id="addTagButton" type="button">
                             <i class="ti ti-plus"></i> Add
                         </button>
                     </div>
                 </div>
-
-                <div class="alert alert-light border">
-                    <strong>Tip:</strong> Common tags include District, Zone, Sub-District, Area, Local, Province, County, Cell, Satellite, etc.
+                <div class="alert alert-light border mt-3 mb-0">
+                    <strong>Tip:</strong> Common tags include District, Zone, Sub-District, Area, Local, Province, County, Cell, Satellite, and Outpost.
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="branchDetailsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="ti ti-building-community me-2"></i>Branch Details</h5>
+                <button class="btn-close" data-bs-dismiss="modal" type="button"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3" id="branchDetailsBody">
+                    <div class="col-12 text-secondary">Loading branch details...</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Close</button>
             </div>
         </div>
     </div>
@@ -477,38 +397,807 @@
 <script src="assets/js/jquery-3.6.3.min.js"></script>
 <script src="assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
 <script src="assets/vendor/simplebar/simplebar.js"></script>
+<script src="assets/js/app-config.js"></script>
+<script src="assets/js/app-api.js"></script>
 <script src="assets/js/church-template.js"></script>
 <script src="assets/js/script.js"></script>
 <script>
-// Show custom tag field when "custom" is selected
-document.getElementById('branchTag').addEventListener('change', function() {
-    const customField = document.getElementById('customTagField');
+const branchesSession = window.LFC_API.getSession();
+const activeChurch = branchesSession ? branchesSession.church : null;
+const activeUser = branchesSession ? branchesSession.user : null;
+
+const successAlert = document.getElementById('branchesSuccessAlert');
+const errorAlert = document.getElementById('branchesErrorAlert');
+const branchesTableBody = document.getElementById('branchesTableBody');
+const filterByTag = document.getElementById('filterByTag');
+const branchSearchInput = document.getElementById('branchSearchInput');
+const branchTagInput = document.getElementById('branchTagInput');
+const customTagField = document.getElementById('customTagField');
+const saveBranchButton = document.getElementById('saveBranchButton');
+const confirmReassignButton = document.getElementById('confirmReassignButton');
+const tagsList = document.getElementById('tagsList');
+const branchStateInput = document.getElementById('branchStateInput');
+const branchDistrictAreaInput = document.getElementById('branchDistrictAreaInput');
+
+const branchFormModal = new bootstrap.Modal(document.getElementById('branchFormModal'));
+const assignBranchModal = new bootstrap.Modal(document.getElementById('assignBranchModal'));
+const manageTagsModal = new bootstrap.Modal(document.getElementById('manageTagsModal'));
+const branchDetailsModal = new bootstrap.Modal(document.getElementById('branchDetailsModal'));
+
+let branchTags = [];
+let branches = [];
+let parentOptions = { churches: [], branches: [] };
+
+function populateSelect(selectElement, options, placeholder) {
+    selectElement.innerHTML = `<option value="">${placeholder}</option>`;
+
+    options.forEach(function (option) {
+        const optionElement = document.createElement('option');
+        optionElement.value = option.id || option.slug || option.name;
+        optionElement.textContent = option.name;
+        if (option.slug) {
+            optionElement.dataset.slug = option.slug;
+        }
+        selectElement.appendChild(optionElement);
+    });
+}
+
+if (!activeChurch || !activeChurch.id) {
+    window.location.replace('sign_in.html');
+    throw new Error('Missing active church session.');
+}
+
+function showError(message) {
+    errorAlert.textContent = message;
+    errorAlert.classList.remove('d-none');
+}
+
+function hideError() {
+    errorAlert.classList.add('d-none');
+    errorAlert.textContent = '';
+}
+
+function showSuccess(message) {
+    successAlert.textContent = message;
+    successAlert.classList.remove('d-none');
+}
+
+function hideSuccess() {
+    successAlert.classList.add('d-none');
+    successAlert.textContent = '';
+}
+
+function escapeHtml(value) {
+    return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function formatActorSummary(branch, source) {
+    if (source === 'creator') {
+        const creatorChurch = branch.creator_church ? branch.creator_church.name : 'Unknown church';
+        const creatorUser = branch.creator_user ? branch.creator_user.name : null;
+        return creatorChurch + (creatorUser ? ' / ' + creatorUser : ' / Church');
+    }
+
+    if (!branch.last_assignment || (!branch.last_assignment.church && !branch.last_assignment.user)) {
+        return 'No reassignment yet';
+    }
+
+    const churchName = branch.last_assignment.church ? branch.last_assignment.church.name : 'Unknown church';
+    const userName = branch.last_assignment.user ? branch.last_assignment.user.name : null;
+    const actorType = branch.last_assignment.actor_type === 'church' ? 'Church' : 'Admin';
+    return churchName + ' / ' + (userName || actorType);
+}
+
+function formatParent(branch) {
+    if (!branch.current_parent) {
+        return '<span class="text-muted">Unassigned</span>';
+    }
+
+    if (branch.current_parent.type === 'church') {
+        return `<span class="text-muted"><i class="ti ti-home me-1"></i>${escapeHtml(branch.current_parent.name)}</span>`;
+    }
+
+    return `<span class="text-primary"><i class="ti ti-building-community me-1"></i>${escapeHtml(branch.current_parent.name)}</span>`;
+}
+
+function getTagBadgeClass(slug) {
+    const palette = {
+        district: 'bg-primary',
+        zone: 'bg-success',
+        'sub-district': 'bg-warning',
+        area: 'bg-info',
+        branch: 'bg-secondary'
+    };
+
+    return palette[slug] || 'bg-dark';
+}
+
+function getStatusBadgeClass(status) {
+    const normalized = (status || '').toLowerCase();
+    if (normalized === 'active') {
+        return 'bg-success';
+    }
+    if (normalized === 'review') {
+        return 'bg-warning text-dark';
+    }
+    if (normalized === 'inactive') {
+        return 'bg-danger';
+    }
+    return 'bg-secondary';
+}
+
+function buildHierarchyRows(visibleBranches) {
+    const branchMap = new Map();
+    const childrenMap = new Map();
+
+    visibleBranches.forEach(function (branch) {
+        branchMap.set(branch.id, branch);
+        childrenMap.set(branch.id, []);
+    });
+
+    visibleBranches.forEach(function (branch) {
+        if (branch.current_parent && branch.current_parent.type === 'branch' && branchMap.has(branch.current_parent.id)) {
+            childrenMap.get(branch.current_parent.id).push(branch);
+        }
+    });
+
+    childrenMap.forEach(function (childBranches) {
+        childBranches.sort(function (left, right) {
+            return left.name.localeCompare(right.name);
+        });
+    });
+
+    const roots = visibleBranches.filter(function (branch) {
+        return !(branch.current_parent && branch.current_parent.type === 'branch' && branchMap.has(branch.current_parent.id));
+    }).sort(function (left, right) {
+        return left.name.localeCompare(right.name);
+    });
+
+    const ordered = [];
+
+    function walk(branch, depth) {
+        ordered.push({ branch: branch, depth: depth });
+        (childrenMap.get(branch.id) || []).forEach(function (childBranch) {
+            walk(childBranch, depth + 1);
+        });
+    }
+
+    roots.forEach(function (rootBranch) {
+        walk(rootBranch, 0);
+    });
+
+    return ordered;
+}
+
+function renderStats(visibleBranches) {
+    document.getElementById('totalBranchesStat').textContent = String(visibleBranches.length);
+    document.getElementById('directBranchesStat').textContent = String(visibleBranches.filter(function (branch) {
+        return branch.current_parent && branch.current_parent.type === 'church' && branch.current_parent.id === activeChurch.id;
+    }).length);
+    document.getElementById('subBranchesStat').textContent = String(visibleBranches.filter(function (branch) {
+        return branch.current_parent && branch.current_parent.type === 'branch';
+    }).length);
+}
+
+function renderBranchesTable() {
+    const selectedTag = filterByTag.value;
+    const search = branchSearchInput.value.trim().toLowerCase();
+    const visibleBranches = branches.filter(function (branch) {
+        const tagMatches = !selectedTag || (branch.tag && branch.tag.slug === selectedTag);
+        const searchMatches = !search || [
+            branch.name,
+            branch.city,
+            branch.district_area,
+            branch.state,
+            branch.pastor_name,
+            branch.current_parent ? branch.current_parent.name : ''
+        ].some(function (value) {
+            return String(value || '').toLowerCase().includes(search);
+        });
+
+        return tagMatches && searchMatches;
+    });
+
+    renderStats(visibleBranches);
+
+    if (!visibleBranches.length) {
+        branchesTableBody.innerHTML = '<tr><td class="text-center text-muted py-4" colspan="9">No branches found for the current filters.</td></tr>';
+        return;
+    }
+
+    branchesTableBody.innerHTML = buildHierarchyRows(visibleBranches).map(function (entry) {
+        const branch = entry.branch;
+        const depthIndent = entry.depth * 20;
+        const namePrefix = entry.depth > 0 ? '<i class="ti ti-corner-down-right me-1 text-muted"></i>' : '<i class="ti ti-building-community me-1 text-primary"></i>';
+
+        return `
+            <tr${entry.depth > 0 ? ' class="bg-light"' : ''}>
+                <td style="padding-left:${12 + depthIndent}px;">
+                    <strong>${namePrefix}${escapeHtml(branch.name)}</strong>
+                    <div class="small text-secondary">${escapeHtml(branch.code || '--')}</div>
+                    <div class="small text-secondary">${escapeHtml(formatLocalAdmin(branch.local_admin))}</div>
+                </td>
+                <td>${branch.tag ? `<span class="badge ${getTagBadgeClass(branch.tag.slug)}">${escapeHtml(branch.tag.name)}</span>` : '<span class="text-muted">No tag</span>'}</td>
+                <td>${formatParent(branch)}</td>
+                <td><span class="small">${escapeHtml(formatActorSummary(branch, 'creator'))}</span></td>
+                <td><span class="small">${escapeHtml(formatActorSummary(branch, 'last_assignment'))}</span></td>
+                <td>${escapeHtml(branch.pastor_name || '--')}</td>
+                <td>${escapeHtml([branch.city, branch.district_area, branch.state].filter(Boolean).join(', ') || '--')}</td>
+                <td><span class="badge ${getStatusBadgeClass(branch.status)}">${escapeHtml(branch.status || 'active')}</span></td>
+                <td>
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-light-secondary dropdown-toggle" data-bs-toggle="dropdown" type="button">Actions</button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item branch-action" data-action="view" data-branch-id="${branch.id}" href="#"><i class="ti ti-eye me-2"></i>View Details</a></li>
+                            <li><a class="dropdown-item branch-action" data-action="edit" data-branch-id="${branch.id}" href="#"><i class="ti ti-edit me-2"></i>Edit</a></li>
+                            <li><a class="dropdown-item branch-action" data-action="reassign" data-branch-id="${branch.id}" href="#"><i class="ti ti-arrows-transfer-down me-2"></i>Reassign</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger branch-action" data-action="detach" data-branch-id="${branch.id}" href="#"><i class="ti ti-unlink me-2"></i>Detach</a></li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function renderTagFilters() {
+    const tagOptions = branchTags.map(function (tag) {
+        return `<option value="${escapeHtml(tag.slug)}">${escapeHtml(tag.name)}</option>`;
+    }).join('');
+
+    filterByTag.innerHTML = '<option value="">All Tags</option>' + tagOptions;
+    branchTagInput.innerHTML = '<option value="">Select a tag...</option>' + branchTags.map(function (tag) {
+        return `<option value="${tag.id}">${escapeHtml(tag.name)}</option>`;
+    }).join('') + '<option value="custom">+ Add Custom Tag</option>';
+}
+
+function renderTagsList() {
+    tagsList.innerHTML = branchTags.map(function (tag) {
+        const isDefaultTag = tag.church_id === null;
+        return `
+            <span class="badge ${getTagBadgeClass(tag.slug)} p-2">
+                ${escapeHtml(tag.name)}
+                ${isDefaultTag ? '' : `<button class="btn-close btn-close-white ms-2 delete-tag-button" data-tag-id="${tag.id}" style="font-size:0.5rem;" type="button"></button>`}
+            </span>
+        `;
+    }).join('');
+}
+
+function resetBranchForm() {
+    document.getElementById('branchForm').reset();
+    document.getElementById('branchIdInput').value = '';
+    document.getElementById('branchFormModalTitle').textContent = 'Add New Branch';
+    customTagField.classList.add('d-none');
+    document.getElementById('branchAdminPasswordInput').value = '';
+    document.getElementById('branchAdminPasswordConfirmationInput').value = '';
+    saveBranchButton.innerHTML = '<i class="ti ti-device-floppy me-1"></i>Save Branch';
+}
+
+async function loadBranchStates(selectedStateName, selectedLgaName) {
+    const response = await window.LFC_API.request('locations/states');
+    populateSelect(branchStateInput, response.data, 'Select state');
+    populateSelect(branchDistrictAreaInput, [], selectedStateName ? 'Loading LGAs...' : 'Select state first');
+
+    if (!selectedStateName) {
+        return;
+    }
+
+    const matchingStateOption = Array.from(branchStateInput.options).find(function (option) {
+        return option.textContent.trim().toLowerCase() === selectedStateName.trim().toLowerCase();
+    });
+
+    if (matchingStateOption) {
+        matchingStateOption.selected = true;
+        await loadBranchLgas(matchingStateOption.dataset.slug, selectedLgaName);
+    }
+}
+
+async function loadBranchLgas(stateSlug, selectedLgaName) {
+    populateSelect(branchDistrictAreaInput, [], stateSlug ? 'Loading LGAs...' : 'Select state first');
+
+    if (!stateSlug) {
+        return;
+    }
+
+    const response = await window.LFC_API.request('locations/lgas?state_slug=' + encodeURIComponent(stateSlug));
+    populateSelect(branchDistrictAreaInput, response.data, 'Select LGA');
+
+    if (!selectedLgaName) {
+        return;
+    }
+
+    const matchingLgaOption = Array.from(branchDistrictAreaInput.options).find(function (option) {
+        return option.textContent.trim().toLowerCase() === selectedLgaName.trim().toLowerCase();
+    });
+
+    if (matchingLgaOption) {
+        matchingLgaOption.selected = true;
+    }
+}
+
+async function fillBranchForm(branch) {
+    document.getElementById('branchIdInput').value = branch.id;
+    document.getElementById('branchNameInput').value = branch.name || '';
+    document.getElementById('branchCodeInput').value = branch.code || '';
+    document.getElementById('branchTagInput').value = branch.tag ? String(branch.tag.id) : '';
+    document.getElementById('branchPastorInput').value = branch.pastor_name || '';
+    document.getElementById('branchPastorPhoneInput').value = branch.pastor_phone || '';
+    document.getElementById('branchPastorEmailInput').value = branch.pastor_email || '';
+    document.getElementById('branchStatusInput').value = branch.status || 'active';
+    document.getElementById('branchCityInput').value = branch.city || '';
+    document.getElementById('branchPhoneInput').value = branch.phone || '';
+    document.getElementById('branchEmailInput').value = branch.email || '';
+    document.getElementById('branchAddressInput').value = branch.address || '';
+    document.getElementById('branchAdminNameInput').value = branch.local_admin ? (branch.local_admin.name || '') : '';
+    document.getElementById('branchAdminEmailInput').value = branch.local_admin ? (branch.local_admin.email || '') : '';
+    document.getElementById('branchAdminPhoneInput').value = branch.local_admin ? (branch.local_admin.phone || '') : '';
+    document.getElementById('branchAdminPasswordInput').value = '';
+    document.getElementById('branchAdminPasswordConfirmationInput').value = '';
+    document.getElementById('branchFormModalTitle').textContent = 'Edit Branch';
+    saveBranchButton.innerHTML = '<i class="ti ti-device-floppy me-1"></i>Update Branch';
+    await loadBranchStates(branch.state || null, branch.district_area || null);
+}
+
+function buildBranchPayload() {
+    const stateOption = branchStateInput.options[branchStateInput.selectedIndex];
+    const lgaOption = branchDistrictAreaInput.options[branchDistrictAreaInput.selectedIndex];
+    const selectedState = stateOption && stateOption.value ? stateOption.textContent.trim() : null;
+    const selectedLga = lgaOption && lgaOption.value ? lgaOption.textContent.trim() : null;
+
+    const payload = {
+        name: document.getElementById('branchNameInput').value.trim(),
+        code: document.getElementById('branchCodeInput').value.trim() || null,
+        branch_tag_id: Number(document.getElementById('branchTagInput').value || 0) || null,
+        pastor_name: document.getElementById('branchPastorInput').value.trim() || null,
+        pastor_phone: document.getElementById('branchPastorPhoneInput').value.trim() || null,
+        pastor_email: document.getElementById('branchPastorEmailInput').value.trim() || null,
+        status: document.getElementById('branchStatusInput').value || 'active',
+        state: selectedState,
+        city: document.getElementById('branchCityInput').value.trim() || null,
+        district_area: selectedLga,
+        phone: document.getElementById('branchPhoneInput').value.trim() || null,
+        email: document.getElementById('branchEmailInput').value.trim() || null,
+        address: document.getElementById('branchAddressInput').value.trim() || null
+    };
+
+    const adminName = document.getElementById('branchAdminNameInput').value.trim();
+    const adminEmail = document.getElementById('branchAdminEmailInput').value.trim();
+    const adminPhone = document.getElementById('branchAdminPhoneInput').value.trim();
+    const adminPassword = document.getElementById('branchAdminPasswordInput').value;
+    const adminPasswordConfirmation = document.getElementById('branchAdminPasswordConfirmationInput').value;
+
+    if (adminName || adminEmail || adminPhone || adminPassword || adminPasswordConfirmation) {
+        payload.admin = {
+            name: adminName || null,
+            email: adminEmail || null,
+            phone: adminPhone || null,
+            password: adminPassword || null,
+            password_confirmation: adminPasswordConfirmation || null
+        };
+    }
+
+    return payload;
+}
+
+function formatLocalAdmin(admin) {
+    if (!admin) {
+        return 'No local admin';
+    }
+
+    return [admin.name, admin.email].filter(Boolean).join(' / ');
+}
+
+function formatParentSummary(parent) {
+    if (!parent) {
+        return 'Unassigned';
+    }
+
+    return parent.type === 'church'
+        ? parent.name + ' (Church)'
+        : parent.name + ' (Branch)';
+}
+
+function formatHistoryItem(history) {
+    const fromParent = history.from_parent ? history.from_parent.name : 'No parent';
+    const toParent = history.to_parent ? history.to_parent.name : 'No parent';
+    const byChurch = history.changed_by_church ? history.changed_by_church.name : 'Unknown church';
+    const byUser = history.changed_by_user ? history.changed_by_user.name : (history.changed_by_actor_type === 'church' ? 'Church action' : 'Admin action');
+    const note = history.note ? `<div class="small text-secondary mt-1">${escapeHtml(history.note)}</div>` : '';
+
+    return `
+        <div class="border rounded p-3">
+            <div class="d-flex justify-content-between flex-wrap gap-2">
+                <strong>${escapeHtml(history.action_type)}</strong>
+                <span class="small text-secondary">${new Date(history.created_at).toLocaleString()}</span>
+            </div>
+            <div class="small mt-2">${escapeHtml(fromParent)} -> ${escapeHtml(toParent)}</div>
+            <div class="small text-secondary mt-1">${escapeHtml(byChurch)} / ${escapeHtml(byUser)}</div>
+            ${note}
+        </div>
+    `;
+}
+
+async function loadBranchTags() {
+    const response = await window.LFC_API.request('branch-tags?church_id=' + encodeURIComponent(activeChurch.id));
+    branchTags = response.data || [];
+    renderTagFilters();
+    renderTagsList();
+}
+
+async function loadBranches() {
+    const response = await window.LFC_API.request('branches?church_id=' + encodeURIComponent(activeChurch.id));
+    branches = response.data || [];
+    renderBranchesTable();
+}
+
+async function loadParentOptions(excludeBranchId) {
+    const suffix = excludeBranchId ? '?exclude_branch_id=' + encodeURIComponent(excludeBranchId) : '';
+    const response = await window.LFC_API.request('branch-parents' + suffix);
+    parentOptions = response.data || { churches: [], branches: [] };
+}
+
+async function maybeCreateCustomTag() {
+    if (document.getElementById('branchTagInput').value !== 'custom') {
+        return null;
+    }
+
+    const customTagName = document.getElementById('customTagNameInput').value.trim();
+    if (!customTagName) {
+        throw new Error('Enter a custom tag name or select an existing tag.');
+    }
+
+    const response = await window.LFC_API.request('branch-tags', {
+        method: 'POST',
+        body: {
+            church_id: activeChurch.id,
+            name: customTagName
+        }
+    });
+
+    await loadBranchTags();
+    return response.data.id;
+}
+
+async function openBranchDetails(branchId) {
+    const detailsBody = document.getElementById('branchDetailsBody');
+    detailsBody.innerHTML = '<div class="col-12 text-secondary">Loading branch details...</div>';
+    branchDetailsModal.show();
+
+    try {
+        const response = await window.LFC_API.request('branches/' + encodeURIComponent(branchId));
+        const branch = response.data;
+
+        detailsBody.innerHTML = `
+            <div class="col-md-6">
+                <div class="border rounded p-3 h-100">
+                    <span class="text-secondary small d-block mb-1">Branch Name</span>
+                    <strong>${escapeHtml(branch.name)}</strong>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="border rounded p-3 h-100">
+                    <span class="text-secondary small d-block mb-1">Tag</span>
+                    <strong>${escapeHtml(branch.tag ? branch.tag.name : '--')}</strong>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="border rounded p-3 h-100">
+                    <span class="text-secondary small d-block mb-1">Created By</span>
+                    <strong>${escapeHtml(formatActorSummary(branch, 'creator'))}</strong>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="border rounded p-3 h-100">
+                    <span class="text-secondary small d-block mb-1">Current Parent</span>
+                    <strong>${escapeHtml(formatParentSummary(branch.current_parent))}</strong>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="border rounded p-3 h-100">
+                    <span class="text-secondary small d-block mb-1">Pastor in Charge</span>
+                    <strong>${escapeHtml(branch.pastor_name || '--')}</strong>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="border rounded p-3 h-100">
+                    <span class="text-secondary small d-block mb-1">Local Admin</span>
+                    <strong>${escapeHtml(formatLocalAdmin(branch.local_admin))}</strong>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="border rounded p-3 h-100">
+                    <span class="text-secondary small d-block mb-1">Location</span>
+                    <strong>${escapeHtml([branch.city, branch.district_area, branch.state].filter(Boolean).join(', ') || '--')}</strong>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="border rounded p-3">
+                    <span class="text-secondary small d-block mb-2">Assignment History</span>
+                    <div class="d-grid gap-2">
+                        ${(branch.assignment_history || []).length ? branch.assignment_history.map(formatHistoryItem).join('') : '<div class="text-secondary">No history recorded yet.</div>'}
+                    </div>
+                </div>
+            </div>
+        `;
+    } catch (error) {
+        detailsBody.innerHTML = `<div class="col-12 text-danger">${escapeHtml(error.message)}</div>`;
+    }
+}
+
+async function openReassignModal(branchId) {
+    const branch = branches.find(function (candidate) {
+        return candidate.id === branchId;
+    });
+
+    if (!branch) {
+        showError('Branch not found.');
+        return;
+    }
+
+    document.getElementById('reassignBranchIdInput').value = branch.id;
+    document.getElementById('reassignBranchNameInput').value = branch.name;
+    document.getElementById('currentAssignmentInput').value = formatParentSummary(branch.current_parent);
+    document.getElementById('reassignNoteInput').value = '';
+
+    try {
+        await loadParentOptions(branch.id);
+
+        const select = document.getElementById('assignParentTypeInput');
+        select.innerHTML = '<option value="">Select new parent...</option>';
+
+        if (parentOptions.churches.length) {
+            select.insertAdjacentHTML('beforeend', `<optgroup label="Churches">${parentOptions.churches.map(function (church) {
+                return `<option value="church:${church.id}">${escapeHtml(church.name)} (Church)</option>`;
+            }).join('')}</optgroup>`);
+        }
+
+        if (parentOptions.branches.length) {
+            select.insertAdjacentHTML('beforeend', `<optgroup label="Branches">${parentOptions.branches.map(function (parentBranch) {
+                return `<option value="branch:${parentBranch.id}">${escapeHtml(parentBranch.name)}${parentBranch.tag_name ? ' (' + escapeHtml(parentBranch.tag_name) + ')' : ''}</option>`;
+            }).join('')}</optgroup>`);
+        }
+
+        assignBranchModal.show();
+    } catch (error) {
+        showError(error.message);
+    }
+}
+
+async function bootstrapBranchesPage() {
+    hideError();
+    hideSuccess();
+    await loadBranchTags();
+    await loadBranches();
+}
+
+document.getElementById('openAddBranchButton').addEventListener('click', function () {
+    resetBranchForm();
+    loadBranchStates(null, null).catch(function (error) {
+        showError(error.message);
+    });
+    branchFormModal.show();
+});
+
+document.getElementById('openManageTagsButton').addEventListener('click', function () {
+    manageTagsModal.show();
+});
+
+branchTagInput.addEventListener('change', function () {
     if (this.value === 'custom') {
-        customField.classList.remove('d-none');
-    } else {
-        customField.classList.add('d-none');
+        customTagField.classList.remove('d-none');
+        return;
+    }
+
+    customTagField.classList.add('d-none');
+});
+
+branchStateInput.addEventListener('change', function () {
+    const option = branchStateInput.options[branchStateInput.selectedIndex];
+    loadBranchLgas(option ? option.dataset.slug : '', null).catch(function (error) {
+        showError(error.message);
+    });
+});
+
+filterByTag.addEventListener('change', renderBranchesTable);
+branchSearchInput.addEventListener('input', renderBranchesTable);
+
+saveBranchButton.addEventListener('click', async function () {
+    hideError();
+    hideSuccess();
+    saveBranchButton.disabled = true;
+    const originalLabel = saveBranchButton.innerHTML;
+    saveBranchButton.innerHTML = '<i class="ti ti-loader me-1"></i>Saving...';
+
+    try {
+        const branchId = Number(document.getElementById('branchIdInput').value || 0) || null;
+        const payload = buildBranchPayload();
+        const customTagId = await maybeCreateCustomTag();
+
+        if (customTagId) {
+            payload.branch_tag_id = customTagId;
+        }
+
+        if (!branchId) {
+            payload.created_by_church_id = activeChurch.id;
+            payload.created_by_user_id = activeUser && activeUser.id ? activeUser.id : null;
+            payload.created_by_actor_type = activeUser && activeUser.id ? 'user' : 'church';
+        }
+
+        await window.LFC_API.request(branchId ? 'branches/' + encodeURIComponent(branchId) : 'branches', {
+            method: branchId ? 'PUT' : 'POST',
+            body: payload
+        });
+
+        branchFormModal.hide();
+        resetBranchForm();
+        await bootstrapBranchesPage();
+        showSuccess(branchId ? 'Branch updated successfully.' : 'Branch created successfully.');
+    } catch (error) {
+        showError(error.message);
+    } finally {
+        saveBranchButton.disabled = false;
+        saveBranchButton.innerHTML = originalLabel;
     }
 });
 
-// Add new tag
-function addNewTag() {
-    const input = document.getElementById('newTagInput');
-    const tagName = input.value.trim();
-    if (tagName) {
-        const colors = ['primary', 'success', 'warning', 'info', 'danger', 'secondary'];
-        const randomColor = colors[Math.floor(Math.random() * colors.length)];
-        const tagHtml = `<span class="badge bg-${randomColor} p-2">${tagName} <button class="btn-close btn-close-white ms-2" style="font-size: 0.5rem;" onclick="this.parentElement.remove()"></button></span>`;
-        document.getElementById('tagsList').insertAdjacentHTML('beforeend', tagHtml);
-        input.value = '';
-        
-        // Also add to tag dropdown
-        const select = document.getElementById('branchTag');
-        const option = document.createElement('option');
-        option.value = tagName.toLowerCase().replace(/\s+/g, '-');
-        option.textContent = tagName;
-        select.insertBefore(option, select.lastElementChild);
+confirmReassignButton.addEventListener('click', async function () {
+    hideError();
+    hideSuccess();
+    confirmReassignButton.disabled = true;
+    const originalLabel = confirmReassignButton.innerHTML;
+    confirmReassignButton.innerHTML = '<i class="ti ti-loader me-1"></i>Reassigning...';
+
+    try {
+        const selection = document.getElementById('assignParentTypeInput').value;
+        if (!selection) {
+            throw new Error('Select a church or branch to assign under.');
+        }
+
+        const [parentType, parentId] = selection.split(':');
+        const branchId = Number(document.getElementById('reassignBranchIdInput').value);
+
+        await window.LFC_API.request('branches/' + encodeURIComponent(branchId) + '/reassign', {
+            method: 'POST',
+            body: {
+                to_parent_church_id: parentType === 'church' ? Number(parentId) : null,
+                to_parent_branch_id: parentType === 'branch' ? Number(parentId) : null,
+                changed_by_church_id: activeChurch.id,
+                changed_by_user_id: activeUser && activeUser.id ? activeUser.id : null,
+                changed_by_actor_type: activeUser && activeUser.id ? 'user' : 'church',
+                note: document.getElementById('reassignNoteInput').value.trim() || null
+            }
+        });
+
+        assignBranchModal.hide();
+        await bootstrapBranchesPage();
+        showSuccess('Branch reassigned successfully.');
+    } catch (error) {
+        showError(error.message);
+    } finally {
+        confirmReassignButton.disabled = false;
+        confirmReassignButton.innerHTML = originalLabel;
     }
-}
+});
+
+document.getElementById('addTagButton').addEventListener('click', async function () {
+    hideError();
+    hideSuccess();
+
+    const tagName = document.getElementById('newTagInput').value.trim();
+    if (!tagName) {
+        showError('Enter a tag name first.');
+        return;
+    }
+
+    try {
+        await window.LFC_API.request('branch-tags', {
+            method: 'POST',
+            body: {
+                church_id: activeChurch.id,
+                name: tagName
+            }
+        });
+
+        document.getElementById('newTagInput').value = '';
+        await loadBranchTags();
+        showSuccess('Branch tag added successfully.');
+    } catch (error) {
+        showError(error.message);
+    }
+});
+
+tagsList.addEventListener('click', async function (event) {
+    const button = event.target.closest('.delete-tag-button');
+    if (!button) {
+        return;
+    }
+
+    const tagId = button.dataset.tagId;
+    if (!window.confirm('Delete this custom tag?')) {
+        return;
+    }
+
+    try {
+        await window.LFC_API.request('branch-tags/' + encodeURIComponent(tagId), {
+            method: 'DELETE'
+        });
+
+        await loadBranchTags();
+        showSuccess('Branch tag deleted successfully.');
+    } catch (error) {
+        showError(error.message);
+    }
+});
+
+branchesTableBody.addEventListener('click', async function (event) {
+    const actionLink = event.target.closest('.branch-action');
+    if (!actionLink) {
+        return;
+    }
+
+    event.preventDefault();
+
+    const branchId = Number(actionLink.dataset.branchId);
+    const action = actionLink.dataset.action;
+    const branch = branches.find(function (candidate) {
+        return candidate.id === branchId;
+    });
+
+    if (!branch) {
+        showError('Branch not found.');
+        return;
+    }
+
+    if (action === 'view') {
+        await openBranchDetails(branchId);
+        return;
+    }
+
+    if (action === 'edit') {
+        resetBranchForm();
+        await fillBranchForm(branch);
+        branchFormModal.show();
+        return;
+    }
+
+    if (action === 'reassign') {
+        await openReassignModal(branchId);
+        return;
+    }
+
+    if (action === 'detach') {
+        if (!window.confirm('Detach this branch back to its creator church?')) {
+            return;
+        }
+
+        try {
+            await window.LFC_API.request('branches/' + encodeURIComponent(branchId) + '/detach', {
+                method: 'POST',
+                body: {
+                    changed_by_church_id: activeChurch.id,
+                    changed_by_user_id: activeUser && activeUser.id ? activeUser.id : null,
+                    changed_by_actor_type: activeUser && activeUser.id ? 'user' : 'church',
+                    note: 'Detached from current parent.'
+                }
+            });
+
+            await bootstrapBranchesPage();
+            showSuccess('Branch detached successfully.');
+        } catch (error) {
+            showError(error.message);
+        }
+    }
+});
+
+bootstrapBranchesPage().catch(function (error) {
+    showError(error.message);
+});
 </script>
 </body>
 

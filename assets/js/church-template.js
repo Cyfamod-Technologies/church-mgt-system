@@ -192,6 +192,12 @@
     if (!nav) return;
     const userName = escapeHtml(session.user.name || "Church Admin");
     const churchName = escapeHtml(session.church.name || "Church Workspace");
+    const branchName = session.branch && session.branch.name
+      ? escapeHtml(session.branch.name)
+      : "";
+    const workspaceLabel = branchName
+      ? `${churchName} / ${branchName}`
+      : churchName;
 
     const groupsHtml = navGroups.map((group) => {
       if (group.directHref) {
@@ -237,7 +243,7 @@
           </span>
           <div class="flex-grow-1 ps-2">
             <h6 class="text-primary mb-0">${userName}</h6>
-            <p class="text-muted f-s-12 mb-0">${churchName}</p>
+            <p class="text-muted f-s-12 mb-0">${workspaceLabel}</p>
           </div>
         </div>
       </div>

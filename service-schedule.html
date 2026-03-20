@@ -303,7 +303,8 @@ async function loadServiceSchedule() {
         church: {
             ...serviceScheduleSession.church,
             ...church
-        }
+        },
+        branch: serviceScheduleSession.branch || null
     });
 }
 

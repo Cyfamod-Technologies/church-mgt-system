@@ -117,7 +117,8 @@ signInForm.addEventListener('submit', async function (event) {
 
         window.LFC_API.saveSession({
             user: response.data.user,
-            church: response.data.church
+            church: response.data.church,
+            branch: response.data.branch || null
         });
 
         window.location.href = 'dashboard.html';

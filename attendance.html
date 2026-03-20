@@ -64,11 +64,11 @@
                                     <h5 class="mb-0"><i class="ti ti-calendar me-2"></i>Select Service</h5>
                                 </div>
                                 <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <div class="mb-3">
-                                                <label class="form-label">Date <span class="text-danger">*</span></label>
-                                                <input class="form-control" type="date" id="serviceDate" required>
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Date <span class="text-danger">*</span></label>
+                                                    <input class="form-control" type="date" id="serviceDate" required>
                                             </div>
                                         </div>
                                         <div class="col-md-3">
@@ -108,6 +108,7 @@
                                         <i class="ti ti-info-circle me-2"></i>
                                         <strong>Week of Spiritual Emphasis:</strong> This is the first week of the month. WOSE services are available (Wed, Thu, Fri).
                                     </div>
+                                    <div class="alert alert-warning d-none mb-0" id="attendancePageAlert" role="alert"></div>
                                 </div>
                             </div>
                         </div>
@@ -264,19 +265,19 @@
                                     <div class="mb-3">
                                         <div class="d-flex justify-content-between">
                                             <span class="text-secondary">Total</span>
-                                            <span class="fw-bold">1,247</span>
+                                            <span class="fw-bold" id="weeklyTotal">0</span>
                                         </div>
                                     </div>
                                     <div class="mb-3">
                                         <div class="d-flex justify-content-between">
                                             <span class="text-secondary">Average</span>
-                                            <span class="fw-bold">415</span>
+                                            <span class="fw-bold" id="weeklyAverage">0</span>
                                         </div>
                                     </div>
                                     <div class="mb-3">
                                         <div class="d-flex justify-content-between">
                                             <span class="text-secondary">Highest</span>
-                                            <span class="fw-bold text-success">512 <small class="text-muted">(Sun 2nd)</small></span>
+                                            <span class="fw-bold text-success" id="weeklyHighest">No records yet</span>
                                         </div>
                                     </div>
                                 </div>
@@ -326,52 +327,7 @@
                                                     <th>Actions</th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>Mar 16, 2026</td>
-                                                    <td><span class="badge bg-primary">Sunday 2nd</span></td>
-                                                    <td>198</td>
-                                                    <td>245</td>
-                                                    <td>69</td>
-                                                    <td class="fw-bold">512</td>
-                                                    <td><span class="text-success">12</span></td>
-                                                    <td><span class="text-primary">4</span></td>
-                                                    <td><a href="#" class="btn btn-sm btn-light-primary">Edit</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Mar 16, 2026</td>
-                                                    <td><span class="badge bg-primary">Sunday 1st</span></td>
-                                                    <td>156</td>
-                                                    <td>189</td>
-                                                    <td>42</td>
-                                                    <td class="fw-bold">387</td>
-                                                    <td><span class="text-success">8</span></td>
-                                                    <td><span class="text-primary">2</span></td>
-                                                    <td><a href="#" class="btn btn-sm btn-light-primary">Edit</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Mar 12, 2026</td>
-                                                    <td><span class="badge bg-success">Wednesday</span></td>
-                                                    <td>124</td>
-                                                    <td>167</td>
-                                                    <td>57</td>
-                                                    <td class="fw-bold">348</td>
-                                                    <td><span class="text-success">5</span></td>
-                                                    <td><span class="text-primary">1</span></td>
-                                                    <td><a href="#" class="btn btn-sm btn-light-primary">Edit</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Mar 6, 2026</td>
-                                                    <td><span class="badge bg-warning">WOSE Fri</span></td>
-                                                    <td>142</td>
-                                                    <td>178</td>
-                                                    <td>38</td>
-                                                    <td class="fw-bold">358</td>
-                                                    <td><span class="text-success">3</span></td>
-                                                    <td><span class="text-primary">2</span></td>
-                                                    <td><a href="#" class="btn btn-sm btn-light-primary">Edit</a></td>
-                                                </tr>
-                                            </tbody>
+                                            <tbody id="recentAttendanceTableBody"></tbody>
                                         </table>
                                     </div>
                                 </div>
@@ -387,11 +343,30 @@
 <script src="assets/js/jquery-3.6.3.min.js"></script>
 <script src="assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
 <script src="assets/vendor/simplebar/simplebar.js"></script>
+<script src="assets/js/app-config.js"></script>
+<script src="assets/js/app-api.js"></script>
 <script src="assets/js/church-template.js"></script>
 <script src="assets/js/script.js"></script>
 <script>
+const attendanceForm = document.getElementById('attendanceForm');
+const attendancePageAlert = document.getElementById('attendancePageAlert');
+const recentAttendanceTableBody = document.getElementById('recentAttendanceTableBody');
+const session = window.LFC_API.getSession();
+const activeChurch = session ? session.church : null;
+const activeUser = session ? session.user : null;
+
 // Set today's date as default
 document.getElementById('serviceDate').valueAsDate = new Date();
+
+function showAttendanceAlert(message) {
+    attendancePageAlert.textContent = message;
+    attendancePageAlert.classList.remove('d-none');
+}
+
+function hideAttendanceAlert() {
+    attendancePageAlert.classList.add('d-none');
+    attendancePageAlert.textContent = '';
+}
 
 // Check if first week of month (WOSE)
 function checkWOSE() {
@@ -407,6 +382,11 @@ function checkWOSE() {
 }
 
 document.getElementById('serviceDate').addEventListener('change', checkWOSE);
+document.getElementById('serviceDate').addEventListener('change', function () {
+    if (activeChurch && activeChurch.id) {
+        loadAttendanceSummary();
+    }
+});
 checkWOSE(); // Check on load
 
 // Service type selection handling
@@ -415,7 +395,17 @@ document.getElementById('serviceType').addEventListener('change', function() {
     const specialName = document.getElementById('specialServiceName');
     
     sundaySelect.style.display = this.value === 'sunday' ? 'block' : 'none';
-    specialName.style.display = this.value === 'special' ? 'block' : 'none';
+    specialName.style.display = this.value === 'special' || this.value.startsWith('wose-') ? 'block' : 'none';
+
+    if (this.value === 'wose-wed') {
+        document.getElementById('specialName').value = 'WOSE Wednesday';
+    } else if (this.value === 'wose-thu') {
+        document.getElementById('specialName').value = 'WOSE Thursday';
+    } else if (this.value === 'wose-fri') {
+        document.getElementById('specialName').value = 'WOSE Friday';
+    } else if (this.value !== 'special') {
+        document.getElementById('specialName').value = '';
+    }
 });
 
 // Auto-calculate total attendance
@@ -444,46 +434,163 @@ document.getElementById('newConvertsCount').addEventListener('input', function()
 });
 
 // Form submission
-document.getElementById('attendanceForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const serviceType = document.getElementById('serviceType').value;
-    if (!serviceType) {
-        alert('Please select a service type');
+function formatDate(value) {
+    return new Date(value).toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+    });
+}
+
+function normalizeServiceType(value) {
+    if (value.startsWith('wose-')) {
+        return 'wose';
+    }
+    return value;
+}
+
+function buildServiceLabel(serviceType) {
+    if (serviceType === 'sunday') {
+        return document.getElementById('sundayServiceNumber').value + (document.getElementById('sundayServiceNumber').value === '1' ? 'st' : document.getElementById('sundayServiceNumber').value === '2' ? 'nd' : document.getElementById('sundayServiceNumber').value === '3' ? 'rd' : 'th') + ' Service';
+    }
+
+    if (serviceType === 'wednesday') {
+        return 'Wednesday Service';
+    }
+
+    return document.getElementById('specialName').value.trim() || 'Special Service';
+}
+
+function renderRecentAttendance(records) {
+    if (!records.length) {
+        recentAttendanceTableBody.innerHTML = `
+            <tr>
+                <td class="text-center text-muted py-4" colspan="9">No attendance records yet.</td>
+            </tr>
+        `;
         return;
     }
-    
-    // TODO: API integration - POST to /api/attendance
-    const data = {
-        date: document.getElementById('serviceDate').value,
-        serviceType: serviceType,
-        sundayServiceNumber: document.getElementById('sundayServiceNumber').value,
-        specialName: document.getElementById('specialName').value,
-        male: document.getElementById('maleCount').value,
-        female: document.getElementById('femaleCount').value,
-        children: document.getElementById('childrenCount').value,
-        total: document.getElementById('totalCount').value,
-        firstTimers: document.getElementById('firstTimersCount').value,
-        newConverts: document.getElementById('newConvertsCount').value,
-        rededications: document.getElementById('rededications').value,
-        notes: document.getElementById('attendanceNotes').value
-    };
-    
-    console.log('Attendance data:', data);
-    alert('Attendance saved successfully!');
-    
-    // Reset form for next entry
-    this.reset();
-    document.getElementById('serviceDate').valueAsDate = new Date();
-    calculateTotal();
+
+    recentAttendanceTableBody.innerHTML = records.map(function (record) {
+        return `
+            <tr>
+                <td>${formatDate(record.service_date)}</td>
+                <td><span class="badge bg-primary">${record.service_label}</span></td>
+                <td>${record.male_count}</td>
+                <td>${record.female_count}</td>
+                <td>${record.children_count}</td>
+                <td class="fw-bold">${record.total_count}</td>
+                <td><span class="text-success">${record.first_timers_count}</span></td>
+                <td><span class="text-primary">${record.new_converts_count}</span></td>
+                <td><span class="text-muted">Saved</span></td>
+            </tr>
+        `;
+    }).join('');
+}
+
+async function loadAttendanceSummary() {
+    if (!activeChurch || !activeChurch.id) {
+        showAttendanceAlert('Sign in first so attendance can be linked to a church.');
+        return;
+    }
+
+    try {
+        const summaryResponse = await window.LFC_API.request('attendance/summary?church_id=' + encodeURIComponent(activeChurch.id) + '&period=weekly&date=' + encodeURIComponent(document.getElementById('serviceDate').value));
+        const summary = summaryResponse.data;
+
+        document.getElementById('weeklyTotal').textContent = summary.total_attendance;
+        document.getElementById('weeklyAverage').textContent = summary.average_attendance;
+        document.getElementById('weeklyHighest').textContent = summary.highest_service
+            ? summary.highest_service.total_count + ' (' + summary.highest_service.service_label + ')'
+            : 'No records yet';
+    } catch (error) {
+        showAttendanceAlert(error.message);
+    }
+}
+
+async function loadRecentAttendance() {
+    if (!activeChurch || !activeChurch.id) {
+        renderRecentAttendance([]);
+        return;
+    }
+
+    try {
+        const response = await window.LFC_API.request('attendance?church_id=' + encodeURIComponent(activeChurch.id) + '&per_page=5');
+        renderRecentAttendance(response.data || []);
+    } catch (error) {
+        showAttendanceAlert(error.message);
+    }
+}
+
+attendanceForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    hideAttendanceAlert();
+
+    const serviceType = document.getElementById('serviceType').value;
+    if (!serviceType) {
+        showAttendanceAlert('Please select a service type.');
+        return;
+    }
+
+    if (!activeChurch || !activeChurch.id) {
+        showAttendanceAlert('Sign in first so attendance can be linked to a church.');
+        return;
+    }
+
+    const submitButton = attendanceForm.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
+    submitButton.innerHTML = '<i class="ti ti-loader me-1"></i>Saving...';
+
+    try {
+        await window.LFC_API.request('attendance', {
+            method: 'POST',
+            body: {
+                church_id: activeChurch.id,
+                recorded_by_user_id: activeUser && activeUser.id ? activeUser.id : null,
+                service_date: document.getElementById('serviceDate').value,
+                service_type: normalizeServiceType(serviceType),
+                service_label: buildServiceLabel(normalizeServiceType(serviceType)),
+                sunday_service_number: serviceType === 'sunday' ? Number(document.getElementById('sundayServiceNumber').value) : null,
+                special_service_name: serviceType === 'special' || serviceType.startsWith('wose-') ? document.getElementById('specialName').value.trim() || null : null,
+                male_count: Number(document.getElementById('maleCount').value || 0),
+                female_count: Number(document.getElementById('femaleCount').value || 0),
+                children_count: Number(document.getElementById('childrenCount').value || 0),
+                first_timers_count: Number(document.getElementById('firstTimersCount').value || 0),
+                new_converts_count: Number(document.getElementById('newConvertsCount').value || 0),
+                rededications_count: Number(document.getElementById('rededications').value || 0),
+                main_offering: document.getElementById('mainOffering').value ? Number(document.getElementById('mainOffering').value) : null,
+                tithe: document.getElementById('tithe').value ? Number(document.getElementById('tithe').value) : null,
+                special_offering: document.getElementById('specialOffering').value ? Number(document.getElementById('specialOffering').value) : null,
+                notes: document.getElementById('attendanceNotes').value.trim() || null
+            }
+        });
+
+        attendanceForm.reset();
+        document.getElementById('serviceDate').valueAsDate = new Date();
+        document.getElementById('summaryFirstTimers').textContent = '0';
+        document.getElementById('summaryConverts').textContent = '0';
+        calculateTotal();
+        checkWOSE();
+        await loadAttendanceSummary();
+        await loadRecentAttendance();
+    } catch (error) {
+        showAttendanceAlert(error.message);
+    } finally {
+        submitButton.disabled = false;
+        submitButton.innerHTML = '<i class="ti ti-check me-1"></i>Save Attendance';
+    }
 });
 
-// Check if finance is enabled (from church settings)
-// TODO: Load from church settings API
-const financeEnabled = false; // Change based on settings
-if (financeEnabled) {
+if (activeChurch && activeChurch.finance_enabled) {
     document.getElementById('financeSection').style.display = 'block';
 }
+
+if (!activeChurch || !activeChurch.id) {
+    showAttendanceAlert('No active church session found. Please sign in first.');
+}
+
+loadAttendanceSummary();
+loadRecentAttendance();
 </script>
 </body>
 

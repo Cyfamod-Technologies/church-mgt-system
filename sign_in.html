@@ -36,11 +36,12 @@
                             </a>
                         </div>
                         <div class="form_container">
-                            <form class="app-form">
+                            <form class="app-form" id="signInForm">
                                 <div class="mb-3 text-center">
                                     <h3>Login to Church Management</h3>
                                     <p class="f-s-12 text-secondary">Use email address or phone number to access the admin workspace.</p>
                                 </div>
+                                <div class="alert alert-danger d-none" id="signInAlert" role="alert"></div>
                                 <div class="mb-3">
                                     <label class="form-label" for="loginId">Email or Phone Number</label>
                                     <input class="form-control" id="loginId" placeholder="admin@church.org or +234..." type="text">
@@ -57,7 +58,7 @@
                                     <a class="text-primary text-decoration-underline" href="forgot_password.html">Forgot Password</a>
                                 </div>
                                 <div>
-                                    <a class="btn btn-primary w-100" href="dashboard.html" role="button">Continue</a>
+                                    <button class="btn btn-primary w-100" id="signInSubmit" type="submit">Continue</button>
                                 </div>
                                 <div class="app-divider-v justify-content-center">
                                     <p>OR</p>
@@ -76,6 +77,58 @@
 
 <script src="assets/js/jquery-3.6.3.min.js"></script>
 <script src="assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
+<script src="assets/js/app-config.js"></script>
+<script src="assets/js/app-api.js"></script>
+<script>
+const existingSignInSession = window.LFC_API.getSession();
+
+if (existingSignInSession && existingSignInSession.user && existingSignInSession.user.id && existingSignInSession.church && existingSignInSession.church.id) {
+    window.location.replace('dashboard.html');
+}
+
+const signInForm = document.getElementById('signInForm');
+const signInAlert = document.getElementById('signInAlert');
+const signInSubmit = document.getElementById('signInSubmit');
+
+function showSignInAlert(message) {
+    signInAlert.textContent = message;
+    signInAlert.classList.remove('d-none');
+}
+
+function hideSignInAlert() {
+    signInAlert.classList.add('d-none');
+    signInAlert.textContent = '';
+}
+
+signInForm.addEventListener('submit', async function (event) {
+    event.preventDefault();
+    hideSignInAlert();
+    signInSubmit.disabled = true;
+    signInSubmit.textContent = 'Signing in...';
+
+    try {
+        const response = await window.LFC_API.request('auth/login', {
+            method: 'POST',
+            body: {
+                login: document.getElementById('loginId').value.trim(),
+                password: document.getElementById('loginPassword').value
+            }
+        });
+
+        window.LFC_API.saveSession({
+            user: response.data.user,
+            church: response.data.church
+        });
+
+        window.location.href = 'dashboard.html';
+    } catch (error) {
+        showSignInAlert(error.message);
+    } finally {
+        signInSubmit.disabled = false;
+        signInSubmit.textContent = 'Continue';
+    }
+});
+</script>
 </body>
 
 </html>

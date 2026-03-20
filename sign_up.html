@@ -75,6 +75,7 @@
                                 <span class="small text-center" style="width:80px;">Services</span>
                                 <span class="small text-center" style="width:80px;">Admin</span>
                             </div>
+                            <div class="alert alert-danger d-none" id="signUpAlert" role="alert"></div>
 
                             <form class="app-form" id="churchOnboardingForm">
                                 
@@ -86,49 +87,53 @@
                                             <div class="col-md-6">
                                                 <div class="mb-3">
                                                     <label class="form-label">Church Name</label>
-                                                    <input class="form-control" placeholder="e.g. Living Faith Church Lekki" type="text">
+                                                    <input class="form-control" id="churchName" placeholder="e.g. Living Faith Church Lekki" type="text">
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="mb-3">
                                                     <label class="form-label">Church Code</label>
-                                                    <input class="form-control" placeholder="e.g. LFC-LAG-001 (auto-generated if blank)" type="text">
+                                                    <input class="form-control" id="churchCode" placeholder="e.g. LFC-LAG-001 (auto-generated if blank)" type="text">
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="mb-3">
                                                     <label class="form-label">State</label>
-                                                    <input class="form-control" placeholder="Enter state" type="text">
+                                                    <select class="form-select" id="churchState">
+                                                        <option value="">Select state</option>
+                                                    </select>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="mb-3">
                                                     <label class="form-label">City</label>
-                                                    <input class="form-control" placeholder="Enter city" type="text">
+                                                    <input class="form-control" id="churchCity" placeholder="Enter city" type="text">
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="mb-3">
                                                     <label class="form-label">LGA / District Area</label>
-                                                    <input class="form-control" placeholder="Enter LGA or district area" type="text">
+                                                    <select class="form-select" id="churchLga">
+                                                        <option value="">Select LGA</option>
+                                                    </select>
                                                 </div>
                                             </div>
                                             <div class="col-12">
                                                 <div class="mb-3">
                                                     <label class="form-label">Full Address</label>
-                                                    <textarea class="form-control" rows="2" placeholder="Enter complete church address"></textarea>
+                                                    <textarea class="form-control" id="churchAddress" rows="2" placeholder="Enter complete church address"></textarea>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="mb-3">
                                                     <label class="form-label">Church Email</label>
-                                                    <input class="form-control" placeholder="e.g. info@lfclekki.org" type="email">
+                                                    <input class="form-control" id="churchEmail" placeholder="e.g. info@lfclekki.org" type="email">
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="mb-3">
                                                     <label class="form-label">Church Phone Number</label>
-                                                    <input class="form-control" placeholder="e.g. +234 801 234 5678" type="text">
+                                                    <input class="form-control" id="churchPhone" placeholder="e.g. +234 801 234 5678" type="text">
                                                 </div>
                                             </div>
                                         </div>
@@ -147,19 +152,19 @@
                                             <div class="col-md-6">
                                                 <div class="mb-3">
                                                     <label class="form-label">Pastor's Full Name</label>
-                                                    <input class="form-control" placeholder="e.g. Pst. Samuel Adeyemi" type="text">
+                                                    <input class="form-control" id="pastorName" placeholder="e.g. Pst. Samuel Adeyemi" type="text">
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="mb-3">
                                                     <label class="form-label">Pastor's Phone Number</label>
-                                                    <input class="form-control" placeholder="e.g. +234 803 111 2233" type="text">
+                                                    <input class="form-control" id="pastorPhone" placeholder="e.g. +234 803 111 2233" type="text">
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="mb-3">
                                                     <label class="form-label">Pastor's Email</label>
-                                                    <input class="form-control" placeholder="e.g. pastor@lfclekki.org" type="email">
+                                                    <input class="form-control" id="pastorEmail" placeholder="e.g. pastor@lfclekki.org" type="email">
                                                 </div>
                                             </div>
                                         </div>
@@ -195,13 +200,13 @@
                                                 <div class="col-md-3 sunday-service-time">
                                                     <div class="mb-3">
                                                         <label class="form-label">1st Service Time</label>
-                                                        <input class="form-control" type="time" value="07:00">
+                                                        <input class="form-control sunday-service-input" type="time" value="07:00">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3 sunday-service-time">
                                                     <div class="mb-3">
                                                         <label class="form-label">2nd Service Time</label>
-                                                        <input class="form-control" type="time" value="09:00">
+                                                        <input class="form-control sunday-service-input" type="time" value="09:00">
                                                     </div>
                                                 </div>
                                             </div>
@@ -214,7 +219,7 @@
                                                 <div class="col-md-4">
                                                     <div class="mb-3">
                                                         <label class="form-label">Wednesday Service Time</label>
-                                                        <input class="form-control" type="time" value="17:30">
+                                                        <input class="form-control" id="wednesdayTime" type="time" value="17:30">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4">
@@ -234,19 +239,19 @@
                                                 <div class="col-md-3">
                                                     <div class="mb-3">
                                                         <label class="form-label">Wednesday Time</label>
-                                                        <input class="form-control" type="time" value="17:30">
+                                                        <input class="form-control" id="woseWednesdayTime" type="time" value="17:30">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3">
                                                     <div class="mb-3">
                                                         <label class="form-label">Thursday Time</label>
-                                                        <input class="form-control" type="time" value="17:30">
+                                                        <input class="form-control" id="woseThursdayTime" type="time" value="17:30">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3">
                                                     <div class="mb-3">
                                                         <label class="form-label">Friday Time</label>
-                                                        <input class="form-control" type="time" value="17:30">
+                                                        <input class="form-control" id="woseFridayTime" type="time" value="17:30">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3">
@@ -282,32 +287,32 @@
                                             <div class="col-md-6">
                                                 <div class="mb-3">
                                                     <label class="form-label">Admin Full Name</label>
-                                                    <input class="form-control" placeholder="Enter admin full name" type="text">
+                                                    <input class="form-control" id="adminName" placeholder="Enter admin full name" type="text">
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="mb-3">
                                                     <label class="form-label">Admin Phone Number</label>
-                                                    <input class="form-control" placeholder="e.g. +234 803 876 9000" type="text">
+                                                    <input class="form-control" id="adminPhone" placeholder="e.g. +234 803 876 9000" type="text">
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="mb-3">
                                                     <label class="form-label">Admin Email</label>
-                                                    <input class="form-control" placeholder="e.g. admin@lfclekki.org" type="email">
+                                                    <input class="form-control" id="adminEmail" placeholder="e.g. admin@lfclekki.org" type="email">
                                                 </div>
                                             </div>
                                             <div class="col-md-6"></div>
                                             <div class="col-md-6">
                                                 <div class="mb-3">
                                                     <label class="form-label">Password</label>
-                                                    <input class="form-control" placeholder="Enter password" type="password">
+                                                    <input class="form-control" id="adminPassword" placeholder="Enter password" type="password">
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="mb-3">
                                                     <label class="form-label">Confirm Password</label>
-                                                    <input class="form-control" placeholder="Confirm password" type="password">
+                                                    <input class="form-control" id="adminPasswordConfirmation" placeholder="Confirm password" type="password">
                                                 </div>
                                             </div>
                                         </div>
@@ -345,9 +350,21 @@
 
 <script src="assets/js/jquery-3.6.3.min.js"></script>
 <script src="assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
+<script src="assets/js/app-config.js"></script>
+<script src="assets/js/app-api.js"></script>
 <script>
+const existingSignUpSession = window.LFC_API.getSession();
+
+if (existingSignUpSession && existingSignUpSession.user && existingSignUpSession.user.id && existingSignUpSession.church && existingSignUpSession.church.id) {
+    window.location.replace('dashboard.html');
+}
+
 let currentStep = 1;
 const totalSteps = 4;
+const churchStateSelect = document.getElementById('churchState');
+const churchLgaSelect = document.getElementById('churchLga');
+const signUpAlert = document.getElementById('signUpAlert');
+const completeRegistrationButton = document.querySelector('#step-4 .btn-success');
 
 function updateStepIndicators() {
     for (let i = 1; i <= totalSteps; i++) {
@@ -387,7 +404,76 @@ function showStep(step) {
     updateStepIndicators();
 }
 
+function showSignUpAlert(message) {
+    signUpAlert.textContent = message;
+    signUpAlert.classList.remove('d-none');
+}
+
+function hideSignUpAlert() {
+    signUpAlert.classList.add('d-none');
+    signUpAlert.textContent = '';
+}
+
+function populateSelect(selectElement, options, placeholder) {
+    selectElement.innerHTML = `<option value="">${placeholder}</option>`;
+
+    options.forEach(function (option) {
+        const optionElement = document.createElement('option');
+        optionElement.value = option.id || option.slug || option.name;
+        optionElement.textContent = option.name;
+        if (option.slug) {
+            optionElement.dataset.slug = option.slug;
+        }
+        selectElement.appendChild(optionElement);
+    });
+}
+
+function validateStep(step) {
+    const stepFields = {
+        1: ['churchName', 'churchState', 'churchCity', 'churchLga', 'churchAddress', 'churchPhone'],
+        2: ['pastorName', 'pastorPhone'],
+        3: ['sundayServiceCount'],
+        4: ['adminName', 'adminPhone', 'adminEmail', 'adminPassword', 'adminPasswordConfirmation']
+    };
+
+    const invalidFieldId = (stepFields[step] || []).find(function (fieldId) {
+        const element = document.getElementById(fieldId);
+        if (!element) {
+            return false;
+        }
+        return !String(element.value || '').trim();
+    });
+
+    if (invalidFieldId) {
+        document.getElementById(invalidFieldId).focus();
+        return false;
+    }
+
+    if (step === 4 && document.getElementById('adminPassword').value !== document.getElementById('adminPasswordConfirmation').value) {
+        showSignUpAlert('Password confirmation does not match.');
+        return false;
+    }
+
+    if (step === 3) {
+        const sundayTimes = Array.from(document.querySelectorAll('.sunday-service-input')).map(function (input) {
+            return input.value;
+        }).filter(Boolean);
+
+        if (!sundayTimes.length) {
+            showSignUpAlert('Add at least one Sunday service time.');
+            return false;
+        }
+    }
+
+    return true;
+}
+
 function nextStep() {
+    hideSignUpAlert();
+    if (!validateStep(currentStep)) {
+        return;
+    }
+
     if (currentStep < totalSteps) {
         currentStep++;
         showStep(currentStep);
@@ -396,6 +482,7 @@ function nextStep() {
 }
 
 function prevStep() {
+    hideSignUpAlert();
     if (currentStep > 1) {
         currentStep--;
         showStep(currentStep);
@@ -403,10 +490,109 @@ function prevStep() {
     }
 }
 
-function completeRegistration() {
-    // TODO: API integration - POST to /api/churches/register
-    alert('Church registration completed! Redirecting to dashboard...');
-    window.location.href = 'dashboard.html';
+async function loadStates() {
+    try {
+        const response = await window.LFC_API.request('locations/states');
+        populateSelect(churchStateSelect, response.data, 'Select state');
+    } catch (error) {
+        showSignUpAlert('Unable to load Nigerian states. Check the backend connection.');
+    }
+}
+
+async function loadLgasForSelectedState() {
+    const selectedOption = churchStateSelect.options[churchStateSelect.selectedIndex];
+    const stateSlug = selectedOption ? selectedOption.dataset.slug : '';
+
+    populateSelect(churchLgaSelect, [], stateSlug ? 'Loading LGAs...' : 'Select LGA');
+
+    if (!stateSlug) {
+        return;
+    }
+
+    try {
+        const response = await window.LFC_API.request('locations/lgas?state_slug=' + encodeURIComponent(stateSlug));
+        populateSelect(churchLgaSelect, response.data, 'Select LGA');
+    } catch (error) {
+        showSignUpAlert('Unable to load LGAs for the selected state.');
+    }
+}
+
+function buildRegistrationPayload() {
+    const stateOption = churchStateSelect.options[churchStateSelect.selectedIndex];
+    const lgaOption = churchLgaSelect.options[churchLgaSelect.selectedIndex];
+
+    return {
+        church: {
+            name: document.getElementById('churchName').value.trim(),
+            code: document.getElementById('churchCode').value.trim() || null,
+            address: document.getElementById('churchAddress').value.trim(),
+            city: document.getElementById('churchCity').value.trim(),
+            state: stateOption ? stateOption.textContent.trim() : '',
+            district_area: lgaOption ? lgaOption.textContent.trim() : '',
+            email: document.getElementById('churchEmail').value.trim() || null,
+            phone: document.getElementById('churchPhone').value.trim() || null
+        },
+        pastor: {
+            name: document.getElementById('pastorName').value.trim(),
+            phone: document.getElementById('pastorPhone').value.trim(),
+            email: document.getElementById('pastorEmail').value.trim() || null
+        },
+        services: {
+            sunday_count: Number(document.getElementById('sundayServiceCount').value),
+            sunday_times: Array.from(document.querySelectorAll('.sunday-service-input')).map(function (input) {
+                return input.value;
+            }).filter(Boolean),
+            wednesday_enabled: document.getElementById('wednesdayEnabled').checked,
+            wednesday_time: document.getElementById('wednesdayTime').value || null,
+            wose_enabled: document.getElementById('woseEnabled').checked,
+            wose_times: {
+                wednesday: document.getElementById('woseWednesdayTime').value || null,
+                thursday: document.getElementById('woseThursdayTime').value || null,
+                friday: document.getElementById('woseFridayTime').value || null
+            },
+            special_services_enabled: document.getElementById('specialServicesEnabled').checked
+        },
+        settings: {
+            finance_enabled: document.getElementById('financeEnabled').checked
+        },
+        admin: {
+            name: document.getElementById('adminName').value.trim(),
+            email: document.getElementById('adminEmail').value.trim(),
+            phone: document.getElementById('adminPhone').value.trim(),
+            password: document.getElementById('adminPassword').value,
+            password_confirmation: document.getElementById('adminPasswordConfirmation').value
+        }
+    };
+}
+
+async function completeRegistration() {
+    hideSignUpAlert();
+
+    if (!validateStep(4)) {
+        return;
+    }
+
+    completeRegistrationButton.disabled = true;
+    completeRegistrationButton.innerHTML = '<i class="ti ti-loader me-1"></i> Creating...';
+
+    try {
+        const response = await window.LFC_API.request('churches/register', {
+            method: 'POST',
+            body: buildRegistrationPayload()
+        });
+
+        window.LFC_API.saveSession({
+            user: response.data.admin,
+            church: response.data.church
+        });
+
+        window.location.href = 'dashboard.html';
+    } catch (error) {
+        showSignUpAlert(error.message);
+    } finally {
+        completeRegistrationButton.disabled = false;
+        completeRegistrationButton.innerHTML = '<i class="ti ti-check me-1"></i> Complete Registration';
+    }
 }
 
 // Dynamic Sunday service time fields
@@ -422,15 +608,16 @@ document.getElementById('sundayServiceCount').addEventListener('change', functio
             <div class="col-md-3 sunday-service-time">
                 <div class="mb-3">
                     <label class="form-label">${i}${suffix} Service Time</label>
-                    <input class="form-control" type="time" value="${defaultTime}">
+                    <input class="form-control sunday-service-input" type="time" value="${defaultTime}">
                 </div>
             </div>
         `;
     }
 });
+
+churchStateSelect.addEventListener('change', loadLgasForSelectedState);
+loadStates();
 </script>
 </body>
-
-</html>
 
 </html>

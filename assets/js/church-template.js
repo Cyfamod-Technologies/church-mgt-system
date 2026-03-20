@@ -1,5 +1,13 @@
 (function () {
   const currentPage = (location.pathname.split("/").pop() || "index.html").split("#")[0];
+  const sessionKey = "lfc_session";
+  const session = getSession();
+
+  if (!hasValidSession(session)) {
+    window.location.replace("sign_in.html");
+    return;
+  }
+
   const iconMarkup = {
     home: {
       viewBox: "0 0 24 24",
@@ -124,12 +132,50 @@
     }
   ];
 
+  function getSession() {
+    const raw = window.localStorage.getItem(sessionKey);
+
+    if (!raw) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(raw);
+    } catch (error) {
+      window.localStorage.removeItem(sessionKey);
+      return null;
+    }
+  }
+
+  function hasValidSession(value) {
+    return Boolean(
+      value &&
+      value.user &&
+      value.user.id &&
+      value.church &&
+      value.church.id
+    );
+  }
+
+  function clearSession() {
+    window.localStorage.removeItem(sessionKey);
+  }
+
   function icon(sprite) {
     const iconDef = iconMarkup[sprite];
     if (!iconDef) {
       return "";
     }
     return `<svg stroke="currentColor" stroke-width="1.5" viewBox="${iconDef.viewBox}" fill="none" aria-hidden="true">${iconDef.body}</svg>`;
+  }
+
+  function escapeHtml(value) {
+    return String(value || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
   }
 
   function isActive(href) {
@@ -139,6 +185,8 @@
   function buildNav() {
     const nav = document.getElementById("church-nav");
     if (!nav) return;
+    const userName = escapeHtml(session.user.name || "Church Admin");
+    const churchName = escapeHtml(session.church.name || "Church Workspace");
 
     const groupsHtml = navGroups.map((group) => {
       if (group.directHref) {
@@ -183,8 +231,8 @@
             <span class="position-absolute top-0 end-0 p-1 bg-success border border-light rounded-circle"></span>
           </span>
           <div class="flex-grow-1 ps-2">
-            <h6 class="text-primary mb-0"> Church Admin</h6>
-            <p class="text-muted f-s-12 mb-0">Living Faith Central</p>
+            <h6 class="text-primary mb-0">${userName}</h6>
+            <p class="text-muted f-s-12 mb-0">${churchName}</p>
           </div>
         </div>
       </div>
@@ -213,6 +261,8 @@
 
     const title = document.body.dataset.title || "Church Management System";
     const subtitle = document.body.dataset.subtitle || "Administrative workspace";
+    const userName = escapeHtml(session.user.name || "Church Admin");
+    const churchName = escapeHtml(session.church.name || "Church Workspace");
 
     header.innerHTML = `
       <div class="container-fluid">
@@ -245,12 +295,14 @@
                 </a>
                 <ul class="dropdown-menu profile-dropdown p-2">
                   <li class="dropdown-item-text">
-                    <h6 class="mb-0">${title}</h6>
-                    <p class="text-muted mb-0 f-s-12">${subtitle}</p>
+                    <h6 class="mb-0">${userName}</h6>
+                    <p class="text-muted mb-0 f-s-12">${churchName}</p>
                   </li>
                   <li><hr class="dropdown-divider"></li>
+                  <li><span class="dropdown-item-text text-muted f-s-12">${escapeHtml(title)}<br>${escapeHtml(subtitle)}</span></li>
+                  <li><hr class="dropdown-divider"></li>
                   <li><a class="dropdown-item" href="settings.html">Settings</a></li>
-                  <li><a class="dropdown-item text-danger" href="sign_in.html">Logout</a></li>
+                  <li><a class="dropdown-item text-danger" href="#" id="logoutLink">Logout</a></li>
                 </ul>
               </li>
             </ul>
@@ -260,9 +312,21 @@
     `;
   }
 
+  function bindLogout() {
+    const logoutLink = document.getElementById("logoutLink");
+    if (!logoutLink) return;
+
+    logoutLink.addEventListener("click", function (event) {
+      event.preventDefault();
+      clearSession();
+      window.location.replace("sign_in.html");
+    });
+  }
+
   function init() {
     buildNav();
     buildHeader();
+    bindLogout();
   }
 
   if (document.readyState === "loading") {

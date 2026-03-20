@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="Record service attendance for Living Faith Church." name="description">
+    <meta content="church attendance" name="keywords">
+    <meta content="la-themes" name="author">
+    <link href="assets/images/logo/favicon.png" rel="icon" type="image/x-icon">
+    <link href="assets/images/logo/favicon.png" rel="shortcut icon" type="image/x-icon">
+    <title>Record Attendance - LFC</title>
+
+    <link href="assets/vendor/animation/animate.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap"
+          rel="stylesheet">
+    <link href="assets/vendor/flag-icons-master/flag-icon.css" rel="stylesheet" type="text/css">
+    <link href="assets/vendor/tabler-icons/tabler-icons.css" rel="stylesheet" type="text/css">
+    <link href="assets/vendor/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="assets/vendor/simplebar/simplebar.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/style.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/responsive.css" rel="stylesheet" type="text/css">
+</head>
+
+<body data-title="Record Attendance" data-subtitle="Enter service attendance figures for Male, Female, Children, First Timers and New Converts.">
+<div class="app-wrapper">
+    <div class="loader-wrapper">
+        <div class="loader_24"></div>
+    </div>
+
+    <nav id="church-nav"></nav>
+
+    <div class="app-content">
+        <div class="">
+            <header class="header-main" id="church-header"></header>
+
+            <main>
+                <div class="container-fluid">
+                    <div class="row">
+                        <!-- Page Header -->
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                                        <div>
+                                            <h4 class="mb-1">Record Service Attendance</h4>
+                                            <p class="text-secondary mb-0">Enter attendance counts for today's service. System auto-calculates totals.</p>
+                                        </div>
+                                        <div class="d-flex gap-2 flex-wrap">
+                                            <a class="btn btn-outline-primary" href="attendance-reports.html">View Reports</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Service Type Selection -->
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0"><i class="ti ti-calendar me-2"></i>Select Service</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="mb-3">
+                                                <label class="form-label">Date <span class="text-danger">*</span></label>
+                                                <input class="form-control" type="date" id="serviceDate" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="mb-3">
+                                                <label class="form-label">Service Type <span class="text-danger">*</span></label>
+                                                <select class="form-select" id="serviceType" required>
+                                                    <option value="">Select service type</option>
+                                                    <option value="sunday">Sunday Service</option>
+                                                    <option value="wednesday">Wednesday Service</option>
+                                                    <option value="wose-wed">WOSE - Wednesday</option>
+                                                    <option value="wose-thu">WOSE - Thursday</option>
+                                                    <option value="wose-fri">WOSE - Friday</option>
+                                                    <option value="special">Special Service</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3" id="sundayServiceSelect" style="display:none;">
+                                            <div class="mb-3">
+                                                <label class="form-label">Which Service?</label>
+                                                <select class="form-select" id="sundayServiceNumber">
+                                                    <option value="1">1st Service</option>
+                                                    <option value="2">2nd Service</option>
+                                                    <option value="3">3rd Service</option>
+                                                    <option value="4">4th Service</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3" id="specialServiceName" style="display:none;">
+                                            <div class="mb-3">
+                                                <label class="form-label">Service Name</label>
+                                                <input class="form-control" type="text" placeholder="e.g. Thanksgiving Service" id="specialName">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- WOSE Indicator -->
+                                    <div class="alert alert-info d-none" id="woseAlert">
+                                        <i class="ti ti-info-circle me-2"></i>
+                                        <strong>Week of Spiritual Emphasis:</strong> This is the first week of the month. WOSE services are available (Wed, Thu, Fri).
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Attendance Entry Form -->
+                        <div class="col-lg-8">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0"><i class="ti ti-users me-2"></i>Attendance Figures</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form id="attendanceForm">
+                                        <!-- Main Attendance -->
+                                        <div class="border rounded p-3 mb-4">
+                                            <h6 class="mb-3">Main Attendance Count</h6>
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Male <span class="text-danger">*</span></label>
+                                                        <input class="form-control attendance-input" type="number" min="0" id="maleCount" placeholder="0" required>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Female <span class="text-danger">*</span></label>
+                                                        <input class="form-control attendance-input" type="number" min="0" id="femaleCount" placeholder="0" required>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Children <span class="text-danger">*</span></label>
+                                                        <input class="form-control attendance-input" type="number" min="0" id="childrenCount" placeholder="0" required>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Total</label>
+                                                        <input class="form-control bg-light fw-bold" type="text" id="totalCount" readonly value="0">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- First Timers & New Converts -->
+                                        <div class="border rounded p-3 mb-4">
+                                            <h6 class="mb-3">First Timers & New Converts</h6>
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">First Timers</label>
+                                                        <input class="form-control" type="number" min="0" id="firstTimersCount" placeholder="0">
+                                                        <small class="text-muted">New visitors to the church</small>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">New Converts</label>
+                                                        <input class="form-control" type="number" min="0" id="newConvertsCount" placeholder="0">
+                                                        <small class="text-muted">Gave life to Christ today</small>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Rededications</label>
+                                                        <input class="form-control" type="number" min="0" id="rededications" placeholder="0">
+                                                        <small class="text-muted">Rededicated their life</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Optional: Finance (if enabled) -->
+                                        <div class="border rounded p-3 mb-4" id="financeSection" style="display:none;">
+                                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                                <h6 class="mb-0">Offering & Finance (Optional)</h6>
+                                                <span class="badge bg-light-secondary">Optional</span>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Main Offering (₦)</label>
+                                                        <input class="form-control" type="number" min="0" id="mainOffering" placeholder="0">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Tithe (₦)</label>
+                                                        <input class="form-control" type="number" min="0" id="tithe" placeholder="0">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Special Offering (₦)</label>
+                                                        <input class="form-control" type="number" min="0" id="specialOffering" placeholder="0">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Notes -->
+                                        <div class="mb-4">
+                                            <label class="form-label">Notes (Optional)</label>
+                                            <textarea class="form-control" rows="2" id="attendanceNotes" placeholder="Any additional notes about this service..."></textarea>
+                                        </div>
+
+                                        <div class="d-flex gap-2">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="ti ti-check me-1"></i>Save Attendance
+                                            </button>
+                                            <button type="reset" class="btn btn-outline-secondary">Clear Form</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Summary Sidebar -->
+                        <div class="col-lg-4">
+                            <!-- Today's Summary -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Today's Summary</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between">
+                                            <span class="text-secondary">Total Attendance</span>
+                                            <span class="fw-bold" id="summaryTotal">0</span>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between">
+                                            <span class="text-secondary">First Timers</span>
+                                            <span class="text-success fw-bold" id="summaryFirstTimers">0</span>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between">
+                                            <span class="text-secondary">New Converts</span>
+                                            <span class="text-primary fw-bold" id="summaryConverts">0</span>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <small class="text-muted">Summary updates as you enter figures</small>
+                                </div>
+                            </div>
+
+                            <!-- This Week Stats -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">This Week</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between">
+                                            <span class="text-secondary">Total</span>
+                                            <span class="fw-bold">1,247</span>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between">
+                                            <span class="text-secondary">Average</span>
+                                            <span class="fw-bold">415</span>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between">
+                                            <span class="text-secondary">Highest</span>
+                                            <span class="fw-bold text-success">512 <small class="text-muted">(Sun 2nd)</small></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Quick Links -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Quick Actions</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-grid gap-2">
+                                        <a href="first-timers.html" class="btn btn-light-success">
+                                            <i class="ti ti-user-plus me-1"></i>Register First Timers
+                                        </a>
+                                        <a href="new-converts.html" class="btn btn-light-primary">
+                                            <i class="ti ti-heart me-1"></i>Add New Converts
+                                        </a>
+                                        <a href="homecell-office.html" class="btn btn-light-warning">
+                                            <i class="ti ti-home me-1"></i>Homecell Attendance
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Entries -->
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0">Recent Attendance Records</h5>
+                                    <a href="attendance-reports.html" class="btn btn-sm btn-outline-primary">View All</a>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover align-middle mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th>Date</th>
+                                                    <th>Service</th>
+                                                    <th>Male</th>
+                                                    <th>Female</th>
+                                                    <th>Children</th>
+                                                    <th>Total</th>
+                                                    <th>First Timers</th>
+                                                    <th>New Converts</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Mar 16, 2026</td>
+                                                    <td><span class="badge bg-primary">Sunday 2nd</span></td>
+                                                    <td>198</td>
+                                                    <td>245</td>
+                                                    <td>69</td>
+                                                    <td class="fw-bold">512</td>
+                                                    <td><span class="text-success">12</span></td>
+                                                    <td><span class="text-primary">4</span></td>
+                                                    <td><a href="#" class="btn btn-sm btn-light-primary">Edit</a></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Mar 16, 2026</td>
+                                                    <td><span class="badge bg-primary">Sunday 1st</span></td>
+                                                    <td>156</td>
+                                                    <td>189</td>
+                                                    <td>42</td>
+                                                    <td class="fw-bold">387</td>
+                                                    <td><span class="text-success">8</span></td>
+                                                    <td><span class="text-primary">2</span></td>
+                                                    <td><a href="#" class="btn btn-sm btn-light-primary">Edit</a></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Mar 12, 2026</td>
+                                                    <td><span class="badge bg-success">Wednesday</span></td>
+                                                    <td>124</td>
+                                                    <td>167</td>
+                                                    <td>57</td>
+                                                    <td class="fw-bold">348</td>
+                                                    <td><span class="text-success">5</span></td>
+                                                    <td><span class="text-primary">1</span></td>
+                                                    <td><a href="#" class="btn btn-sm btn-light-primary">Edit</a></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Mar 6, 2026</td>
+                                                    <td><span class="badge bg-warning">WOSE Fri</span></td>
+                                                    <td>142</td>
+                                                    <td>178</td>
+                                                    <td>38</td>
+                                                    <td class="fw-bold">358</td>
+                                                    <td><span class="text-success">3</span></td>
+                                                    <td><span class="text-primary">2</span></td>
+                                                    <td><a href="#" class="btn btn-sm btn-light-primary">Edit</a></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</div>
+
+<script src="assets/js/jquery-3.6.3.min.js"></script>
+<script src="assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
+<script src="assets/vendor/simplebar/simplebar.js"></script>
+<script src="assets/js/church-template.js"></script>
+<script src="assets/js/script.js"></script>
+<script>
+// Set today's date as default
+document.getElementById('serviceDate').valueAsDate = new Date();
+
+// Check if first week of month (WOSE)
+function checkWOSE() {
+    const date = new Date(document.getElementById('serviceDate').value);
+    const dayOfMonth = date.getDate();
+    const woseAlert = document.getElementById('woseAlert');
+    
+    if (dayOfMonth <= 7) {
+        woseAlert.classList.remove('d-none');
+    } else {
+        woseAlert.classList.add('d-none');
+    }
+}
+
+document.getElementById('serviceDate').addEventListener('change', checkWOSE);
+checkWOSE(); // Check on load
+
+// Service type selection handling
+document.getElementById('serviceType').addEventListener('change', function() {
+    const sundaySelect = document.getElementById('sundayServiceSelect');
+    const specialName = document.getElementById('specialServiceName');
+    
+    sundaySelect.style.display = this.value === 'sunday' ? 'block' : 'none';
+    specialName.style.display = this.value === 'special' ? 'block' : 'none';
+});
+
+// Auto-calculate total attendance
+const attendanceInputs = document.querySelectorAll('.attendance-input');
+attendanceInputs.forEach(input => {
+    input.addEventListener('input', calculateTotal);
+});
+
+function calculateTotal() {
+    const male = parseInt(document.getElementById('maleCount').value) || 0;
+    const female = parseInt(document.getElementById('femaleCount').value) || 0;
+    const children = parseInt(document.getElementById('childrenCount').value) || 0;
+    const total = male + female + children;
+    
+    document.getElementById('totalCount').value = total;
+    document.getElementById('summaryTotal').textContent = total;
+}
+
+// Update summary for first timers & converts
+document.getElementById('firstTimersCount').addEventListener('input', function() {
+    document.getElementById('summaryFirstTimers').textContent = this.value || 0;
+});
+
+document.getElementById('newConvertsCount').addEventListener('input', function() {
+    document.getElementById('summaryConverts').textContent = this.value || 0;
+});
+
+// Form submission
+document.getElementById('attendanceForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const serviceType = document.getElementById('serviceType').value;
+    if (!serviceType) {
+        alert('Please select a service type');
+        return;
+    }
+    
+    // TODO: API integration - POST to /api/attendance
+    const data = {
+        date: document.getElementById('serviceDate').value,
+        serviceType: serviceType,
+        sundayServiceNumber: document.getElementById('sundayServiceNumber').value,
+        specialName: document.getElementById('specialName').value,
+        male: document.getElementById('maleCount').value,
+        female: document.getElementById('femaleCount').value,
+        children: document.getElementById('childrenCount').value,
+        total: document.getElementById('totalCount').value,
+        firstTimers: document.getElementById('firstTimersCount').value,
+        newConverts: document.getElementById('newConvertsCount').value,
+        rededications: document.getElementById('rededications').value,
+        notes: document.getElementById('attendanceNotes').value
+    };
+    
+    console.log('Attendance data:', data);
+    alert('Attendance saved successfully!');
+    
+    // Reset form for next entry
+    this.reset();
+    document.getElementById('serviceDate').valueAsDate = new Date();
+    calculateTotal();
+});
+
+// Check if finance is enabled (from church settings)
+// TODO: Load from church settings API
+const financeEnabled = false; // Change based on settings
+if (financeEnabled) {
+    document.getElementById('financeSection').style.display = 'block';
+}
+</script>
+</body>
+
+</html>

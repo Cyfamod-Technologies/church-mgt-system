@@ -5,12 +5,13 @@
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
     <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="Church management section page using the ki-admin template." name="description">
-    <meta content="church management" name="keywords">
+    <meta content="Homecell attendance reports with Male, Female, Children breakdown." name="description">
+    <meta content="homecell reports" name="keywords">
     <meta content="la-themes" name="author">
     <link href="assets/images/logo/favicon.png" rel="icon" type="image/x-icon">
     <link href="assets/images/logo/favicon.png" rel="shortcut icon" type="image/x-icon">
-    <title>Church Management</title>
+    <title>Homecell Reports - LFC</title>
+
     <link href="assets/vendor/animation/animate.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com" rel="preconnect">
     <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
@@ -23,23 +24,427 @@
     <link href="assets/css/responsive.css" rel="stylesheet" type="text/css">
 </head>
 
-<body data-section-key="homecell-reports">
+<body data-title="Homecell Reports" data-subtitle="View attendance reports for all homecells with Male, Female, and Children breakdown.">
 <div class="app-wrapper">
     <div class="loader-wrapper"><div class="loader_24"></div></div>
     <nav id="church-nav"></nav>
     <div class="app-content">
         <div class="">
             <header class="header-main" id="church-header"></header>
-            <main id="church-section-root"></main>
+            <main>
+                <div class="container-fluid">
+                    <div class="row">
+                        <!-- Page Header -->
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                                        <div>
+                                            <h4 class="mb-1">Homecell Reports</h4>
+                                            <p class="text-secondary mb-0">View attendance breakdown (Male, Female, Children) for each homecell meeting.</p>
+                                        </div>
+                                        <div class="d-flex gap-2 flex-wrap">
+                                            <select class="form-select" id="weekFilter" style="width: auto;">
+                                                <option value="current">This Week</option>
+                                                <option value="last">Last Week</option>
+                                                <option value="2weeks">2 Weeks Ago</option>
+                                                <option value="month">This Month</option>
+                                            </select>
+                                            <button class="btn btn-outline-primary">
+                                                <i class="ti ti-download me-1"></i>Export Report
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Summary Stats -->
+                        <div class="col-md-3">
+                            <div class="card overview-details-box b-s-3-primary">
+                                <div class="card-body">
+                                    <p class="text-dark f-w-600 mb-1">Total Attendance</p>
+                                    <h3 class="text-primary mb-0">284</h3>
+                                    <span class="badge text-light-primary mt-2">All homecells this week</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card overview-details-box b-s-3-info">
+                                <div class="card-body">
+                                    <p class="text-dark f-w-600 mb-1">Male</p>
+                                    <h3 class="text-info mb-0">98</h3>
+                                    <span class="badge text-light-info mt-2">34.5% of total</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card overview-details-box b-s-3-danger">
+                                <div class="card-body">
+                                    <p class="text-dark f-w-600 mb-1">Female</p>
+                                    <h3 class="text-danger mb-0">126</h3>
+                                    <span class="badge text-light-danger mt-2">44.4% of total</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card overview-details-box b-s-3-warning">
+                                <div class="card-body">
+                                    <p class="text-dark f-w-600 mb-1">Children</p>
+                                    <h3 class="text-warning mb-0">60</h3>
+                                    <span class="badge text-light-warning mt-2">21.1% of total</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Homecell Reports Table -->
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0">Homecell Attendance Reports</h5>
+                                    <div class="d-flex gap-2">
+                                        <input type="text" class="form-control form-control-sm" placeholder="Search homecell..." style="width: 200px;">
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover align-middle">
+                                            <thead>
+                                                <tr>
+                                                    <th>Homecell Name</th>
+                                                    <th>Leader</th>
+                                                    <th class="text-center text-info"><i class="ti ti-man me-1"></i>Male</th>
+                                                    <th class="text-center text-danger"><i class="ti ti-woman me-1"></i>Female</th>
+                                                    <th class="text-center text-warning"><i class="ti ti-friends me-1"></i>Children</th>
+                                                    <th class="text-center"><strong>Total</strong></th>
+                                                    <th>Meeting Date</th>
+                                                    <th>Status</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td><strong>Grace Homecell</strong></td>
+                                                    <td>Sis. Nkiru James</td>
+                                                    <td class="text-center"><span class="badge bg-light-info">12</span></td>
+                                                    <td class="text-center"><span class="badge bg-light-danger">15</span></td>
+                                                    <td class="text-center"><span class="badge bg-light-warning">4</span></td>
+                                                    <td class="text-center"><strong class="text-primary">31</strong></td>
+                                                    <td>Mar 14, 2026</td>
+                                                    <td><span class="badge bg-success">Submitted</span></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-light-primary" data-bs-toggle="modal" data-bs-target="#viewReportModal" onclick="viewReport('Grace Homecell', 'Sis. Nkiru James', 12, 15, 4)">
+                                                            <i class="ti ti-eye"></i> View
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>Victory Homecell</strong></td>
+                                                    <td>Bro. Ayo Alabi</td>
+                                                    <td class="text-center"><span class="badge bg-light-info">8</span></td>
+                                                    <td class="text-center"><span class="badge bg-light-danger">10</span></td>
+                                                    <td class="text-center"><span class="badge bg-light-warning">4</span></td>
+                                                    <td class="text-center"><strong class="text-primary">22</strong></td>
+                                                    <td>Mar 14, 2026</td>
+                                                    <td><span class="badge bg-success">Submitted</span></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-light-primary" data-bs-toggle="modal" data-bs-target="#viewReportModal" onclick="viewReport('Victory Homecell', 'Bro. Ayo Alabi', 8, 10, 4)">
+                                                            <i class="ti ti-eye"></i> View
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>Faith Homecell</strong></td>
+                                                    <td>Bro. Chidi Eze</td>
+                                                    <td class="text-center"><span class="badge bg-light-info">14</span></td>
+                                                    <td class="text-center"><span class="badge bg-light-danger">18</span></td>
+                                                    <td class="text-center"><span class="badge bg-light-warning">8</span></td>
+                                                    <td class="text-center"><strong class="text-primary">40</strong></td>
+                                                    <td>Mar 14, 2026</td>
+                                                    <td><span class="badge bg-success">Submitted</span></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-light-primary" data-bs-toggle="modal" data-bs-target="#viewReportModal" onclick="viewReport('Faith Homecell', 'Bro. Chidi Eze', 14, 18, 8)">
+                                                            <i class="ti ti-eye"></i> View
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>Joy Homecell</strong></td>
+                                                    <td>Sis. Amaka Obi</td>
+                                                    <td class="text-center"><span class="badge bg-light-info">10</span></td>
+                                                    <td class="text-center"><span class="badge bg-light-danger">12</span></td>
+                                                    <td class="text-center"><span class="badge bg-light-warning">6</span></td>
+                                                    <td class="text-center"><strong class="text-primary">28</strong></td>
+                                                    <td>Mar 14, 2026</td>
+                                                    <td><span class="badge bg-success">Submitted</span></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-light-primary" data-bs-toggle="modal" data-bs-target="#viewReportModal" onclick="viewReport('Joy Homecell', 'Sis. Amaka Obi', 10, 12, 6)">
+                                                            <i class="ti ti-eye"></i> View
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>Peace Homecell</strong></td>
+                                                    <td>Bro. Emeka Nwosu</td>
+                                                    <td class="text-center"><span class="badge bg-light-info">15</span></td>
+                                                    <td class="text-center"><span class="badge bg-light-danger">20</span></td>
+                                                    <td class="text-center"><span class="badge bg-light-warning">10</span></td>
+                                                    <td class="text-center"><strong class="text-primary">45</strong></td>
+                                                    <td>Mar 14, 2026</td>
+                                                    <td><span class="badge bg-success">Submitted</span></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-light-primary" data-bs-toggle="modal" data-bs-target="#viewReportModal" onclick="viewReport('Peace Homecell', 'Bro. Emeka Nwosu', 15, 20, 10)">
+                                                            <i class="ti ti-eye"></i> View
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>Hope Homecell</strong></td>
+                                                    <td>Sis. Blessing Okoro</td>
+                                                    <td class="text-center"><span class="badge bg-light-info">11</span></td>
+                                                    <td class="text-center"><span class="badge bg-light-danger">14</span></td>
+                                                    <td class="text-center"><span class="badge bg-light-warning">7</span></td>
+                                                    <td class="text-center"><strong class="text-primary">32</strong></td>
+                                                    <td>Mar 14, 2026</td>
+                                                    <td><span class="badge bg-success">Submitted</span></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-light-primary" data-bs-toggle="modal" data-bs-target="#viewReportModal" onclick="viewReport('Hope Homecell', 'Sis. Blessing Okoro', 11, 14, 7)">
+                                                            <i class="ti ti-eye"></i> View
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>Love Homecell</strong></td>
+                                                    <td>Bro. Tunde Adebayo</td>
+                                                    <td class="text-center"><span class="badge bg-light-info">9</span></td>
+                                                    <td class="text-center"><span class="badge bg-light-danger">13</span></td>
+                                                    <td class="text-center"><span class="badge bg-light-warning">5</span></td>
+                                                    <td class="text-center"><strong class="text-primary">27</strong></td>
+                                                    <td>Mar 14, 2026</td>
+                                                    <td><span class="badge bg-success">Submitted</span></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-light-primary" data-bs-toggle="modal" data-bs-target="#viewReportModal" onclick="viewReport('Love Homecell', 'Bro. Tunde Adebayo', 9, 13, 5)">
+                                                            <i class="ti ti-eye"></i> View
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>Unity Homecell</strong></td>
+                                                    <td>Sis. Funke Adeniyi</td>
+                                                    <td class="text-center"><span class="badge bg-light-info">19</span></td>
+                                                    <td class="text-center"><span class="badge bg-light-danger">24</span></td>
+                                                    <td class="text-center"><span class="badge bg-light-warning">16</span></td>
+                                                    <td class="text-center"><strong class="text-primary">59</strong></td>
+                                                    <td>Mar 14, 2026</td>
+                                                    <td><span class="badge bg-success">Submitted</span></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-light-primary" data-bs-toggle="modal" data-bs-target="#viewReportModal" onclick="viewReport('Unity Homecell', 'Sis. Funke Adeniyi', 19, 24, 16)">
+                                                            <i class="ti ti-eye"></i> View
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr class="table-warning">
+                                                    <td><strong>Light Homecell</strong></td>
+                                                    <td>Bro. Samuel Okonkwo</td>
+                                                    <td class="text-center text-muted">—</td>
+                                                    <td class="text-center text-muted">—</td>
+                                                    <td class="text-center text-muted">—</td>
+                                                    <td class="text-center text-muted">—</td>
+                                                    <td>—</td>
+                                                    <td><span class="badge bg-warning">Pending</span></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-light-warning">
+                                                            <i class="ti ti-bell"></i> Remind
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot class="table-light">
+                                                <tr>
+                                                    <th colspan="2" class="text-end">Weekly Total:</th>
+                                                    <th class="text-center text-info"><strong>98</strong></th>
+                                                    <th class="text-center text-danger"><strong>126</strong></th>
+                                                    <th class="text-center text-warning"><strong>60</strong></th>
+                                                    <th class="text-center text-primary"><strong>284</strong></th>
+                                                    <th colspan="3"></th>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Weekly Comparison -->
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Weekly Attendance Comparison</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>Week</th>
+                                                    <th class="text-center">Male</th>
+                                                    <th class="text-center">Female</th>
+                                                    <th class="text-center">Children</th>
+                                                    <th class="text-center">Total</th>
+                                                    <th class="text-center">Change</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td><strong>This Week</strong> (Mar 10-16)</td>
+                                                    <td class="text-center">98</td>
+                                                    <td class="text-center">126</td>
+                                                    <td class="text-center">60</td>
+                                                    <td class="text-center"><strong>284</strong></td>
+                                                    <td class="text-center text-success"><i class="ti ti-trending-up"></i> +8%</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Last Week (Mar 3-9)</td>
+                                                    <td class="text-center">92</td>
+                                                    <td class="text-center">118</td>
+                                                    <td class="text-center">53</td>
+                                                    <td class="text-center"><strong>263</strong></td>
+                                                    <td class="text-center text-success"><i class="ti ti-trending-up"></i> +5%</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>2 Weeks Ago (Feb 24 - Mar 2)</td>
+                                                    <td class="text-center">88</td>
+                                                    <td class="text-center">112</td>
+                                                    <td class="text-center">50</td>
+                                                    <td class="text-center"><strong>250</strong></td>
+                                                    <td class="text-center text-danger"><i class="ti ti-trending-down"></i> -3%</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
         </div>
     </div>
 </div>
+
+<!-- View Report Modal -->
+<div class="modal fade" id="viewReportModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="ti ti-report me-2"></i>Homecell Report Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <p class="mb-1"><strong>Homecell:</strong> <span id="reportHomecell">-</span></p>
+                        <p class="mb-1"><strong>Leader:</strong> <span id="reportLeader">-</span></p>
+                        <p class="mb-0"><strong>Meeting Date:</strong> March 14, 2026</p>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <p class="mb-1"><strong>Report Status:</strong> <span class="badge bg-success">Submitted</span></p>
+                        <p class="mb-0"><strong>Submitted:</strong> Mar 14, 2026 at 9:45 PM</p>
+                    </div>
+                </div>
+
+                <hr>
+
+                <h6 class="mb-3">Attendance Breakdown</h6>
+                <div class="row text-center mb-4">
+                    <div class="col-md-3">
+                        <div class="border rounded p-3">
+                            <i class="ti ti-man text-info" style="font-size: 2rem;"></i>
+                            <h3 class="mb-0 text-info" id="reportMale">-</h3>
+                            <p class="text-muted mb-0">Male</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="border rounded p-3">
+                            <i class="ti ti-woman text-danger" style="font-size: 2rem;"></i>
+                            <h3 class="mb-0 text-danger" id="reportFemale">-</h3>
+                            <p class="text-muted mb-0">Female</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="border rounded p-3">
+                            <i class="ti ti-friends text-warning" style="font-size: 2rem;"></i>
+                            <h3 class="mb-0 text-warning" id="reportChildren">-</h3>
+                            <p class="text-muted mb-0">Children</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="border rounded p-3 bg-primary text-white">
+                            <i class="ti ti-users" style="font-size: 2rem;"></i>
+                            <h3 class="mb-0" id="reportTotal">-</h3>
+                            <p class="mb-0">Total</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h6 class="mb-3">Additional Details</h6>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">First Timers</label>
+                            <p class="mb-0"><strong>2</strong></p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Testimonies Shared</label>
+                            <p class="mb-0"><strong>3</strong></p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Offerings Collected</label>
+                            <p class="mb-0"><strong>₦25,500</strong></p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Prayer Requests</label>
+                            <p class="mb-0"><strong>5</strong></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-0">
+                    <label class="form-label text-muted small">Leader's Notes</label>
+                    <p class="mb-0 border rounded p-2 bg-light">Great meeting this week. We had 2 first-timers who were invited by members. The study on faith was engaging and everyone participated. Follow-up planned for the new members.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-primary">
+                    <i class="ti ti-printer me-1"></i>Print Report
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="assets/js/jquery-3.6.3.min.js"></script>
 <script src="assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
 <script src="assets/vendor/simplebar/simplebar.js"></script>
-<script src="assets/js/church-section-pages.js"></script>
 <script src="assets/js/church-template.js"></script>
 <script src="assets/js/script.js"></script>
+<script>
+function viewReport(homecell, leader, male, female, children) {
+    document.getElementById('reportHomecell').textContent = homecell;
+    document.getElementById('reportLeader').textContent = leader;
+    document.getElementById('reportMale').textContent = male;
+    document.getElementById('reportFemale').textContent = female;
+    document.getElementById('reportChildren').textContent = children;
+    document.getElementById('reportTotal').textContent = male + female + children;
+}
+</script>
 </body>
 
 </html>

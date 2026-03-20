@@ -53,55 +53,49 @@
       ]
     },
     {
-      title: "Church Administration",
-      id: "church-admin",
+      title: "Church Setup",
+      id: "church-setup",
       icon: "briefcase",
       items: [
         { label: "Church Profile", href: "church-profile.html" },
-        { label: "Church Structure", href: "church-structure.html" },
-        { label: "Branches", href: "branches.html" },
-        { label: "Districts", href: "districts.html" },
-        { label: "Sub-Districts / Zones", href: "zones.html" },
-        { label: "Homecells", href: "homecells.html" },
+        { label: "Service Schedule", href: "service-schedule.html" },
+        { label: "Branches", href: "branches.html" }
+      ]
+    },
+    {
+      title: "Weekly Operations",
+      id: "weekly-ops",
+      icon: "stack",
+      items: [
+        { label: "Record Attendance", href: "attendance.html" },
+        { label: "First Timers Entry", href: "first-timers.html" },
+        { label: "New Converts Entry", href: "new-converts.html" },
+        { label: "Rededications", href: "rededications.html" }
+      ]
+    },
+    {
+      title: "Member Journey",
+      id: "member-journey",
+      icon: "queue-list",
+      items: [
+        { label: "First Timers", href: "first-timers.html" },
+        { label: "Follow-Up", href: "follow-up.html" },
+        { label: "Foundation Class", href: "foundation-class.html" },
+        { label: "Baptism Records", href: "baptism-reports.html" },
+        { label: "WOFBI (BCC/LCC/LDC)", href: "wofbi.html" },
+        { label: "Members", href: "members.html" },
         { label: "Church Units", href: "church-units.html" }
       ]
     },
     {
-      title: "User Management",
-      id: "people-management",
-      icon: "queue-list",
+      title: "Homecell Management",
+      id: "homecell-mgmt",
+      icon: "home",
       items: [
-        { label: "Members", href: "members.html" },
-        { label: "First Timers", href: "first-timers.html" },
-        { label: "New Converts", href: "new-converts.html" },
-        { label: "Re-Dedications", href: "rededications.html" },
-        { label: "Workers / Leaders", href: "workers.html" },
-        { label: "Users", href: "users.html" }
-      ]
-    },
-    {
-      title: "Leadership Management",
-      id: "leadership-management",
-      icon: "gift",
-      items: [
-        { label: "Pastors", href: "pastors.html" },
-        { label: "District Pastors", href: "district-pastors.html" },
-        { label: "District Ministers", href: "district-ministers.html" },
-        { label: "Zone Ministers", href: "zone-ministers.html" },
+        { label: "Homecells", href: "homecells.html" },
         { label: "Homecell Leaders", href: "homecell-leaders.html" },
-        { label: "Assignments", href: "assignments.html" }
-      ]
-    },
-    {
-      title: "Follow-Up & Growth",
-      id: "follow-up-growth",
-      icon: "briefcase-advance",
-      items: [
-        { label: "Hospitality Unit", href: "hospitality-unit.html" },
-        { label: "Callers Squad", href: "callers-squad.html" },
-        { label: "Counselling Unit", href: "counselling-unit.html" },
-        { label: "Believers Foundation Class", href: "foundation-class.html" },
-        { label: "Homecell Office", href: "homecell-office.html" }
+        { label: "Homecell Attendance", href: "homecell-office.html" },
+        { label: "Homecell Reports", href: "homecell-reports.html" }
       ]
     },
     {
@@ -110,30 +104,22 @@
       icon: "chart",
       items: [
         { label: "Attendance Reports", href: "attendance-reports.html" },
-        { label: "Homecell Reports", href: "homecell-reports.html" },
         { label: "Growth Reports", href: "growth-reports.html" },
         { label: "Retention Reports", href: "retention-reports.html" },
-        { label: "Baptism Reports", href: "baptism-reports.html" },
-        { label: "Foundation Class Reports", href: "foundation-class-reports.html" }
+        { label: "Foundation Class Reports", href: "foundation-class-reports.html" },
+        { label: "Baptism Reports", href: "baptism-reports.html" }
       ]
     },
     {
-      title: "Access Control",
-      id: "access-control",
+      title: "Administration",
+      id: "admin-group",
       icon: "table",
       items: [
-        { label: "Roles", href: "roles.html" },
-        { label: "Permissions", href: "permissions.html" }
-      ]
-    },
-    {
-      title: "System",
-      id: "system-group",
-      icon: "document-text",
-      items: [
-        { label: "Settings", href: "settings.html" },
-        { label: "Audit Logs", href: "audit-logs.html" },
-        { label: "Support", href: "support.html" }
+        { label: "Users", href: "users.html" },
+        { label: "Workers / Leaders", href: "workers.html" },
+        { label: "Roles & Permissions", href: "roles.html" },
+        { label: "Finance", href: "finance.html" },
+        { label: "Settings", href: "settings.html" }
       ]
     }
   ];

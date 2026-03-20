@@ -5,12 +5,12 @@
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
     <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="Church registration page using the template design." name="description">
-    <meta content="church registration" name="keywords">
+    <meta content="Church registration and onboarding page for Living Faith Church Management System." name="description">
+    <meta content="church registration, onboarding" name="keywords">
     <meta content="la-themes" name="author">
     <link href="assets/images/logo/favicon.png" rel="icon" type="image/x-icon">
     <link href="assets/images/logo/favicon.png" rel="shortcut icon" type="image/x-icon">
-    <title>Register Church Account</title>
+    <title>Church Onboarding - Living Faith</title>
 
     <link href="assets/vendor/fontawesome/css/all.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com" rel="preconnect">
@@ -21,6 +21,26 @@
     <link href="assets/vendor/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
     <link href="assets/css/style.css" rel="stylesheet" type="text/css">
     <link href="assets/css/responsive.css" rel="stylesheet" type="text/css">
+    <style>
+        .step { display: none; }
+        .step.active { display: block; }
+        .step-indicator { 
+            width: 40px; 
+            height: 40px; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .step-indicator.active { background: #0d6efd; color: white; }
+        .step-indicator.completed { background: #198754; color: white; }
+        .step-indicator.pending { background: #e9ecef; color: #6c757d; }
+        .step-line { height: 3px; flex: 1; margin: 0 8px; }
+        .step-line.completed { background: #198754; }
+        .step-line.pending { background: #e9ecef; }
+    </style>
 </head>
 
 <body>
@@ -35,99 +55,284 @@
                                 <a class="logo d-inline-block mb-3" href="index.html">
                                     <img alt="logo" src="assets/images/logo/3.png">
                                 </a>
-                                <h3>Create Church Account</h3>
-                                <p class="f-s-12 text-secondary mb-0">Use the approved registration flow fields from the system document.</p>
+                                <h3>Church Onboarding</h3>
+                                <p class="f-s-12 text-secondary mb-0">Register your church and configure service schedules to get started.</p>
                             </div>
-                            <form class="app-form">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label class="form-label">Church Name</label>
-                                            <input class="form-control" placeholder="Enter church name" type="text">
+
+                            <!-- Step Progress Indicators -->
+                            <div class="d-flex align-items-center justify-content-center mb-4 px-4">
+                                <div class="step-indicator active" id="indicator-1">1</div>
+                                <div class="step-line pending" id="line-1"></div>
+                                <div class="step-indicator pending" id="indicator-2">2</div>
+                                <div class="step-line pending" id="line-2"></div>
+                                <div class="step-indicator pending" id="indicator-3">3</div>
+                                <div class="step-line pending" id="line-3"></div>
+                                <div class="step-indicator pending" id="indicator-4">4</div>
+                            </div>
+                            <div class="d-flex justify-content-between mb-4 px-2">
+                                <span class="small text-center" style="width:80px;">Church Info</span>
+                                <span class="small text-center" style="width:80px;">Pastor Info</span>
+                                <span class="small text-center" style="width:80px;">Services</span>
+                                <span class="small text-center" style="width:80px;">Admin</span>
+                            </div>
+
+                            <form class="app-form" id="churchOnboardingForm">
+                                
+                                <!-- Step 1: Church Information -->
+                                <div class="step active" id="step-1">
+                                    <div class="border rounded p-4 mb-4">
+                                        <h5 class="mb-3"><i class="ti ti-building-church me-2"></i>Church Information</h5>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Church Name</label>
+                                                    <input class="form-control" placeholder="e.g. Living Faith Church Lekki" type="text">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Church Code</label>
+                                                    <input class="form-control" placeholder="e.g. LFC-LAG-001 (auto-generated if blank)" type="text">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="mb-3">
+                                                    <label class="form-label">State</label>
+                                                    <input class="form-control" placeholder="Enter state" type="text">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="mb-3">
+                                                    <label class="form-label">City</label>
+                                                    <input class="form-control" placeholder="Enter city" type="text">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="mb-3">
+                                                    <label class="form-label">LGA / District Area</label>
+                                                    <input class="form-control" placeholder="Enter LGA or district area" type="text">
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Full Address</label>
+                                                    <textarea class="form-control" rows="2" placeholder="Enter complete church address"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Church Email</label>
+                                                    <input class="form-control" placeholder="e.g. info@lfclekki.org" type="email">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Church Phone Number</label>
+                                                    <input class="form-control" placeholder="e.g. +234 801 234 5678" type="text">
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label class="form-label">Church Type or Level</label>
-                                            <select class="form-select">
-                                                <option>State Church</option>
-                                                <option>District Church</option>
-                                                <option>Zonal Church</option>
-                                                <option>Area Church</option>
-                                                <option>Church Branch</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label class="form-label">State</label>
-                                            <input class="form-control" placeholder="Enter state" type="text">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label class="form-label">District / Area</label>
-                                            <input class="form-control" placeholder="Enter district or area" type="text">
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="mb-3">
-                                            <label class="form-label">Church Address</label>
-                                            <textarea class="form-control" rows="3"></textarea>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label class="form-label">Church Email</label>
-                                            <input class="form-control" placeholder="Enter official email" type="email">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label class="form-label">Official Phone Number</label>
-                                            <input class="form-control" placeholder="Enter official phone number" type="text">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label class="form-label">Pastor in Charge Name</label>
-                                            <input class="form-control" placeholder="Enter pastor name" type="text">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label class="form-label">Admin Full Name</label>
-                                            <input class="form-control" placeholder="Enter admin full name" type="text">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label class="form-label">Admin Phone Number</label>
-                                            <input class="form-control" placeholder="Enter admin phone number" type="text">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label class="form-label">Admin Email</label>
-                                            <input class="form-control" placeholder="Enter admin email" type="email">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label class="form-label">Password</label>
-                                            <input class="form-control" placeholder="Enter password" type="password">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label class="form-label">Confirm Password</label>
-                                            <input class="form-control" placeholder="Confirm password" type="password">
-                                        </div>
+                                    <div class="d-flex justify-content-between">
+                                        <a class="text-primary text-decoration-underline" href="sign_in.html">Already have an account? Login</a>
+                                        <button type="button" class="btn btn-primary" onclick="nextStep()">Next <i class="ti ti-arrow-right ms-1"></i></button>
                                     </div>
                                 </div>
-                                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-                                    <a class="text-primary text-decoration-underline" href="sign_in.html">Go to Login</a>
-                                    <a class="btn btn-primary" href="dashboard.html" role="button">Create Church Account</a>
+
+                                <!-- Step 2: Pastor Information -->
+                                <div class="step" id="step-2">
+                                    <div class="border rounded p-4 mb-4">
+                                        <h5 class="mb-3"><i class="ti ti-user me-2"></i>Pastor in Charge Information</h5>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Pastor's Full Name</label>
+                                                    <input class="form-control" placeholder="e.g. Pst. Samuel Adeyemi" type="text">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Pastor's Phone Number</label>
+                                                    <input class="form-control" placeholder="e.g. +234 803 111 2233" type="text">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Pastor's Email</label>
+                                                    <input class="form-control" placeholder="e.g. pastor@lfclekki.org" type="email">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <button type="button" class="btn btn-outline-secondary" onclick="prevStep()"><i class="ti ti-arrow-left me-1"></i> Previous</button>
+                                        <button type="button" class="btn btn-primary" onclick="nextStep()">Next <i class="ti ti-arrow-right ms-1"></i></button>
+                                    </div>
+                                </div>
+
+                                <!-- Step 3: Service Schedule -->
+                                <div class="step" id="step-3">
+                                    <div class="border rounded p-4 mb-4">
+                                        <h5 class="mb-3"><i class="ti ti-calendar me-2"></i>Service Schedule</h5>
+                                        
+                                        <!-- Sunday Services -->
+                                        <div class="bg-light p-3 rounded mb-3">
+                                            <h6 class="mb-3">Sunday Services</h6>
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Number of Sunday Services</label>
+                                                        <select class="form-select" id="sundayServiceCount">
+                                                            <option value="1">1 Service</option>
+                                                            <option value="2" selected>2 Services</option>
+                                                            <option value="3">3 Services</option>
+                                                            <option value="4">4 Services</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row" id="sundayServiceTimes">
+                                                <div class="col-md-3 sunday-service-time">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">1st Service Time</label>
+                                                        <input class="form-control" type="time" value="07:00">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3 sunday-service-time">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">2nd Service Time</label>
+                                                        <input class="form-control" type="time" value="09:00">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Wednesday Service -->
+                                        <div class="bg-light p-3 rounded mb-3">
+                                            <h6 class="mb-3">Wednesday Service</h6>
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Wednesday Service Time</label>
+                                                        <input class="form-control" type="time" value="17:30">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-check mt-4">
+                                                        <input class="form-check-input" type="checkbox" id="wednesdayEnabled" checked>
+                                                        <label class="form-check-label" for="wednesdayEnabled">Wednesday service is active</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Week of Spiritual Emphasis (WOSE) -->
+                                        <div class="bg-light p-3 rounded mb-3">
+                                            <h6 class="mb-3">Week of Spiritual Emphasis (WOSE)</h6>
+                                            <p class="text-muted small mb-3">WOSE occurs on the first week of every month (Wednesday, Thursday, Friday)</p>
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Wednesday Time</label>
+                                                        <input class="form-control" type="time" value="17:30">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Thursday Time</label>
+                                                        <input class="form-control" type="time" value="17:30">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Friday Time</label>
+                                                        <input class="form-control" type="time" value="17:30">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-check mt-4">
+                                                        <input class="form-check-input" type="checkbox" id="woseEnabled" checked>
+                                                        <label class="form-check-label" for="woseEnabled">WOSE is active</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Special/Unplanned Services -->
+                                        <div class="bg-light p-3 rounded">
+                                            <h6 class="mb-3">Special / Unplanned Services</h6>
+                                            <p class="text-muted small mb-3">Enable this to allow recording attendance for ad-hoc services</p>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="specialServicesEnabled" checked>
+                                                <label class="form-check-label" for="specialServicesEnabled">Allow special/unplanned services</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <button type="button" class="btn btn-outline-secondary" onclick="prevStep()"><i class="ti ti-arrow-left me-1"></i> Previous</button>
+                                        <button type="button" class="btn btn-primary" onclick="nextStep()">Next <i class="ti ti-arrow-right ms-1"></i></button>
+                                    </div>
+                                </div>
+
+                                <!-- Step 4: Admin Account -->
+                                <div class="step" id="step-4">
+                                    <div class="border rounded p-4 mb-4">
+                                        <h5 class="mb-3"><i class="ti ti-lock me-2"></i>Admin Account Setup</h5>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Admin Full Name</label>
+                                                    <input class="form-control" placeholder="Enter admin full name" type="text">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Admin Phone Number</label>
+                                                    <input class="form-control" placeholder="e.g. +234 803 876 9000" type="text">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Admin Email</label>
+                                                    <input class="form-control" placeholder="e.g. admin@lfclekki.org" type="email">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6"></div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Password</label>
+                                                    <input class="form-control" placeholder="Enter password" type="password">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Confirm Password</label>
+                                                    <input class="form-control" placeholder="Confirm password" type="password">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Optional: Finance Tracking -->
+                                    <div class="border rounded p-4 mb-4">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h5 class="mb-1"><i class="ti ti-wallet me-2"></i>Finance Tracking (Optional)</h5>
+                                                <p class="text-muted small mb-0">Enable to track offerings, tithes and donations per service</p>
+                                            </div>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="financeEnabled">
+                                                <label class="form-check-label" for="financeEnabled">Enable</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex justify-content-between">
+                                        <button type="button" class="btn btn-outline-secondary" onclick="prevStep()"><i class="ti ti-arrow-left me-1"></i> Previous</button>
+                                        <button type="button" class="btn btn-success btn-lg" onclick="completeRegistration()">
+                                            <i class="ti ti-check me-1"></i> Complete Registration
+                                        </button>
+                                    </div>
                                 </div>
                             </form>
                         </div>
@@ -140,6 +345,92 @@
 
 <script src="assets/js/jquery-3.6.3.min.js"></script>
 <script src="assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
+<script>
+let currentStep = 1;
+const totalSteps = 4;
+
+function updateStepIndicators() {
+    for (let i = 1; i <= totalSteps; i++) {
+        const indicator = document.getElementById(`indicator-${i}`);
+        const line = document.getElementById(`line-${i}`);
+        
+        indicator.classList.remove('active', 'completed', 'pending');
+        
+        if (i < currentStep) {
+            indicator.classList.add('completed');
+            indicator.innerHTML = '<i class="ti ti-check"></i>';
+            if (line) {
+                line.classList.remove('pending');
+                line.classList.add('completed');
+            }
+        } else if (i === currentStep) {
+            indicator.classList.add('active');
+            indicator.textContent = i;
+            if (line) {
+                line.classList.remove('completed');
+                line.classList.add('pending');
+            }
+        } else {
+            indicator.classList.add('pending');
+            indicator.textContent = i;
+            if (line) {
+                line.classList.remove('completed');
+                line.classList.add('pending');
+            }
+        }
+    }
+}
+
+function showStep(step) {
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    document.getElementById(`step-${step}`).classList.add('active');
+    updateStepIndicators();
+}
+
+function nextStep() {
+    if (currentStep < totalSteps) {
+        currentStep++;
+        showStep(currentStep);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+}
+
+function prevStep() {
+    if (currentStep > 1) {
+        currentStep--;
+        showStep(currentStep);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+}
+
+function completeRegistration() {
+    // TODO: API integration - POST to /api/churches/register
+    alert('Church registration completed! Redirecting to dashboard...');
+    window.location.href = 'dashboard.html';
+}
+
+// Dynamic Sunday service time fields
+document.getElementById('sundayServiceCount').addEventListener('change', function() {
+    const count = parseInt(this.value);
+    const container = document.getElementById('sundayServiceTimes');
+    container.innerHTML = '';
+    
+    for (let i = 1; i <= count; i++) {
+        const suffix = i === 1 ? 'st' : i === 2 ? 'nd' : i === 3 ? 'rd' : 'th';
+        const defaultTime = i === 1 ? '07:00' : i === 2 ? '09:00' : i === 3 ? '11:00' : '14:00';
+        container.innerHTML += `
+            <div class="col-md-3 sunday-service-time">
+                <div class="mb-3">
+                    <label class="form-label">${i}${suffix} Service Time</label>
+                    <input class="form-control" type="time" value="${defaultTime}">
+                </div>
+            </div>
+        `;
+    }
+});
+</script>
 </body>
+
+</html>
 
 </html>

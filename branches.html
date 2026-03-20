@@ -5,12 +5,13 @@
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
     <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="Church management section page using the ki-admin template." name="description">
-    <meta content="church management" name="keywords">
+    <meta content="Manage church branches - add, tag, and organize branch relationships." name="description">
+    <meta content="church branches" name="keywords">
     <meta content="la-themes" name="author">
     <link href="assets/images/logo/favicon.png" rel="icon" type="image/x-icon">
     <link href="assets/images/logo/favicon.png" rel="shortcut icon" type="image/x-icon">
-    <title>Church Management</title>
+    <title>Branches - LFC</title>
+
     <link href="assets/vendor/animation/animate.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com" rel="preconnect">
     <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
@@ -23,23 +24,492 @@
     <link href="assets/css/responsive.css" rel="stylesheet" type="text/css">
 </head>
 
-<body data-section-key="branches">
+<body data-title="Branches" data-subtitle="Add and manage your church branches with custom tags and assignments.">
 <div class="app-wrapper">
     <div class="loader-wrapper"><div class="loader_24"></div></div>
     <nav id="church-nav"></nav>
     <div class="app-content">
         <div class="">
             <header class="header-main" id="church-header"></header>
-            <main id="church-section-root"></main>
+            <main>
+                <div class="container-fluid">
+                    <div class="row">
+                        <!-- Page Header -->
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                                        <div>
+                                            <h4 class="mb-1">Church Branches</h4>
+                                            <p class="text-secondary mb-0">Add branches with custom tags (District, Zone, Sub-District, etc.) and manage their relationships.</p>
+                                        </div>
+                                        <div class="d-flex gap-2 flex-wrap">
+                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBranchModal">
+                                                <i class="ti ti-plus me-1"></i>Add Branch
+                                            </button>
+                                            <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#manageTagsModal">
+                                                <i class="ti ti-tags me-1"></i>Manage Tags
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Stats -->
+                        <div class="col-md-4">
+                            <div class="card overview-details-box b-s-3-primary">
+                                <div class="card-body">
+                                    <p class="text-dark f-w-600 mb-1">Total Branches</p>
+                                    <h3 class="text-primary mb-0">8</h3>
+                                    <span class="badge text-light-primary mt-2">Under your church</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card overview-details-box b-s-3-success">
+                                <div class="card-body">
+                                    <p class="text-dark f-w-600 mb-1">Direct Branches</p>
+                                    <h3 class="text-success mb-0">3</h3>
+                                    <span class="badge text-light-success mt-2">Directly under you</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card overview-details-box b-s-3-warning">
+                                <div class="card-body">
+                                    <p class="text-dark f-w-600 mb-1">Sub-Branches</p>
+                                    <h3 class="text-warning mb-0">5</h3>
+                                    <span class="badge text-light-warning mt-2">Under other branches</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Branches List -->
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0">Your Branches</h5>
+                                    <div class="d-flex gap-2">
+                                        <select class="form-select form-select-sm" style="width: auto;" id="filterByTag">
+                                            <option value="">All Tags</option>
+                                            <option value="district">District</option>
+                                            <option value="zone">Zone</option>
+                                            <option value="sub-district">Sub-District</option>
+                                        </select>
+                                        <input type="text" class="form-control form-control-sm" placeholder="Search branches..." style="width: 200px;">
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover align-middle">
+                                            <thead>
+                                                <tr>
+                                                    <th>Branch Name</th>
+                                                    <th>Tag</th>
+                                                    <th>Assigned Under</th>
+                                                    <th>Pastor in Charge</th>
+                                                    <th>Location</th>
+                                                    <th>Status</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- Direct Branch - Lekki -->
+                                                <tr>
+                                                    <td>
+                                                        <strong><i class="ti ti-building-community me-1 text-primary"></i>Lekki Branch</strong>
+                                                    </td>
+                                                    <td><span class="badge bg-primary">District</span></td>
+                                                    <td>
+                                                        <span class="text-muted"><i class="ti ti-home me-1"></i>Your Church (Direct)</span>
+                                                    </td>
+                                                    <td>Pst. Samuel Adeyemi</td>
+                                                    <td>Lekki, Lagos</td>
+                                                    <td><span class="badge bg-success">Active</span></td>
+                                                    <td>
+                                                        <div class="dropdown">
+                                                            <button class="btn btn-sm btn-light-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                                                                Actions
+                                                            </button>
+                                                            <ul class="dropdown-menu">
+                                                                <li><a class="dropdown-item" href="#"><i class="ti ti-eye me-2"></i>View Details</a></li>
+                                                                <li><a class="dropdown-item" href="#"><i class="ti ti-edit me-2"></i>Edit</a></li>
+                                                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#assignBranchModal"><i class="ti ti-arrows-transfer-down me-2"></i>Reassign</a></li>
+                                                                <li><hr class="dropdown-divider"></li>
+                                                                <li><a class="dropdown-item text-danger" href="#"><i class="ti ti-unlink me-2"></i>Detach</a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <!-- Sub-Branch under Lekki -->
+                                                <tr class="bg-light">
+                                                    <td class="ps-4">
+                                                        <i class="ti ti-corner-down-right me-1 text-muted"></i>Admiralty Branch
+                                                    </td>
+                                                    <td><span class="badge bg-success">Zone</span></td>
+                                                    <td>
+                                                        <span class="text-primary"><i class="ti ti-building-community me-1"></i>Lekki Branch</span>
+                                                    </td>
+                                                    <td>Pst. Chika Okafor</td>
+                                                    <td>Admiralty Way, Lekki</td>
+                                                    <td><span class="badge bg-success">Active</span></td>
+                                                    <td>
+                                                        <div class="dropdown">
+                                                            <button class="btn btn-sm btn-light-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                                                                Actions
+                                                            </button>
+                                                            <ul class="dropdown-menu">
+                                                                <li><a class="dropdown-item" href="#"><i class="ti ti-eye me-2"></i>View Details</a></li>
+                                                                <li><a class="dropdown-item" href="#"><i class="ti ti-edit me-2"></i>Edit</a></li>
+                                                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#assignBranchModal"><i class="ti ti-arrows-transfer-down me-2"></i>Reassign</a></li>
+                                                                <li><hr class="dropdown-divider"></li>
+                                                                <li><a class="dropdown-item text-danger" href="#"><i class="ti ti-unlink me-2"></i>Detach</a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <!-- Another sub-branch under Lekki -->
+                                                <tr class="bg-light">
+                                                    <td class="ps-4">
+                                                        <i class="ti ti-corner-down-right me-1 text-muted"></i>Chevron Branch
+                                                    </td>
+                                                    <td><span class="badge bg-success">Zone</span></td>
+                                                    <td>
+                                                        <span class="text-primary"><i class="ti ti-building-community me-1"></i>Lekki Branch</span>
+                                                    </td>
+                                                    <td>Pst. Florence Balogun</td>
+                                                    <td>Chevron Drive, Lekki</td>
+                                                    <td><span class="badge bg-success">Active</span></td>
+                                                    <td>
+                                                        <div class="dropdown">
+                                                            <button class="btn btn-sm btn-light-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                                                                Actions
+                                                            </button>
+                                                            <ul class="dropdown-menu">
+                                                                <li><a class="dropdown-item" href="#"><i class="ti ti-eye me-2"></i>View Details</a></li>
+                                                                <li><a class="dropdown-item" href="#"><i class="ti ti-edit me-2"></i>Edit</a></li>
+                                                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#assignBranchModal"><i class="ti ti-arrows-transfer-down me-2"></i>Reassign</a></li>
+                                                                <li><hr class="dropdown-divider"></li>
+                                                                <li><a class="dropdown-item text-danger" href="#"><i class="ti ti-unlink me-2"></i>Detach</a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <!-- Direct Branch - Ajah -->
+                                                <tr>
+                                                    <td>
+                                                        <strong><i class="ti ti-building-community me-1 text-primary"></i>Ajah Branch</strong>
+                                                    </td>
+                                                    <td><span class="badge bg-primary">District</span></td>
+                                                    <td>
+                                                        <span class="text-muted"><i class="ti ti-home me-1"></i>Your Church (Direct)</span>
+                                                    </td>
+                                                    <td>Pst. Efe Ighalo</td>
+                                                    <td>Ajah, Lagos</td>
+                                                    <td><span class="badge bg-success">Active</span></td>
+                                                    <td>
+                                                        <div class="dropdown">
+                                                            <button class="btn btn-sm btn-light-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                                                                Actions
+                                                            </button>
+                                                            <ul class="dropdown-menu">
+                                                                <li><a class="dropdown-item" href="#"><i class="ti ti-eye me-2"></i>View Details</a></li>
+                                                                <li><a class="dropdown-item" href="#"><i class="ti ti-edit me-2"></i>Edit</a></li>
+                                                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#assignBranchModal"><i class="ti ti-arrows-transfer-down me-2"></i>Reassign</a></li>
+                                                                <li><hr class="dropdown-divider"></li>
+                                                                <li><a class="dropdown-item text-danger" href="#"><i class="ti ti-unlink me-2"></i>Detach</a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <!-- Sub under Ajah -->
+                                                <tr class="bg-light">
+                                                    <td class="ps-4">
+                                                        <i class="ti ti-corner-down-right me-1 text-muted"></i>Sangotedo Branch
+                                                    </td>
+                                                    <td><span class="badge bg-warning">Sub-District</span></td>
+                                                    <td>
+                                                        <span class="text-primary"><i class="ti ti-building-community me-1"></i>Ajah Branch</span>
+                                                    </td>
+                                                    <td>Pst. David Nnadi</td>
+                                                    <td>Sangotedo, Lagos</td>
+                                                    <td><span class="badge bg-success">Active</span></td>
+                                                    <td>
+                                                        <div class="dropdown">
+                                                            <button class="btn btn-sm btn-light-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                                                                Actions
+                                                            </button>
+                                                            <ul class="dropdown-menu">
+                                                                <li><a class="dropdown-item" href="#"><i class="ti ti-eye me-2"></i>View Details</a></li>
+                                                                <li><a class="dropdown-item" href="#"><i class="ti ti-edit me-2"></i>Edit</a></li>
+                                                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#assignBranchModal"><i class="ti ti-arrows-transfer-down me-2"></i>Reassign</a></li>
+                                                                <li><hr class="dropdown-divider"></li>
+                                                                <li><a class="dropdown-item text-danger" href="#"><i class="ti ti-unlink me-2"></i>Detach</a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <!-- Direct Branch - Ikeja -->
+                                                <tr>
+                                                    <td>
+                                                        <strong><i class="ti ti-building-community me-1 text-primary"></i>Ikeja Branch</strong>
+                                                    </td>
+                                                    <td><span class="badge bg-info">Area</span></td>
+                                                    <td>
+                                                        <span class="text-muted"><i class="ti ti-home me-1"></i>Your Church (Direct)</span>
+                                                    </td>
+                                                    <td>Pst. Michael Akinpelu</td>
+                                                    <td>Ikeja, Lagos</td>
+                                                    <td><span class="badge bg-success">Active</span></td>
+                                                    <td>
+                                                        <div class="dropdown">
+                                                            <button class="btn btn-sm btn-light-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                                                                Actions
+                                                            </button>
+                                                            <ul class="dropdown-menu">
+                                                                <li><a class="dropdown-item" href="#"><i class="ti ti-eye me-2"></i>View Details</a></li>
+                                                                <li><a class="dropdown-item" href="#"><i class="ti ti-edit me-2"></i>Edit</a></li>
+                                                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#assignBranchModal"><i class="ti ti-arrows-transfer-down me-2"></i>Reassign</a></li>
+                                                                <li><hr class="dropdown-divider"></li>
+                                                                <li><a class="dropdown-item text-danger" href="#"><i class="ti ti-unlink me-2"></i>Detach</a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Info -->
+                        <div class="col-12">
+                            <div class="alert alert-info">
+                                <i class="ti ti-info-circle me-2"></i>
+                                <strong>How it works:</strong> When you add a branch, it's automatically under your church. You can then <strong>reassign</strong> it to be under another branch (e.g., assign a Zone under a District). Use <strong>Detach</strong> to remove a branch from its parent without deleting it.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
         </div>
     </div>
 </div>
+
+<!-- Add Branch Modal -->
+<div class="modal fade" id="addBranchModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="ti ti-plus me-2"></i>Add New Branch</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-light border mb-3">
+                    <i class="ti ti-info-circle me-1"></i>
+                    This branch will be added under <strong>your church</strong>. You can reassign it to another branch later.
+                </div>
+                <form>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Branch Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" placeholder="e.g. Lekki Branch, Ikeja Church">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Tag / Label <span class="text-danger">*</span></label>
+                                <select class="form-select" id="branchTag">
+                                    <option value="">Select a tag...</option>
+                                    <option value="district">District</option>
+                                    <option value="zone">Zone</option>
+                                    <option value="sub-district">Sub-District</option>
+                                    <option value="area">Area</option>
+                                    <option value="local">Local</option>
+                                    <option value="custom">+ Add Custom Tag</option>
+                                </select>
+                                <small class="text-muted">Tag helps identify the type of branch</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6 d-none" id="customTagField">
+                            <div class="mb-3">
+                                <label class="form-label">Custom Tag Name</label>
+                                <input type="text" class="form-control" placeholder="e.g. Province, County, Cell">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Pastor in Charge</label>
+                                <input type="text" class="form-control" placeholder="Pastor's full name">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">State / Region</label>
+                                <input type="text" class="form-control" placeholder="e.g. Lagos, Abuja">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">City / Area</label>
+                                <input type="text" class="form-control" placeholder="e.g. Lekki, Ikeja">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label class="form-label">Full Address</label>
+                                <textarea class="form-control" rows="2" placeholder="Complete church address"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Phone Number</label>
+                                <input type="text" class="form-control" placeholder="+234 801 234 5678">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" placeholder="branch@email.com">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary">
+                    <i class="ti ti-plus me-1"></i>Add Branch
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Assign/Reassign Branch Modal -->
+<div class="modal fade" id="assignBranchModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="ti ti-arrows-transfer-down me-2"></i>Reassign Branch</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Branch to Reassign</label>
+                    <input type="text" class="form-control" value="Admiralty Branch" readonly>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Current Assignment</label>
+                    <input type="text" class="form-control" value="Lekki Branch (District)" readonly>
+                </div>
+                <hr>
+                <div class="mb-3">
+                    <label class="form-label">Assign Under <span class="text-danger">*</span></label>
+                    <select class="form-select">
+                        <option value="">Select new parent...</option>
+                        <option value="direct">Your Church (Direct)</option>
+                        <option value="lekki">Lekki Branch (District)</option>
+                        <option value="ajah">Ajah Branch (District)</option>
+                        <option value="ikeja">Ikeja Branch (Area)</option>
+                    </select>
+                    <small class="text-muted">Select which branch this should be under</small>
+                </div>
+                <div class="alert alert-warning">
+                    <i class="ti ti-alert-triangle me-1"></i>
+                    <strong>Note:</strong> Reassigning will move this branch and all its sub-branches under the new parent.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary">Reassign Branch</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Manage Tags Modal -->
+<div class="modal fade" id="manageTagsModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="ti ti-tags me-2"></i>Manage Branch Tags</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted mb-3">Tags help categorize your branches. Add custom tags to match your church's terminology.</p>
+                
+                <div class="mb-3">
+                    <label class="form-label">Available Tags</label>
+                    <div class="d-flex flex-wrap gap-2 mb-3" id="tagsList">
+                        <span class="badge bg-primary p-2">District <button class="btn-close btn-close-white ms-2" style="font-size: 0.5rem;"></button></span>
+                        <span class="badge bg-success p-2">Zone <button class="btn-close btn-close-white ms-2" style="font-size: 0.5rem;"></button></span>
+                        <span class="badge bg-warning p-2">Sub-District <button class="btn-close btn-close-white ms-2" style="font-size: 0.5rem;"></button></span>
+                        <span class="badge bg-info p-2">Area <button class="btn-close btn-close-white ms-2" style="font-size: 0.5rem;"></button></span>
+                        <span class="badge bg-secondary p-2">Local <button class="btn-close btn-close-white ms-2" style="font-size: 0.5rem;"></button></span>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Add New Tag</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="e.g. Province, County, Cell" id="newTagInput">
+                        <button class="btn btn-primary" type="button" onclick="addNewTag()">
+                            <i class="ti ti-plus"></i> Add
+                        </button>
+                    </div>
+                </div>
+
+                <div class="alert alert-light border">
+                    <strong>Tip:</strong> Common tags include District, Zone, Sub-District, Area, Local, Province, County, Cell, Satellite, etc.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="assets/js/jquery-3.6.3.min.js"></script>
 <script src="assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
 <script src="assets/vendor/simplebar/simplebar.js"></script>
-<script src="assets/js/church-section-pages.js"></script>
 <script src="assets/js/church-template.js"></script>
 <script src="assets/js/script.js"></script>
+<script>
+// Show custom tag field when "custom" is selected
+document.getElementById('branchTag').addEventListener('change', function() {
+    const customField = document.getElementById('customTagField');
+    if (this.value === 'custom') {
+        customField.classList.remove('d-none');
+    } else {
+        customField.classList.add('d-none');
+    }
+});
+
+// Add new tag
+function addNewTag() {
+    const input = document.getElementById('newTagInput');
+    const tagName = input.value.trim();
+    if (tagName) {
+        const colors = ['primary', 'success', 'warning', 'info', 'danger', 'secondary'];
+        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+        const tagHtml = `<span class="badge bg-${randomColor} p-2">${tagName} <button class="btn-close btn-close-white ms-2" style="font-size: 0.5rem;" onclick="this.parentElement.remove()"></button></span>`;
+        document.getElementById('tagsList').insertAdjacentHTML('beforeend', tagHtml);
+        input.value = '';
+        
+        // Also add to tag dropdown
+        const select = document.getElementById('branchTag');
+        const option = document.createElement('option');
+        option.value = tagName.toLowerCase().replace(/\s+/g, '-');
+        option.textContent = tagName;
+        select.insertBefore(option, select.lastElementChild);
+    }
+}
+</script>
 </body>
 
 </html>

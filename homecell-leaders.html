@@ -5,12 +5,12 @@
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
     <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="Church management section page using the ki-admin template." name="description">
-    <meta content="church management" name="keywords">
+    <meta content="Manage homecell leaders and their assignments to specific homecells and branches." name="description">
+    <meta content="homecell leaders" name="keywords">
     <meta content="la-themes" name="author">
     <link href="assets/images/logo/favicon.png" rel="icon" type="image/x-icon">
     <link href="assets/images/logo/favicon.png" rel="shortcut icon" type="image/x-icon">
-    <title>Church Management</title>
+    <title>Homecell Leaders - LFC</title>
     <link href="assets/vendor/animation/animate.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com" rel="preconnect">
     <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
@@ -23,23 +23,672 @@
     <link href="assets/css/responsive.css" rel="stylesheet" type="text/css">
 </head>
 
-<body data-section-key="homecell-leaders">
+<body data-title="Homecell Leaders" data-subtitle="Assign leaders to homecells, move them when needed, and keep branch coverage visible.">
 <div class="app-wrapper">
     <div class="loader-wrapper"><div class="loader_24"></div></div>
     <nav id="church-nav"></nav>
     <div class="app-content">
         <div class="">
             <header class="header-main" id="church-header"></header>
-            <main id="church-section-root"></main>
+            <main>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                                        <div>
+                                            <h4 class="mb-1">Homecell Leaders</h4>
+                                            <p class="text-secondary mb-0">View all assigned homecell leaders, attach them to the right homecell, and move them across cells when structure changes.</p>
+                                        </div>
+                                        <div class="d-flex gap-2 flex-wrap">
+                                            <button class="btn btn-primary" id="openAssignLeaderButton" type="button">
+                                                <i class="ti ti-plus me-1"></i>Assign Leader
+                                            </button>
+                                            <a class="btn btn-outline-secondary" href="homecells.html">
+                                                <i class="ti ti-home me-1"></i>Manage Homecells
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="alert alert-success d-none" id="leaderSuccessAlert" role="alert"></div>
+                            <div class="alert alert-danger d-none" id="leaderErrorAlert" role="alert"></div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="card overview-details-box b-s-3-primary">
+                                <div class="card-body">
+                                    <p class="text-dark f-w-600 mb-1">Total Leaders</p>
+                                    <h3 class="text-primary mb-0" id="totalLeadersStat">0</h3>
+                                    <span class="badge text-light-primary mt-2">Assigned across all homecells</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card overview-details-box b-s-3-success">
+                                <div class="card-body">
+                                    <p class="text-dark f-w-600 mb-1">Primary Leaders</p>
+                                    <h3 class="text-success mb-0" id="primaryLeadersStat">0</h3>
+                                    <span class="badge text-light-success mt-2">Lead responsibility holders</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card overview-details-box b-s-3-warning">
+                                <div class="card-body">
+                                    <p class="text-dark f-w-600 mb-1">Covered Homecells</p>
+                                    <h3 class="text-warning mb-0" id="coveredHomecellsStat">0</h3>
+                                    <span class="badge text-light-warning mt-2">Homecells with at least one leader</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                    <h5 class="mb-0">Leader Assignment Registry</h5>
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        <select class="form-select form-select-sm" id="branchFilter" style="width: 220px;">
+                                            <option value="">All Branches</option>
+                                        </select>
+                                        <select class="form-select form-select-sm" id="homecellFilter" style="width: 220px;">
+                                            <option value="">All Homecells</option>
+                                        </select>
+                                        <input class="form-control form-control-sm" id="leaderSearchInput" placeholder="Search leaders..." style="width: 220px;" type="text">
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover align-middle">
+                                            <thead>
+                                            <tr>
+                                                <th>Leader</th>
+                                                <th>Role</th>
+                                                <th>Homecell</th>
+                                                <th>Branch</th>
+                                                <th>Contact</th>
+                                                <th>Primary</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody id="leadersTableBody">
+                                            <tr>
+                                                <td class="text-center text-muted py-4" colspan="7">Loading leaders...</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="alert alert-info mb-0">
+                                <i class="ti ti-info-circle me-2"></i>
+                                <strong>How it works:</strong> Leaders are stored under their assigned homecell. Editing a leader here updates the source homecell record, and moving a leader to another homecell updates both cells in one flow.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="leaderFormModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="leaderFormModalTitle">Assign Homecell Leader</h5>
+                <button class="btn-close" data-bs-dismiss="modal" type="button"></button>
+            </div>
+            <div class="modal-body">
+                <form id="leaderForm">
+                    <input id="editingLeaderIdInput" type="hidden">
+                    <input id="sourceHomecellIdInput" type="hidden">
+                    <div class="mb-3">
+                        <label class="form-label" for="leaderHomecellInput">Homecell <span class="text-danger">*</span></label>
+                        <select class="form-select" id="leaderHomecellInput">
+                            <option value="">Select homecell</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="leaderNameInput">Leader Name <span class="text-danger">*</span></label>
+                        <input class="form-control" id="leaderNameInput" placeholder="Leader full name" type="text">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="leaderRoleInput">Role</label>
+                        <input class="form-control" id="leaderRoleInput" placeholder="e.g. Leader, Assistant Leader, Secretary" type="text">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="leaderPhoneInput">Phone</label>
+                        <input class="form-control" id="leaderPhoneInput" placeholder="+234 801 234 5678" type="text">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="leaderEmailInput">Email</label>
+                        <input class="form-control" id="leaderEmailInput" placeholder="leader@church.org" type="email">
+                    </div>
+                    <div class="mb-0">
+                        <div class="form-check">
+                            <input class="form-check-input" id="leaderPrimaryInput" type="checkbox">
+                            <label class="form-check-label" for="leaderPrimaryInput">Primary leader for this homecell</label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Cancel</button>
+                <button class="btn btn-primary" id="saveLeaderButton" type="button">
+                    <i class="ti ti-device-floppy me-1"></i>Save Leader
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="assets/js/jquery-3.6.3.min.js"></script>
 <script src="assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
 <script src="assets/vendor/simplebar/simplebar.js"></script>
-<script src="assets/js/church-section-pages.js"></script>
+<script src="assets/js/app-config.js"></script>
+<script src="assets/js/app-api.js"></script>
 <script src="assets/js/church-template.js"></script>
 <script src="assets/js/script.js"></script>
+<script>
+const leadersSession = window.LFC_API.getSession();
+const activeChurch = leadersSession ? leadersSession.church : null;
+const activeBranch = leadersSession ? leadersSession.branch : null;
+
+const successAlert = document.getElementById('leaderSuccessAlert');
+const errorAlert = document.getElementById('leaderErrorAlert');
+const leadersTableBody = document.getElementById('leadersTableBody');
+const branchFilter = document.getElementById('branchFilter');
+const homecellFilter = document.getElementById('homecellFilter');
+const leaderSearchInput = document.getElementById('leaderSearchInput');
+const leaderHomecellInput = document.getElementById('leaderHomecellInput');
+const saveLeaderButton = document.getElementById('saveLeaderButton');
+
+const leaderFormModal = new bootstrap.Modal(document.getElementById('leaderFormModal'));
+
+let homecells = [];
+let branches = [];
+
+if (!activeChurch || !activeChurch.id) {
+    window.location.replace('sign_in.html');
+    throw new Error('Missing active church session.');
+}
+
+function showError(message) {
+    errorAlert.textContent = message;
+    errorAlert.classList.remove('d-none');
+}
+
+function hideError() {
+    errorAlert.classList.add('d-none');
+    errorAlert.textContent = '';
+}
+
+function showSuccess(message) {
+    successAlert.textContent = message;
+    successAlert.classList.remove('d-none');
+}
+
+function hideSuccess() {
+    successAlert.classList.add('d-none');
+    successAlert.textContent = '';
+}
+
+function escapeHtml(value) {
+    return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function flattenLeaders(sourceHomecells) {
+    return sourceHomecells.flatMap(function (homecell) {
+        return (homecell.leaders || []).map(function (leader) {
+            return {
+                id: leader.id,
+                name: leader.name,
+                role: leader.role,
+                phone: leader.phone,
+                email: leader.email,
+                is_primary: leader.is_primary,
+                homecell_id: homecell.id,
+                homecell_name: homecell.name,
+                branch_id: homecell.branch ? homecell.branch.id : null,
+                branch_name: homecell.branch ? homecell.branch.name : null
+            };
+        });
+    });
+}
+
+function renderStats(visibleLeaders, visibleHomecells) {
+    document.getElementById('totalLeadersStat').textContent = String(visibleLeaders.length);
+    document.getElementById('primaryLeadersStat').textContent = String(visibleLeaders.filter(function (leader) {
+        return Boolean(leader.is_primary);
+    }).length);
+    document.getElementById('coveredHomecellsStat').textContent = String(visibleHomecells.filter(function (homecell) {
+        return Boolean(homecell.leaders && homecell.leaders.length);
+    }).length);
+}
+
+function renderBranchOptions() {
+    const branchOptions = branches.map(function (branch) {
+        return `<option value="${branch.id}">${escapeHtml(branch.name)}</option>`;
+    }).join('');
+
+    branchFilter.innerHTML = '<option value="">All Branches</option>' + branchOptions;
+
+    if (activeBranch && activeBranch.id) {
+        branchFilter.value = String(activeBranch.id);
+    }
+}
+
+function renderHomecellOptions() {
+    const selectedBranchId = Number(branchFilter.value || 0) || null;
+    const filteredHomecells = homecells.filter(function (homecell) {
+        return !selectedBranchId || (homecell.branch && homecell.branch.id === selectedBranchId);
+    });
+
+    const homecellOptions = filteredHomecells.map(function (homecell) {
+        const branchSuffix = homecell.branch ? ' - ' + homecell.branch.name : '';
+        return `<option value="${homecell.id}">${escapeHtml(homecell.name + branchSuffix)}</option>`;
+    }).join('');
+
+    homecellFilter.innerHTML = '<option value="">All Homecells</option>' + homecellOptions;
+    leaderHomecellInput.innerHTML = '<option value="">Select homecell</option>' + homecellOptions;
+}
+
+function renderLeadersTable() {
+    const selectedBranchId = Number(branchFilter.value || 0) || null;
+    const selectedHomecellId = Number(homecellFilter.value || 0) || null;
+    const search = leaderSearchInput.value.trim().toLowerCase();
+    const visibleHomecells = homecells.filter(function (homecell) {
+        const branchMatches = !selectedBranchId || (homecell.branch && homecell.branch.id === selectedBranchId);
+        const homecellMatches = !selectedHomecellId || homecell.id === selectedHomecellId;
+        return branchMatches && homecellMatches;
+    });
+    const visibleLeaders = flattenLeaders(visibleHomecells).filter(function (leader) {
+        return !search || [
+            leader.name,
+            leader.role,
+            leader.homecell_name,
+            leader.branch_name,
+            leader.phone,
+            leader.email
+        ].some(function (value) {
+            return String(value || '').toLowerCase().includes(search);
+        });
+    });
+
+    renderStats(visibleLeaders, visibleHomecells);
+
+    if (!visibleLeaders.length) {
+        leadersTableBody.innerHTML = '<tr><td class="text-center text-muted py-4" colspan="7">No homecell leaders found for the current filters.</td></tr>';
+        return;
+    }
+
+    leadersTableBody.innerHTML = visibleLeaders.map(function (leader) {
+        return `
+            <tr>
+                <td><strong>${escapeHtml(leader.name)}</strong></td>
+                <td>${escapeHtml(leader.role || 'Leader')}</td>
+                <td>${escapeHtml(leader.homecell_name)}</td>
+                <td>${leader.branch_name ? escapeHtml(leader.branch_name) : '<span class="text-muted">Unassigned</span>'}</td>
+                <td><span class="small">${escapeHtml([leader.phone, leader.email].filter(Boolean).join(' / ') || '--')}</span></td>
+                <td>${leader.is_primary ? '<span class="badge bg-light-success text-success">Primary</span>' : '<span class="text-muted">No</span>'}</td>
+                <td>
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-light-secondary dropdown-toggle" data-bs-toggle="dropdown" type="button">Actions</button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item leader-action" data-action="edit" data-homecell-id="${leader.homecell_id}" data-leader-id="${leader.id}" href="#"><i class="ti ti-edit me-2"></i>Edit</a></li>
+                            <li><a class="dropdown-item leader-action" data-action="remove" data-homecell-id="${leader.homecell_id}" data-leader-id="${leader.id}" href="#"><i class="ti ti-trash me-2"></i>Remove</a></li>
+                            <li><a class="dropdown-item leader-action" data-action="open-homecell" data-homecell-id="${leader.homecell_id}" data-leader-id="${leader.id}" href="#"><i class="ti ti-home me-2"></i>Open Homecell</a></li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function resetForm() {
+    document.getElementById('leaderForm').reset();
+    document.getElementById('editingLeaderIdInput').value = '';
+    document.getElementById('sourceHomecellIdInput').value = '';
+    document.getElementById('leaderFormModalTitle').textContent = 'Assign Homecell Leader';
+    saveLeaderButton.innerHTML = '<i class="ti ti-device-floppy me-1"></i>Save Leader';
+
+    if (homecellFilter.value) {
+        leaderHomecellInput.value = homecellFilter.value;
+    } else {
+        leaderHomecellInput.value = '';
+    }
+}
+
+function openCreateModal() {
+    resetForm();
+    leaderFormModal.show();
+}
+
+function openEditModal(leaderRecord) {
+    resetForm();
+    document.getElementById('editingLeaderIdInput').value = leaderRecord.id;
+    document.getElementById('sourceHomecellIdInput').value = leaderRecord.homecell_id;
+    document.getElementById('leaderHomecellInput').value = String(leaderRecord.homecell_id);
+    document.getElementById('leaderNameInput').value = leaderRecord.name || '';
+    document.getElementById('leaderRoleInput').value = leaderRecord.role || '';
+    document.getElementById('leaderPhoneInput').value = leaderRecord.phone || '';
+    document.getElementById('leaderEmailInput').value = leaderRecord.email || '';
+    document.getElementById('leaderPrimaryInput').checked = Boolean(leaderRecord.is_primary);
+    document.getElementById('leaderFormModalTitle').textContent = 'Edit Homecell Leader';
+    saveLeaderButton.innerHTML = '<i class="ti ti-device-floppy me-1"></i>Update Leader';
+    leaderFormModal.show();
+}
+
+function buildLeaderPayload() {
+    return {
+        homecell_id: Number(document.getElementById('leaderHomecellInput').value || 0) || null,
+        leader_id: Number(document.getElementById('editingLeaderIdInput').value || 0) || null,
+        source_homecell_id: Number(document.getElementById('sourceHomecellIdInput').value || 0) || null,
+        name: document.getElementById('leaderNameInput').value.trim(),
+        role: document.getElementById('leaderRoleInput').value.trim() || 'Leader',
+        phone: document.getElementById('leaderPhoneInput').value.trim() || null,
+        email: document.getElementById('leaderEmailInput').value.trim() || null,
+        is_primary: document.getElementById('leaderPrimaryInput').checked
+    };
+}
+
+function normalizeLeadersForSave(leaders) {
+    let primaryAssigned = false;
+
+    return leaders
+        .filter(function (leader) {
+            return leader.name || leader.phone || leader.email;
+        })
+        .map(function (leader, index) {
+            const nextLeader = {
+                name: leader.name,
+                role: leader.role || 'Leader',
+                phone: leader.phone || null,
+                email: leader.email || null,
+                is_primary: Boolean(leader.is_primary) && !primaryAssigned
+            };
+
+            if (nextLeader.is_primary) {
+                primaryAssigned = true;
+            }
+
+            if (!primaryAssigned && index === 0) {
+                nextLeader.is_primary = true;
+                primaryAssigned = true;
+            }
+
+            return nextLeader;
+        });
+}
+
+async function updateHomecellLeaders(homecellId, leaders) {
+    const homecell = homecells.find(function (candidate) {
+        return candidate.id === homecellId;
+    });
+
+    if (!homecell) {
+        throw new Error('Homecell not found.');
+    }
+
+    await window.LFC_API.request('homecells/' + encodeURIComponent(homecellId), {
+        method: 'PUT',
+        body: {
+            branch_id: homecell.branch ? homecell.branch.id : null,
+            name: homecell.name,
+            code: homecell.code || null,
+            meeting_day: homecell.meeting_day || null,
+            meeting_time: homecell.meeting_time ? homecell.meeting_time.slice(0, 5) : null,
+            host_name: homecell.host_name || null,
+            host_phone: homecell.host_phone || null,
+            city_area: homecell.city_area || null,
+            address: homecell.address || null,
+            notes: homecell.notes || null,
+            status: homecell.status || 'active',
+            leaders: normalizeLeadersForSave(leaders)
+        }
+    });
+}
+
+async function saveLeaderAssignment(payload) {
+    if (!payload.homecell_id) {
+        throw new Error('Select a homecell first.');
+    }
+
+    if (!payload.name) {
+        throw new Error('Leader name is required.');
+    }
+
+    const targetHomecell = homecells.find(function (homecell) {
+        return homecell.id === payload.homecell_id;
+    });
+
+    if (!targetHomecell) {
+        throw new Error('Selected homecell was not found.');
+    }
+
+    const nextLeader = {
+        name: payload.name,
+        role: payload.role,
+        phone: payload.phone,
+        email: payload.email,
+        is_primary: payload.is_primary
+    };
+
+    if (!payload.leader_id) {
+        const updatedLeaders = (targetHomecell.leaders || []).map(function (leader) {
+            return {
+                name: leader.name,
+                role: leader.role,
+                phone: leader.phone,
+                email: leader.email,
+                is_primary: payload.is_primary ? false : leader.is_primary
+            };
+        });
+
+        updatedLeaders.push(nextLeader);
+        await updateHomecellLeaders(targetHomecell.id, updatedLeaders);
+        return;
+    }
+
+    const sourceHomecell = homecells.find(function (homecell) {
+        return homecell.id === payload.source_homecell_id;
+    });
+
+    if (!sourceHomecell) {
+        throw new Error('Source homecell was not found.');
+    }
+
+    if (payload.source_homecell_id === payload.homecell_id) {
+        const updatedLeaders = (sourceHomecell.leaders || []).map(function (leader) {
+            if (leader.id !== payload.leader_id) {
+                return {
+                    name: leader.name,
+                    role: leader.role,
+                    phone: leader.phone,
+                    email: leader.email,
+                    is_primary: payload.is_primary ? false : leader.is_primary
+                };
+            }
+
+            return nextLeader;
+        });
+
+        await updateHomecellLeaders(sourceHomecell.id, updatedLeaders);
+        return;
+    }
+
+    const sourceLeaders = (sourceHomecell.leaders || [])
+        .filter(function (leader) {
+            return leader.id !== payload.leader_id;
+        })
+        .map(function (leader) {
+            return {
+                name: leader.name,
+                role: leader.role,
+                phone: leader.phone,
+                email: leader.email,
+                is_primary: leader.is_primary
+            };
+        });
+
+    const targetLeaders = (targetHomecell.leaders || []).map(function (leader) {
+        return {
+            name: leader.name,
+            role: leader.role,
+            phone: leader.phone,
+            email: leader.email,
+            is_primary: payload.is_primary ? false : leader.is_primary
+        };
+    });
+
+    targetLeaders.push(nextLeader);
+
+    await updateHomecellLeaders(sourceHomecell.id, sourceLeaders);
+    await updateHomecellLeaders(targetHomecell.id, targetLeaders);
+}
+
+async function removeLeaderAssignment(homecellId, leaderId) {
+    const homecell = homecells.find(function (candidate) {
+        return candidate.id === homecellId;
+    });
+
+    if (!homecell) {
+        throw new Error('Homecell not found.');
+    }
+
+    const updatedLeaders = (homecell.leaders || [])
+        .filter(function (leader) {
+            return leader.id !== leaderId;
+        })
+        .map(function (leader) {
+            return {
+                name: leader.name,
+                role: leader.role,
+                phone: leader.phone,
+                email: leader.email,
+                is_primary: leader.is_primary
+            };
+        });
+
+    await updateHomecellLeaders(homecellId, updatedLeaders);
+}
+
+async function loadBranches() {
+    const response = await window.LFC_API.request('branches?church_id=' + encodeURIComponent(activeChurch.id));
+    branches = response.data || [];
+    renderBranchOptions();
+}
+
+async function loadHomecells() {
+    const response = await window.LFC_API.request('homecells?church_id=' + encodeURIComponent(activeChurch.id));
+    homecells = response.data || [];
+    renderHomecellOptions();
+    renderLeadersTable();
+}
+
+async function bootstrapLeadersPage() {
+    hideError();
+    hideSuccess();
+    await loadBranches();
+    await loadHomecells();
+}
+
+document.getElementById('openAssignLeaderButton').addEventListener('click', function () {
+    openCreateModal();
+});
+
+branchFilter.addEventListener('change', function () {
+    renderHomecellOptions();
+    homecellFilter.value = '';
+    renderLeadersTable();
+});
+
+homecellFilter.addEventListener('change', renderLeadersTable);
+leaderSearchInput.addEventListener('input', renderLeadersTable);
+
+saveLeaderButton.addEventListener('click', async function () {
+    hideError();
+    hideSuccess();
+    saveLeaderButton.disabled = true;
+    const originalLabel = saveLeaderButton.innerHTML;
+    saveLeaderButton.innerHTML = '<i class="ti ti-loader me-1"></i>Saving...';
+
+    try {
+        await saveLeaderAssignment(buildLeaderPayload());
+        leaderFormModal.hide();
+        await bootstrapLeadersPage();
+        showSuccess('Homecell leader saved successfully.');
+    } catch (error) {
+        showError(error.message);
+    } finally {
+        saveLeaderButton.disabled = false;
+        saveLeaderButton.innerHTML = originalLabel;
+    }
+});
+
+leadersTableBody.addEventListener('click', async function (event) {
+    const actionLink = event.target.closest('.leader-action');
+    if (!actionLink) {
+        return;
+    }
+
+    event.preventDefault();
+
+    const homecellId = Number(actionLink.dataset.homecellId);
+    const leaderId = Number(actionLink.dataset.leaderId);
+    const action = actionLink.dataset.action;
+    const leaderRecord = flattenLeaders(homecells).find(function (leader) {
+        return leader.id === leaderId && leader.homecell_id === homecellId;
+    });
+
+    if (!leaderRecord) {
+        showError('Leader assignment not found.');
+        return;
+    }
+
+    if (action === 'edit') {
+        openEditModal(leaderRecord);
+        return;
+    }
+
+    if (action === 'remove') {
+        if (!window.confirm('Remove this leader from the homecell?')) {
+            return;
+        }
+
+        try {
+            await removeLeaderAssignment(homecellId, leaderId);
+            await bootstrapLeadersPage();
+            showSuccess('Leader removed successfully.');
+        } catch (error) {
+            showError(error.message);
+        }
+        return;
+    }
+
+    if (action === 'open-homecell') {
+        window.location.href = 'homecells.html';
+    }
+});
+
+bootstrapLeadersPage().catch(function (error) {
+    showError(error.message);
+});
+</script>
 </body>
 
 </html>

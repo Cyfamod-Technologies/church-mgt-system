@@ -73,26 +73,17 @@
                                         </div>
                                         <div class="col-md-3">
                                             <div class="mb-3">
-                                                <label class="form-label">Service Type <span class="text-danger">*</span></label>
-                                                <select class="form-select" id="serviceType" required>
-                                                    <option value="">Select service type</option>
-                                                    <option value="sunday">Sunday Service</option>
-                                                    <option value="wednesday">Wednesday Service</option>
-                                                    <option value="wose-wed">WOSE - Wednesday</option>
-                                                    <option value="wose-thu">WOSE - Thursday</option>
-                                                    <option value="wose-fri">WOSE - Friday</option>
-                                                    <option value="special">Special Service</option>
+                                                <label class="form-label">Branch</label>
+                                                <select class="form-select" id="attendanceBranch">
+                                                    <option value="">Church-wide / No branch</option>
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-3" id="sundayServiceSelect" style="display:none;">
+                                        <div class="col-md-3">
                                             <div class="mb-3">
-                                                <label class="form-label">Which Service?</label>
-                                                <select class="form-select" id="sundayServiceNumber">
-                                                    <option value="1">1st Service</option>
-                                                    <option value="2">2nd Service</option>
-                                                    <option value="3">3rd Service</option>
-                                                    <option value="4">4th Service</option>
+                                                <label class="form-label">Service <span class="text-danger">*</span></label>
+                                                <select class="form-select" id="serviceType" required>
+                                                    <option value="">Loading services...</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -317,6 +308,7 @@
                                             <thead>
                                                 <tr>
                                                     <th>Date</th>
+                                                    <th>Branch</th>
                                                     <th>Service</th>
                                                     <th>Male</th>
                                                     <th>Female</th>
@@ -354,6 +346,11 @@ const recentAttendanceTableBody = document.getElementById('recentAttendanceTable
 const session = window.LFC_API.getSession();
 const activeChurch = session ? session.church : null;
 const activeUser = session ? session.user : null;
+const activeBranch = session ? session.branch : null;
+const attendanceBranch = document.getElementById('attendanceBranch');
+const serviceTypeInput = document.getElementById('serviceType');
+let attendanceBranches = [];
+let attendanceServices = [];
 
 // Set today's date as default
 document.getElementById('serviceDate').valueAsDate = new Date();
@@ -389,22 +386,82 @@ document.getElementById('serviceDate').addEventListener('change', function () {
 });
 checkWOSE(); // Check on load
 
-// Service type selection handling
-document.getElementById('serviceType').addEventListener('change', function() {
-    const sundaySelect = document.getElementById('sundayServiceSelect');
-    const specialName = document.getElementById('specialServiceName');
-    
-    sundaySelect.style.display = this.value === 'sunday' ? 'block' : 'none';
-    specialName.style.display = this.value === 'special' || this.value.startsWith('wose-') ? 'block' : 'none';
+function getOrdinal(value) {
+    return value + (value === 1 ? 'st' : value === 2 ? 'nd' : value === 3 ? 'rd' : 'th');
+}
 
-    if (this.value === 'wose-wed') {
-        document.getElementById('specialName').value = 'WOSE Wednesday';
-    } else if (this.value === 'wose-thu') {
-        document.getElementById('specialName').value = 'WOSE Thursday';
-    } else if (this.value === 'wose-fri') {
-        document.getElementById('specialName').value = 'WOSE Friday';
-    } else if (this.value !== 'special') {
+function populateBranchOptions() {
+    const options = ['<option value="">Church-wide / No branch</option>'].concat(attendanceBranches.map(function (branch) {
+        return `<option value="${branch.id}">${branch.name}</option>`;
+    }));
+
+    attendanceBranch.innerHTML = options.join('');
+
+    if (activeBranch && activeBranch.id) {
+        attendanceBranch.value = String(activeBranch.id);
+        attendanceBranch.disabled = true;
+    }
+}
+
+function buildServiceOptions() {
+    const options = ['<option value="">Select service</option>'];
+    const sundaySchedules = attendanceServices.filter(function (service) {
+        return service.service_type === 'sunday';
+    });
+
+    sundaySchedules.forEach(function (service, index) {
+        options.push(`<option value="schedule:${service.id}" data-service-schedule-id="${service.id}" data-service-type="sunday" data-label="${service.label}" data-sunday-service-number="${index + 1}">${getOrdinal(index + 1)} Service${service.service_time ? ' - ' + formatTime(service.service_time) : ''}</option>`);
+    });
+
+    attendanceServices.filter(function (service) {
+        return service.service_type !== 'sunday';
+    }).forEach(function (service) {
+        options.push(`<option value="schedule:${service.id}" data-service-schedule-id="${service.id}" data-service-type="${service.service_type}" data-label="${service.label}" data-special-service-name="${service.label}">${service.label}${service.service_time ? ' - ' + formatTime(service.service_time) : ''}</option>`);
+    });
+
+    options.push('<option value="manual:special" data-service-type="special" data-manual="1">Special Service (Ad hoc)</option>');
+    serviceTypeInput.innerHTML = options.join('');
+}
+
+function getSelectedServiceOption() {
+    const option = serviceTypeInput.options[serviceTypeInput.selectedIndex];
+
+    if (!option || !option.value) {
+        return null;
+    }
+
+    return {
+        value: option.value,
+        serviceScheduleId: option.dataset.serviceScheduleId ? Number(option.dataset.serviceScheduleId) : null,
+        serviceType: option.dataset.serviceType || null,
+        label: option.dataset.label || null,
+        sundayServiceNumber: option.dataset.sundayServiceNumber ? Number(option.dataset.sundayServiceNumber) : null,
+        specialServiceName: option.dataset.specialServiceName || null,
+        manual: option.dataset.manual === '1'
+    };
+}
+
+function handleServiceSelection() {
+    const specialName = document.getElementById('specialServiceName');
+    const selected = getSelectedServiceOption();
+
+    specialName.style.display = selected && selected.manual ? 'block' : 'none';
+
+    if (selected && !selected.manual) {
+        document.getElementById('specialName').value = selected.specialServiceName || '';
+        return;
+    }
+
+    if (!selected || !selected.manual) {
         document.getElementById('specialName').value = '';
+    }
+}
+
+serviceTypeInput.addEventListener('change', handleServiceSelection);
+attendanceBranch.addEventListener('change', function () {
+    if (activeChurch && activeChurch.id) {
+        loadAttendanceSummary();
+        loadRecentAttendance();
     }
 });
 
@@ -442,30 +499,20 @@ function formatDate(value) {
     });
 }
 
-function normalizeServiceType(value) {
-    if (value.startsWith('wose-')) {
-        return 'wose';
-    }
-    return value;
-}
-
 function buildServiceLabel(serviceType) {
-    if (serviceType === 'sunday') {
-        return document.getElementById('sundayServiceNumber').value + (document.getElementById('sundayServiceNumber').value === '1' ? 'st' : document.getElementById('sundayServiceNumber').value === '2' ? 'nd' : document.getElementById('sundayServiceNumber').value === '3' ? 'rd' : 'th') + ' Service';
+    if (serviceType === 'special') {
+        return document.getElementById('specialName').value.trim() || 'Special Service';
     }
 
-    if (serviceType === 'wednesday') {
-        return 'Wednesday Service';
-    }
-
-    return document.getElementById('specialName').value.trim() || 'Special Service';
+    const selected = getSelectedServiceOption();
+    return selected && selected.label ? selected.label : 'Service';
 }
 
 function renderRecentAttendance(records) {
     if (!records.length) {
         recentAttendanceTableBody.innerHTML = `
             <tr>
-                <td class="text-center text-muted py-4" colspan="9">No attendance records yet.</td>
+                <td class="text-center text-muted py-4" colspan="10">No attendance records yet.</td>
             </tr>
         `;
         return;
@@ -475,6 +522,7 @@ function renderRecentAttendance(records) {
         return `
             <tr>
                 <td>${formatDate(record.service_date)}</td>
+                <td>${record.branch ? `<span class="badge bg-light-secondary text-secondary">${record.branch.name}</span>` : '<span class="text-muted">Church</span>'}</td>
                 <td><span class="badge bg-primary">${record.service_label}</span></td>
                 <td>${record.male_count}</td>
                 <td>${record.female_count}</td>
@@ -495,7 +543,8 @@ async function loadAttendanceSummary() {
     }
 
     try {
-        const summaryResponse = await window.LFC_API.request('attendance/summary?church_id=' + encodeURIComponent(activeChurch.id) + '&period=weekly&date=' + encodeURIComponent(document.getElementById('serviceDate').value));
+        const branchId = attendanceBranch.value ? '&branch_id=' + encodeURIComponent(attendanceBranch.value) : '';
+        const summaryResponse = await window.LFC_API.request('attendance/summary?church_id=' + encodeURIComponent(activeChurch.id) + branchId + '&period=weekly&date=' + encodeURIComponent(document.getElementById('serviceDate').value));
         const summary = summaryResponse.data;
 
         document.getElementById('weeklyTotal').textContent = summary.total_attendance;
@@ -515,20 +564,37 @@ async function loadRecentAttendance() {
     }
 
     try {
-        const response = await window.LFC_API.request('attendance?church_id=' + encodeURIComponent(activeChurch.id) + '&per_page=5');
+        const branchId = attendanceBranch.value ? '&branch_id=' + encodeURIComponent(attendanceBranch.value) : '';
+        const response = await window.LFC_API.request('attendance?church_id=' + encodeURIComponent(activeChurch.id) + branchId + '&per_page=5');
         renderRecentAttendance(response.data || []);
     } catch (error) {
         showAttendanceAlert(error.message);
     }
 }
 
+async function loadAttendanceContext() {
+    const [branchesResponse, churchResponse] = await Promise.all([
+        window.LFC_API.request('branches?church_id=' + encodeURIComponent(activeChurch.id)),
+        window.LFC_API.request('churches/' + encodeURIComponent(activeChurch.id))
+    ]);
+
+    attendanceBranches = branchesResponse.data || [];
+    attendanceServices = (churchResponse.data.service_schedules || []).slice().sort(function (left, right) {
+        return left.sort_order - right.sort_order;
+    });
+
+    populateBranchOptions();
+    buildServiceOptions();
+    handleServiceSelection();
+}
+
 attendanceForm.addEventListener('submit', async function(e) {
     e.preventDefault();
     hideAttendanceAlert();
 
-    const serviceType = document.getElementById('serviceType').value;
-    if (!serviceType) {
-        showAttendanceAlert('Please select a service type.');
+    const selectedService = getSelectedServiceOption();
+    if (!selectedService) {
+        showAttendanceAlert('Please select a service.');
         return;
     }
 
@@ -546,12 +612,14 @@ attendanceForm.addEventListener('submit', async function(e) {
             method: 'POST',
             body: {
                 church_id: activeChurch.id,
+                branch_id: attendanceBranch.value ? Number(attendanceBranch.value) : null,
+                service_schedule_id: selectedService.serviceScheduleId,
                 recorded_by_user_id: activeUser && activeUser.id ? activeUser.id : null,
                 service_date: document.getElementById('serviceDate').value,
-                service_type: normalizeServiceType(serviceType),
-                service_label: buildServiceLabel(normalizeServiceType(serviceType)),
-                sunday_service_number: serviceType === 'sunday' ? Number(document.getElementById('sundayServiceNumber').value) : null,
-                special_service_name: serviceType === 'special' || serviceType.startsWith('wose-') ? document.getElementById('specialName').value.trim() || null : null,
+                service_type: selectedService.serviceType,
+                service_label: selectedService.manual ? buildServiceLabel(selectedService.serviceType) : (selectedService.label || buildServiceLabel(selectedService.serviceType)),
+                sunday_service_number: selectedService.sundayServiceNumber,
+                special_service_name: selectedService.manual ? (document.getElementById('specialName').value.trim() || null) : (selectedService.serviceType === 'special' || selectedService.serviceType === 'wose' ? (selectedService.specialServiceName || selectedService.label) : null),
                 male_count: Number(document.getElementById('maleCount').value || 0),
                 female_count: Number(document.getElementById('femaleCount').value || 0),
                 children_count: Number(document.getElementById('childrenCount').value || 0),
@@ -567,6 +635,11 @@ attendanceForm.addEventListener('submit', async function(e) {
 
         attendanceForm.reset();
         document.getElementById('serviceDate').valueAsDate = new Date();
+        if (activeBranch && activeBranch.id) {
+            attendanceBranch.value = String(activeBranch.id);
+        }
+        buildServiceOptions();
+        handleServiceSelection();
         document.getElementById('summaryFirstTimers').textContent = '0';
         document.getElementById('summaryConverts').textContent = '0';
         calculateTotal();
@@ -589,8 +662,15 @@ if (!activeChurch || !activeChurch.id) {
     showAttendanceAlert('No active church session found. Please sign in first.');
 }
 
-loadAttendanceSummary();
-loadRecentAttendance();
+if (activeChurch && activeChurch.id) {
+    loadAttendanceContext()
+        .then(function () {
+            return Promise.all([loadAttendanceSummary(), loadRecentAttendance()]);
+        })
+        .catch(function (error) {
+            showAttendanceAlert(error.message);
+        });
+}
 </script>
 </body>
 

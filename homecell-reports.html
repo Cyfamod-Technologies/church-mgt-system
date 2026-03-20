@@ -5,13 +5,12 @@
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
     <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="Homecell attendance reports with Male, Female, Children breakdown." name="description">
+    <meta content="Homecell attendance reports with branch, leader, and submission coverage visibility." name="description">
     <meta content="homecell reports" name="keywords">
     <meta content="la-themes" name="author">
     <link href="assets/images/logo/favicon.png" rel="icon" type="image/x-icon">
     <link href="assets/images/logo/favicon.png" rel="shortcut icon" type="image/x-icon">
     <title>Homecell Reports - LFC</title>
-
     <link href="assets/vendor/animation/animate.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com" rel="preconnect">
     <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
@@ -24,7 +23,7 @@
     <link href="assets/css/responsive.css" rel="stylesheet" type="text/css">
 </head>
 
-<body data-title="Homecell Reports" data-subtitle="View attendance reports for all homecells with Male, Female, and Children breakdown.">
+<body data-title="Homecell Reports" data-subtitle="Review homecell attendance totals, leadership coverage, and pending submissions.">
 <div class="app-wrapper">
     <div class="loader-wrapper"><div class="loader_24"></div></div>
     <nav id="church-nav"></nav>
@@ -34,24 +33,20 @@
             <main>
                 <div class="container-fluid">
                     <div class="row">
-                        <!-- Page Header -->
                         <div class="col-12">
                             <div class="card">
                                 <div class="card-body">
-                                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
                                         <div>
                                             <h4 class="mb-1">Homecell Reports</h4>
-                                            <p class="text-secondary mb-0">View attendance breakdown (Male, Female, Children) for each homecell meeting.</p>
+                                            <p class="text-secondary mb-0">See which homecells submitted attendance, which ones are still pending, and how the period breaks down by leader and branch.</p>
                                         </div>
                                         <div class="d-flex gap-2 flex-wrap">
-                                            <select class="form-select" id="weekFilter" style="width: auto;">
-                                                <option value="current">This Week</option>
-                                                <option value="last">Last Week</option>
-                                                <option value="2weeks">2 Weeks Ago</option>
-                                                <option value="month">This Month</option>
-                                            </select>
-                                            <button class="btn btn-outline-primary">
-                                                <i class="ti ti-download me-1"></i>Export Report
+                                            <a class="btn btn-outline-secondary" href="homecell-office.html">
+                                                <i class="ti ti-clipboard-plus me-1"></i>Record Attendance
+                                            </a>
+                                            <button class="btn btn-primary" id="exportReportButton" type="button">
+                                                <i class="ti ti-download me-1"></i>Export CSV
                                             </button>
                                         </div>
                                     </div>
@@ -59,270 +54,128 @@
                             </div>
                         </div>
 
-                        <!-- Summary Stats -->
+                        <div class="col-12">
+                            <div class="alert alert-danger d-none" id="reportsErrorAlert" role="alert"></div>
+                        </div>
+
                         <div class="col-md-3">
                             <div class="card overview-details-box b-s-3-primary">
                                 <div class="card-body">
                                     <p class="text-dark f-w-600 mb-1">Total Attendance</p>
-                                    <h3 class="text-primary mb-0">284</h3>
-                                    <span class="badge text-light-primary mt-2">All homecells this week</span>
+                                    <h3 class="text-primary mb-0" id="totalAttendanceStat">0</h3>
+                                    <span class="badge text-light-primary mt-2" id="periodBadgeLabel">Selected period</span>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="card overview-details-box b-s-3-info">
                                 <div class="card-body">
-                                    <p class="text-dark f-w-600 mb-1">Male</p>
-                                    <h3 class="text-info mb-0">98</h3>
-                                    <span class="badge text-light-info mt-2">34.5% of total</span>
+                                    <p class="text-dark f-w-600 mb-1">Reports Submitted</p>
+                                    <h3 class="text-info mb-0" id="submittedReportsStat">0</h3>
+                                    <span class="badge text-light-info mt-2">Attendance records received</span>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <div class="card overview-details-box b-s-3-danger">
+                            <div class="card overview-details-box b-s-3-success">
                                 <div class="card-body">
-                                    <p class="text-dark f-w-600 mb-1">Female</p>
-                                    <h3 class="text-danger mb-0">126</h3>
-                                    <span class="badge text-light-danger mt-2">44.4% of total</span>
+                                    <p class="text-dark f-w-600 mb-1">Covered Homecells</p>
+                                    <h3 class="text-success mb-0" id="coveredHomecellsStat">0 / 0</h3>
+                                    <span class="badge text-light-success mt-2">Submitted at least once</span>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="card overview-details-box b-s-3-warning">
                                 <div class="card-body">
-                                    <p class="text-dark f-w-600 mb-1">Children</p>
-                                    <h3 class="text-warning mb-0">60</h3>
-                                    <span class="badge text-light-warning mt-2">21.1% of total</span>
+                                    <p class="text-dark f-w-600 mb-1">Pending Homecells</p>
+                                    <h3 class="text-warning mb-0" id="pendingHomecellsStat">0</h3>
+                                    <span class="badge text-light-warning mt-2">No report in period</span>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Homecell Reports Table -->
+                        <div class="col-md-4">
+                            <div class="card overview-details-box b-s-3-info">
+                                <div class="card-body">
+                                    <p class="text-dark f-w-600 mb-1">Male</p>
+                                    <h3 class="text-info mb-0" id="maleAttendanceStat">0</h3>
+                                    <span class="badge text-light-info mt-2" id="maleShareStat">0% of total</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card overview-details-box b-s-3-danger">
+                                <div class="card-body">
+                                    <p class="text-dark f-w-600 mb-1">Female</p>
+                                    <h3 class="text-danger mb-0" id="femaleAttendanceStat">0</h3>
+                                    <span class="badge text-light-danger mt-2" id="femaleShareStat">0% of total</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card overview-details-box b-s-3-secondary">
+                                <div class="card-body">
+                                    <p class="text-dark f-w-600 mb-1">Children</p>
+                                    <h3 class="text-secondary mb-0" id="childrenAttendanceStat">0</h3>
+                                    <span class="badge text-light-secondary mt-2" id="childrenShareStat">0% of total</span>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="col-12">
                             <div class="card">
-                                <div class="card-header d-flex justify-content-between align-items-center">
-                                    <h5 class="mb-0">Homecell Attendance Reports</h5>
-                                    <div class="d-flex gap-2">
-                                        <input type="text" class="form-control form-control-sm" placeholder="Search homecell..." style="width: 200px;">
+                                <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                    <h5 class="mb-0">Report Filters</h5>
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        <select class="form-select form-select-sm" id="periodFilterInput" style="width: 140px;">
+                                            <option value="weekly">This Week</option>
+                                            <option value="monthly">This Month</option>
+                                        </select>
+                                        <input class="form-control form-control-sm" id="anchorDateInput" style="width: 170px;" type="date">
+                                        <select class="form-select form-select-sm" id="branchFilterInput" style="width: 220px;">
+                                            <option value="">All Branches</option>
+                                        </select>
+                                        <select class="form-select form-select-sm" id="statusFilterInput" style="width: 170px;">
+                                            <option value="">All Statuses</option>
+                                            <option value="submitted">Submitted</option>
+                                            <option value="pending">Pending</option>
+                                        </select>
+                                        <input class="form-control form-control-sm" id="searchInput" placeholder="Search homecell or leader..." style="width: 240px;" type="text">
                                     </div>
                                 </div>
                                 <div class="card-body">
                                     <div class="table-responsive">
                                         <table class="table table-hover align-middle">
                                             <thead>
-                                                <tr>
-                                                    <th>Homecell Name</th>
-                                                    <th>Leader</th>
-                                                    <th class="text-center text-info"><i class="ti ti-man me-1"></i>Male</th>
-                                                    <th class="text-center text-danger"><i class="ti ti-woman me-1"></i>Female</th>
-                                                    <th class="text-center text-warning"><i class="ti ti-friends me-1"></i>Children</th>
-                                                    <th class="text-center"><strong>Total</strong></th>
-                                                    <th>Meeting Date</th>
-                                                    <th>Status</th>
-                                                    <th>Actions</th>
-                                                </tr>
+                                            <tr>
+                                                <th>Homecell</th>
+                                                <th>Leader</th>
+                                                <th>Branch</th>
+                                                <th class="text-center">Male</th>
+                                                <th class="text-center">Female</th>
+                                                <th class="text-center">Children</th>
+                                                <th class="text-center">Total</th>
+                                                <th>Last Meeting</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
+                                            </tr>
                                             </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td><strong>Grace Homecell</strong></td>
-                                                    <td>Sis. Nkiru James</td>
-                                                    <td class="text-center"><span class="badge bg-light-info">12</span></td>
-                                                    <td class="text-center"><span class="badge bg-light-danger">15</span></td>
-                                                    <td class="text-center"><span class="badge bg-light-warning">4</span></td>
-                                                    <td class="text-center"><strong class="text-primary">31</strong></td>
-                                                    <td>Mar 14, 2026</td>
-                                                    <td><span class="badge bg-success">Submitted</span></td>
-                                                    <td>
-                                                        <button class="btn btn-sm btn-light-primary" data-bs-toggle="modal" data-bs-target="#viewReportModal" onclick="viewReport('Grace Homecell', 'Sis. Nkiru James', 12, 15, 4)">
-                                                            <i class="ti ti-eye"></i> View
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td><strong>Victory Homecell</strong></td>
-                                                    <td>Bro. Ayo Alabi</td>
-                                                    <td class="text-center"><span class="badge bg-light-info">8</span></td>
-                                                    <td class="text-center"><span class="badge bg-light-danger">10</span></td>
-                                                    <td class="text-center"><span class="badge bg-light-warning">4</span></td>
-                                                    <td class="text-center"><strong class="text-primary">22</strong></td>
-                                                    <td>Mar 14, 2026</td>
-                                                    <td><span class="badge bg-success">Submitted</span></td>
-                                                    <td>
-                                                        <button class="btn btn-sm btn-light-primary" data-bs-toggle="modal" data-bs-target="#viewReportModal" onclick="viewReport('Victory Homecell', 'Bro. Ayo Alabi', 8, 10, 4)">
-                                                            <i class="ti ti-eye"></i> View
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td><strong>Faith Homecell</strong></td>
-                                                    <td>Bro. Chidi Eze</td>
-                                                    <td class="text-center"><span class="badge bg-light-info">14</span></td>
-                                                    <td class="text-center"><span class="badge bg-light-danger">18</span></td>
-                                                    <td class="text-center"><span class="badge bg-light-warning">8</span></td>
-                                                    <td class="text-center"><strong class="text-primary">40</strong></td>
-                                                    <td>Mar 14, 2026</td>
-                                                    <td><span class="badge bg-success">Submitted</span></td>
-                                                    <td>
-                                                        <button class="btn btn-sm btn-light-primary" data-bs-toggle="modal" data-bs-target="#viewReportModal" onclick="viewReport('Faith Homecell', 'Bro. Chidi Eze', 14, 18, 8)">
-                                                            <i class="ti ti-eye"></i> View
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td><strong>Joy Homecell</strong></td>
-                                                    <td>Sis. Amaka Obi</td>
-                                                    <td class="text-center"><span class="badge bg-light-info">10</span></td>
-                                                    <td class="text-center"><span class="badge bg-light-danger">12</span></td>
-                                                    <td class="text-center"><span class="badge bg-light-warning">6</span></td>
-                                                    <td class="text-center"><strong class="text-primary">28</strong></td>
-                                                    <td>Mar 14, 2026</td>
-                                                    <td><span class="badge bg-success">Submitted</span></td>
-                                                    <td>
-                                                        <button class="btn btn-sm btn-light-primary" data-bs-toggle="modal" data-bs-target="#viewReportModal" onclick="viewReport('Joy Homecell', 'Sis. Amaka Obi', 10, 12, 6)">
-                                                            <i class="ti ti-eye"></i> View
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td><strong>Peace Homecell</strong></td>
-                                                    <td>Bro. Emeka Nwosu</td>
-                                                    <td class="text-center"><span class="badge bg-light-info">15</span></td>
-                                                    <td class="text-center"><span class="badge bg-light-danger">20</span></td>
-                                                    <td class="text-center"><span class="badge bg-light-warning">10</span></td>
-                                                    <td class="text-center"><strong class="text-primary">45</strong></td>
-                                                    <td>Mar 14, 2026</td>
-                                                    <td><span class="badge bg-success">Submitted</span></td>
-                                                    <td>
-                                                        <button class="btn btn-sm btn-light-primary" data-bs-toggle="modal" data-bs-target="#viewReportModal" onclick="viewReport('Peace Homecell', 'Bro. Emeka Nwosu', 15, 20, 10)">
-                                                            <i class="ti ti-eye"></i> View
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td><strong>Hope Homecell</strong></td>
-                                                    <td>Sis. Blessing Okoro</td>
-                                                    <td class="text-center"><span class="badge bg-light-info">11</span></td>
-                                                    <td class="text-center"><span class="badge bg-light-danger">14</span></td>
-                                                    <td class="text-center"><span class="badge bg-light-warning">7</span></td>
-                                                    <td class="text-center"><strong class="text-primary">32</strong></td>
-                                                    <td>Mar 14, 2026</td>
-                                                    <td><span class="badge bg-success">Submitted</span></td>
-                                                    <td>
-                                                        <button class="btn btn-sm btn-light-primary" data-bs-toggle="modal" data-bs-target="#viewReportModal" onclick="viewReport('Hope Homecell', 'Sis. Blessing Okoro', 11, 14, 7)">
-                                                            <i class="ti ti-eye"></i> View
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td><strong>Love Homecell</strong></td>
-                                                    <td>Bro. Tunde Adebayo</td>
-                                                    <td class="text-center"><span class="badge bg-light-info">9</span></td>
-                                                    <td class="text-center"><span class="badge bg-light-danger">13</span></td>
-                                                    <td class="text-center"><span class="badge bg-light-warning">5</span></td>
-                                                    <td class="text-center"><strong class="text-primary">27</strong></td>
-                                                    <td>Mar 14, 2026</td>
-                                                    <td><span class="badge bg-success">Submitted</span></td>
-                                                    <td>
-                                                        <button class="btn btn-sm btn-light-primary" data-bs-toggle="modal" data-bs-target="#viewReportModal" onclick="viewReport('Love Homecell', 'Bro. Tunde Adebayo', 9, 13, 5)">
-                                                            <i class="ti ti-eye"></i> View
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td><strong>Unity Homecell</strong></td>
-                                                    <td>Sis. Funke Adeniyi</td>
-                                                    <td class="text-center"><span class="badge bg-light-info">19</span></td>
-                                                    <td class="text-center"><span class="badge bg-light-danger">24</span></td>
-                                                    <td class="text-center"><span class="badge bg-light-warning">16</span></td>
-                                                    <td class="text-center"><strong class="text-primary">59</strong></td>
-                                                    <td>Mar 14, 2026</td>
-                                                    <td><span class="badge bg-success">Submitted</span></td>
-                                                    <td>
-                                                        <button class="btn btn-sm btn-light-primary" data-bs-toggle="modal" data-bs-target="#viewReportModal" onclick="viewReport('Unity Homecell', 'Sis. Funke Adeniyi', 19, 24, 16)">
-                                                            <i class="ti ti-eye"></i> View
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                                <tr class="table-warning">
-                                                    <td><strong>Light Homecell</strong></td>
-                                                    <td>Bro. Samuel Okonkwo</td>
-                                                    <td class="text-center text-muted">—</td>
-                                                    <td class="text-center text-muted">—</td>
-                                                    <td class="text-center text-muted">—</td>
-                                                    <td class="text-center text-muted">—</td>
-                                                    <td>—</td>
-                                                    <td><span class="badge bg-warning">Pending</span></td>
-                                                    <td>
-                                                        <button class="btn btn-sm btn-light-warning">
-                                                            <i class="ti ti-bell"></i> Remind
-                                                        </button>
-                                                    </td>
-                                                </tr>
+                                            <tbody id="reportsTableBody">
+                                            <tr>
+                                                <td class="text-center text-muted py-4" colspan="10">Loading homecell reports...</td>
+                                            </tr>
                                             </tbody>
-                                            <tfoot class="table-light">
-                                                <tr>
-                                                    <th colspan="2" class="text-end">Weekly Total:</th>
-                                                    <th class="text-center text-info"><strong>98</strong></th>
-                                                    <th class="text-center text-danger"><strong>126</strong></th>
-                                                    <th class="text-center text-warning"><strong>60</strong></th>
-                                                    <th class="text-center text-primary"><strong>284</strong></th>
-                                                    <th colspan="3"></th>
-                                                </tr>
-                                            </tfoot>
                                         </table>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Weekly Comparison -->
                         <div class="col-12">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h5 class="mb-0">Weekly Attendance Comparison</h5>
-                                </div>
-                                <div class="card-body">
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered">
-                                            <thead>
-                                                <tr>
-                                                    <th>Week</th>
-                                                    <th class="text-center">Male</th>
-                                                    <th class="text-center">Female</th>
-                                                    <th class="text-center">Children</th>
-                                                    <th class="text-center">Total</th>
-                                                    <th class="text-center">Change</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td><strong>This Week</strong> (Mar 10-16)</td>
-                                                    <td class="text-center">98</td>
-                                                    <td class="text-center">126</td>
-                                                    <td class="text-center">60</td>
-                                                    <td class="text-center"><strong>284</strong></td>
-                                                    <td class="text-center text-success"><i class="ti ti-trending-up"></i> +8%</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Last Week (Mar 3-9)</td>
-                                                    <td class="text-center">92</td>
-                                                    <td class="text-center">118</td>
-                                                    <td class="text-center">53</td>
-                                                    <td class="text-center"><strong>263</strong></td>
-                                                    <td class="text-center text-success"><i class="ti ti-trending-up"></i> +5%</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>2 Weeks Ago (Feb 24 - Mar 2)</td>
-                                                    <td class="text-center">88</td>
-                                                    <td class="text-center">112</td>
-                                                    <td class="text-center">50</td>
-                                                    <td class="text-center"><strong>250</strong></td>
-                                                    <td class="text-center text-danger"><i class="ti ti-trending-down"></i> -3%</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
+                            <div class="alert alert-info mb-0">
+                                <i class="ti ti-info-circle me-2"></i>
+                                <strong>How it works:</strong> Submitted homecells are aggregated for the selected period. Active homecells with no attendance record in that same period are shown as pending so follow-up is visible immediately.
                             </div>
                         </div>
                     </div>
@@ -332,99 +185,15 @@
     </div>
 </div>
 
-<!-- View Report Modal -->
-<div class="modal fade" id="viewReportModal" tabindex="-1">
+<div class="modal fade" id="reportDetailsModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title"><i class="ti ti-report me-2"></i>Homecell Report Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <h5 class="modal-title">Homecell Report Details</h5>
+                <button class="btn-close" data-bs-dismiss="modal" type="button"></button>
             </div>
-            <div class="modal-body">
-                <div class="row mb-4">
-                    <div class="col-md-6">
-                        <p class="mb-1"><strong>Homecell:</strong> <span id="reportHomecell">-</span></p>
-                        <p class="mb-1"><strong>Leader:</strong> <span id="reportLeader">-</span></p>
-                        <p class="mb-0"><strong>Meeting Date:</strong> March 14, 2026</p>
-                    </div>
-                    <div class="col-md-6 text-md-end">
-                        <p class="mb-1"><strong>Report Status:</strong> <span class="badge bg-success">Submitted</span></p>
-                        <p class="mb-0"><strong>Submitted:</strong> Mar 14, 2026 at 9:45 PM</p>
-                    </div>
-                </div>
-
-                <hr>
-
-                <h6 class="mb-3">Attendance Breakdown</h6>
-                <div class="row text-center mb-4">
-                    <div class="col-md-3">
-                        <div class="border rounded p-3">
-                            <i class="ti ti-man text-info" style="font-size: 2rem;"></i>
-                            <h3 class="mb-0 text-info" id="reportMale">-</h3>
-                            <p class="text-muted mb-0">Male</p>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="border rounded p-3">
-                            <i class="ti ti-woman text-danger" style="font-size: 2rem;"></i>
-                            <h3 class="mb-0 text-danger" id="reportFemale">-</h3>
-                            <p class="text-muted mb-0">Female</p>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="border rounded p-3">
-                            <i class="ti ti-friends text-warning" style="font-size: 2rem;"></i>
-                            <h3 class="mb-0 text-warning" id="reportChildren">-</h3>
-                            <p class="text-muted mb-0">Children</p>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="border rounded p-3 bg-primary text-white">
-                            <i class="ti ti-users" style="font-size: 2rem;"></i>
-                            <h3 class="mb-0" id="reportTotal">-</h3>
-                            <p class="mb-0">Total</p>
-                        </div>
-                    </div>
-                </div>
-
-                <h6 class="mb-3">Additional Details</h6>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label class="form-label text-muted small">First Timers</label>
-                            <p class="mb-0"><strong>2</strong></p>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label class="form-label text-muted small">Testimonies Shared</label>
-                            <p class="mb-0"><strong>3</strong></p>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label class="form-label text-muted small">Offerings Collected</label>
-                            <p class="mb-0"><strong>₦25,500</strong></p>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label class="form-label text-muted small">Prayer Requests</label>
-                            <p class="mb-0"><strong>5</strong></p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mb-0">
-                    <label class="form-label text-muted small">Leader's Notes</label>
-                    <p class="mb-0 border rounded p-2 bg-light">Great meeting this week. We had 2 first-timers who were invited by members. The study on faith was engaging and everyone participated. Follow-up planned for the new members.</p>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-primary">
-                    <i class="ti ti-printer me-1"></i>Print Report
-                </button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <div class="modal-body" id="reportDetailsBody">
+                <div class="text-secondary">Loading report details...</div>
             </div>
         </div>
     </div>
@@ -433,17 +202,543 @@
 <script src="assets/js/jquery-3.6.3.min.js"></script>
 <script src="assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
 <script src="assets/vendor/simplebar/simplebar.js"></script>
+<script src="assets/js/app-config.js"></script>
+<script src="assets/js/app-api.js"></script>
 <script src="assets/js/church-template.js"></script>
 <script src="assets/js/script.js"></script>
 <script>
-function viewReport(homecell, leader, male, female, children) {
-    document.getElementById('reportHomecell').textContent = homecell;
-    document.getElementById('reportLeader').textContent = leader;
-    document.getElementById('reportMale').textContent = male;
-    document.getElementById('reportFemale').textContent = female;
-    document.getElementById('reportChildren').textContent = children;
-    document.getElementById('reportTotal').textContent = male + female + children;
+const reportsSession = window.LFC_API.getSession();
+const activeChurch = reportsSession ? reportsSession.church : null;
+const activeBranch = reportsSession ? reportsSession.branch : null;
+
+const reportsErrorAlert = document.getElementById('reportsErrorAlert');
+const periodFilterInput = document.getElementById('periodFilterInput');
+const anchorDateInput = document.getElementById('anchorDateInput');
+const branchFilterInput = document.getElementById('branchFilterInput');
+const statusFilterInput = document.getElementById('statusFilterInput');
+const searchInput = document.getElementById('searchInput');
+const reportsTableBody = document.getElementById('reportsTableBody');
+const exportReportButton = document.getElementById('exportReportButton');
+const reportDetailsBody = document.getElementById('reportDetailsBody');
+const reportDetailsModal = new bootstrap.Modal(document.getElementById('reportDetailsModal'));
+
+let branches = [];
+let homecells = [];
+let records = [];
+let visibleRows = [];
+
+if (!activeChurch || !activeChurch.id) {
+    window.location.replace('sign_in.html');
+    throw new Error('Missing active church session.');
 }
+
+function showError(message) {
+    reportsErrorAlert.textContent = message;
+    reportsErrorAlert.classList.remove('d-none');
+}
+
+function hideError() {
+    reportsErrorAlert.classList.add('d-none');
+    reportsErrorAlert.textContent = '';
+}
+
+function escapeHtml(value) {
+    return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function getTodayDate() {
+    return new Date().toISOString().slice(0, 10);
+}
+
+function formatDate(value) {
+    if (!value) {
+        return '--';
+    }
+
+    const date = new Date(value + 'T00:00:00');
+
+    if (Number.isNaN(date.getTime())) {
+        return value;
+    }
+
+    return date.toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+    });
+}
+
+function formatCurrency(value) {
+    if (value === null || value === undefined || value === '') {
+        return '--';
+    }
+
+    const numericValue = Number(value);
+
+    if (Number.isNaN(numericValue)) {
+        return '--';
+    }
+
+    return numericValue.toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+}
+
+function percentage(part, total) {
+    if (!total) {
+        return '0% of total';
+    }
+
+    return ((part / total) * 100).toFixed(1) + '% of total';
+}
+
+function getPrimaryLeaderName(homecell) {
+    const leaders = homecell && homecell.leaders ? homecell.leaders : [];
+    const primaryLeader = leaders.find(function (leader) {
+        return Boolean(leader.is_primary);
+    });
+
+    return primaryLeader
+        ? primaryLeader.name
+        : (leaders[0] ? leaders[0].name : '--');
+}
+
+function getRangeDates(anchorDate, period) {
+    const date = new Date(anchorDate + 'T00:00:00');
+
+    if (period === 'monthly') {
+        const start = new Date(date.getFullYear(), date.getMonth(), 1);
+        const end = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+        return {
+            start: start.toISOString().slice(0, 10),
+            end: end.toISOString().slice(0, 10)
+        };
+    }
+
+    const dayOfWeek = date.getDay();
+    const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+    const start = new Date(date);
+    start.setDate(date.getDate() + diffToMonday);
+    const end = new Date(start);
+    end.setDate(start.getDate() + 6);
+
+    return {
+        start: start.toISOString().slice(0, 10),
+        end: end.toISOString().slice(0, 10)
+    };
+}
+
+function renderBranchOptions() {
+    const options = branches.map(function (branch) {
+        return '<option value="' + branch.id + '">' + escapeHtml(branch.name) + '</option>';
+    }).join('');
+
+    branchFilterInput.innerHTML = '<option value="">All Branches</option>' + options;
+
+    if (activeBranch && activeBranch.id) {
+        branchFilterInput.value = String(activeBranch.id);
+        branchFilterInput.disabled = true;
+    }
+}
+
+function buildRows() {
+    const aggregatedByHomecell = new Map();
+
+    records.forEach(function (record) {
+        const homecellId = record.homecell ? record.homecell.id : null;
+
+        if (!homecellId) {
+            return;
+        }
+
+        const existing = aggregatedByHomecell.get(homecellId) || {
+            homecell_id: homecellId,
+            homecell_name: record.homecell.name,
+            homecell_code: record.homecell.code,
+            branch_id: record.branch ? record.branch.id : null,
+            branch_name: record.branch ? record.branch.name : null,
+            leader_name: '--',
+            male_count: 0,
+            female_count: 0,
+            children_count: 0,
+            total_count: 0,
+            first_timers_count: 0,
+            new_converts_count: 0,
+            offering_amount: 0,
+            latest_meeting_date: null,
+            status: 'submitted',
+            records: []
+        };
+
+        existing.male_count += Number(record.male_count || 0);
+        existing.female_count += Number(record.female_count || 0);
+        existing.children_count += Number(record.children_count || 0);
+        existing.total_count += Number(record.total_count || 0);
+        existing.first_timers_count += Number(record.first_timers_count || 0);
+        existing.new_converts_count += Number(record.new_converts_count || 0);
+        existing.offering_amount += Number(record.offering_amount || 0);
+        existing.latest_meeting_date = !existing.latest_meeting_date || record.meeting_date > existing.latest_meeting_date
+            ? record.meeting_date
+            : existing.latest_meeting_date;
+        existing.records.push(record);
+
+        aggregatedByHomecell.set(homecellId, existing);
+    });
+
+    const submittedRows = homecells.map(function (homecell) {
+        const aggregated = aggregatedByHomecell.get(homecell.id);
+
+        if (aggregated) {
+            aggregated.leader_name = getPrimaryLeaderName(homecell);
+            return aggregated;
+        }
+
+        return {
+            homecell_id: homecell.id,
+            homecell_name: homecell.name,
+            homecell_code: homecell.code,
+            branch_id: homecell.branch ? homecell.branch.id : null,
+            branch_name: homecell.branch ? homecell.branch.name : null,
+            leader_name: getPrimaryLeaderName(homecell),
+            male_count: 0,
+            female_count: 0,
+            children_count: 0,
+            total_count: 0,
+            first_timers_count: 0,
+            new_converts_count: 0,
+            offering_amount: 0,
+            latest_meeting_date: null,
+            status: 'pending',
+            records: []
+        };
+    });
+
+    const selectedStatus = statusFilterInput.value;
+    const selectedBranchId = Number(branchFilterInput.value || 0) || null;
+    const search = searchInput.value.trim().toLowerCase();
+
+    return submittedRows.filter(function (row) {
+        const branchMatches = !selectedBranchId || row.branch_id === selectedBranchId;
+        const statusMatches = !selectedStatus || row.status === selectedStatus;
+        const searchMatches = !search || [
+            row.homecell_name,
+            row.leader_name,
+            row.branch_name,
+            row.homecell_code
+        ].filter(Boolean).join(' ').toLowerCase().includes(search);
+
+        return branchMatches && statusMatches && searchMatches;
+    }).sort(function (left, right) {
+        if (left.status !== right.status) {
+            return left.status === 'submitted' ? -1 : 1;
+        }
+
+        return left.homecell_name.localeCompare(right.homecell_name);
+    });
+}
+
+function renderStats(rows) {
+    const submittedRows = rows.filter(function (row) {
+        return row.status === 'submitted';
+    });
+    const totalAttendance = submittedRows.reduce(function (sum, row) {
+        return sum + row.total_count;
+    }, 0);
+    const maleCount = submittedRows.reduce(function (sum, row) {
+        return sum + row.male_count;
+    }, 0);
+    const femaleCount = submittedRows.reduce(function (sum, row) {
+        return sum + row.female_count;
+    }, 0);
+    const childrenCount = submittedRows.reduce(function (sum, row) {
+        return sum + row.children_count;
+    }, 0);
+    const coveredCount = submittedRows.length;
+    const pendingCount = rows.filter(function (row) {
+        return row.status === 'pending';
+    }).length;
+
+    document.getElementById('totalAttendanceStat').textContent = String(totalAttendance);
+    document.getElementById('submittedReportsStat').textContent = String(records.length);
+    document.getElementById('coveredHomecellsStat').textContent = String(coveredCount) + ' / ' + String(rows.length);
+    document.getElementById('pendingHomecellsStat').textContent = String(pendingCount);
+    document.getElementById('maleAttendanceStat').textContent = String(maleCount);
+    document.getElementById('femaleAttendanceStat').textContent = String(femaleCount);
+    document.getElementById('childrenAttendanceStat').textContent = String(childrenCount);
+    document.getElementById('maleShareStat').textContent = percentage(maleCount, totalAttendance);
+    document.getElementById('femaleShareStat').textContent = percentage(femaleCount, totalAttendance);
+    document.getElementById('childrenShareStat').textContent = percentage(childrenCount, totalAttendance);
+    document.getElementById('periodBadgeLabel').textContent = periodFilterInput.value === 'monthly' ? 'Selected month' : 'Selected week';
+}
+
+function renderTable(rows) {
+    if (!rows.length) {
+        reportsTableBody.innerHTML = '<tr><td class="text-center text-muted py-4" colspan="10">No homecell reports found for the current filters.</td></tr>';
+        return;
+    }
+
+    reportsTableBody.innerHTML = rows.map(function (row) {
+        const statusBadge = row.status === 'submitted'
+            ? '<span class="badge bg-success">Submitted</span>'
+            : '<span class="badge bg-warning">Pending</span>';
+        const actionLabel = row.status === 'submitted' ? 'View' : 'Review';
+
+        return `
+            <tr class="${row.status === 'pending' ? 'table-warning' : ''}">
+                <td>
+                    <strong>${escapeHtml(row.homecell_name)}</strong>
+                    <div class="small text-secondary">${escapeHtml(row.homecell_code || '--')}</div>
+                </td>
+                <td>${escapeHtml(row.leader_name || '--')}</td>
+                <td>${row.branch_name ? escapeHtml(row.branch_name) : '<span class="text-muted">Unassigned</span>'}</td>
+                <td class="text-center">${row.status === 'submitted' ? '<span class="badge bg-light-info">' + escapeHtml(row.male_count) + '</span>' : '<span class="text-muted">--</span>'}</td>
+                <td class="text-center">${row.status === 'submitted' ? '<span class="badge bg-light-danger">' + escapeHtml(row.female_count) + '</span>' : '<span class="text-muted">--</span>'}</td>
+                <td class="text-center">${row.status === 'submitted' ? '<span class="badge bg-light-secondary">' + escapeHtml(row.children_count) + '</span>' : '<span class="text-muted">--</span>'}</td>
+                <td class="text-center">${row.status === 'submitted' ? '<strong class="text-primary">' + escapeHtml(row.total_count) + '</strong>' : '<span class="text-muted">--</span>'}</td>
+                <td>${escapeHtml(formatDate(row.latest_meeting_date))}</td>
+                <td>${statusBadge}</td>
+                <td>
+                    <button class="btn btn-sm btn-light-primary view-report-button" data-homecell-id="${row.homecell_id}" type="button">
+                        <i class="ti ti-eye me-1"></i>${actionLabel}
+                    </button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function openDetails(homecellId) {
+    const row = visibleRows.find(function (candidate) {
+        return candidate.homecell_id === homecellId;
+    });
+
+    if (!row) {
+        return;
+    }
+
+    const recordsList = row.records.length
+        ? row.records.map(function (record) {
+            return `
+                <tr>
+                    <td>${escapeHtml(formatDate(record.meeting_date))}</td>
+                    <td>${escapeHtml(record.male_count)}</td>
+                    <td>${escapeHtml(record.female_count)}</td>
+                    <td>${escapeHtml(record.children_count)}</td>
+                    <td>${escapeHtml(record.total_count)}</td>
+                    <td>${escapeHtml(record.first_timers_count)}</td>
+                    <td>${escapeHtml(record.new_converts_count)}</td>
+                    <td>${escapeHtml(formatCurrency(record.offering_amount))}</td>
+                </tr>
+            `;
+        }).join('')
+        : '<tr><td class="text-center text-muted py-4" colspan="8">No attendance record has been submitted for this homecell in the selected period.</td></tr>';
+
+    reportDetailsBody.innerHTML = `
+        <div class="row g-3">
+            <div class="col-md-6">
+                <div class="border rounded p-3 h-100">
+                    <h6 class="mb-2">${escapeHtml(row.homecell_name)}</h6>
+                    <div class="small text-secondary mb-1">Leader: ${escapeHtml(row.leader_name || '--')}</div>
+                    <div class="small text-secondary mb-1">Branch: ${escapeHtml(row.branch_name || 'Unassigned')}</div>
+                    <div class="small text-secondary mb-1">Status: ${escapeHtml(row.status)}</div>
+                    <div class="small text-secondary">Last Meeting: ${escapeHtml(formatDate(row.latest_meeting_date))}</div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="border rounded p-3 h-100">
+                    <div class="row g-2 text-center">
+                        <div class="col-6">
+                            <div class="border rounded p-2">
+                                <div class="small text-secondary">Male</div>
+                                <strong>${escapeHtml(row.male_count)}</strong>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="border rounded p-2">
+                                <div class="small text-secondary">Female</div>
+                                <strong>${escapeHtml(row.female_count)}</strong>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="border rounded p-2">
+                                <div class="small text-secondary">Children</div>
+                                <strong>${escapeHtml(row.children_count)}</strong>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="border rounded p-2">
+                                <div class="small text-secondary">Total</div>
+                                <strong>${escapeHtml(row.total_count)}</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="table-responsive">
+                    <table class="table table-sm align-middle mb-0">
+                        <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Male</th>
+                            <th>Female</th>
+                            <th>Children</th>
+                            <th>Total</th>
+                            <th>First Timers</th>
+                            <th>New Converts</th>
+                            <th>Offering</th>
+                        </tr>
+                        </thead>
+                        <tbody>${recordsList}</tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    `;
+
+    reportDetailsModal.show();
+}
+
+function exportCsv() {
+    if (!visibleRows.length) {
+        showError('There is no report data to export for the current filters.');
+        return;
+    }
+
+    const lines = [
+        ['Homecell', 'Leader', 'Branch', 'Status', 'Male', 'Female', 'Children', 'Total', 'Last Meeting', 'Records Submitted', 'First Timers', 'New Converts', 'Offering'].join(',')
+    ];
+
+    visibleRows.forEach(function (row) {
+        const csvRow = [
+            row.homecell_name,
+            row.leader_name,
+            row.branch_name || 'Unassigned',
+            row.status,
+            row.male_count,
+            row.female_count,
+            row.children_count,
+            row.total_count,
+            row.latest_meeting_date || '',
+            row.records.length,
+            row.first_timers_count,
+            row.new_converts_count,
+            row.offering_amount ? row.offering_amount.toFixed(2) : ''
+        ].map(function (value) {
+            return '"' + String(value || '').replace(/"/g, '""') + '"';
+        }).join(',');
+
+        lines.push(csvRow);
+    });
+
+    const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'homecell-reports-' + (anchorDateInput.value || getTodayDate()) + '.csv';
+    link.click();
+    window.URL.revokeObjectURL(url);
+}
+
+async function loadBranches() {
+    if (activeBranch && activeBranch.id) {
+        branches = [activeBranch];
+        renderBranchOptions();
+        return;
+    }
+
+    const response = await window.LFC_API.request('branches?church_id=' + encodeURIComponent(activeChurch.id));
+    branches = response.data || [];
+    renderBranchOptions();
+}
+
+async function loadHomecells() {
+    const params = new URLSearchParams({
+        church_id: String(activeChurch.id)
+    });
+
+    if (activeBranch && activeBranch.id) {
+        params.set('branch_id', String(activeBranch.id));
+    } else {
+        const selectedBranchId = Number(branchFilterInput.value || 0) || null;
+        if (selectedBranchId) {
+            params.set('branch_id', String(selectedBranchId));
+        }
+    }
+
+    const response = await window.LFC_API.request('homecells?' + params.toString());
+    homecells = response.data || [];
+}
+
+async function loadRecords() {
+    const range = getRangeDates(anchorDateInput.value || getTodayDate(), periodFilterInput.value || 'weekly');
+    const params = new URLSearchParams({
+        church_id: String(activeChurch.id),
+        date_from: range.start,
+        date_to: range.end,
+        limit: '200'
+    });
+
+    const selectedBranchId = Number(branchFilterInput.value || 0) || null;
+
+    if (selectedBranchId) {
+        params.set('branch_id', String(selectedBranchId));
+    }
+
+    const response = await window.LFC_API.request('homecell-attendance?' + params.toString());
+    records = response.data || [];
+}
+
+async function refreshReports() {
+    hideError();
+    await loadHomecells();
+    await loadRecords();
+    visibleRows = buildRows();
+    renderStats(visibleRows);
+    renderTable(visibleRows);
+}
+
+branchFilterInput.addEventListener('change', refreshReports);
+periodFilterInput.addEventListener('change', refreshReports);
+anchorDateInput.addEventListener('change', refreshReports);
+statusFilterInput.addEventListener('change', function () {
+    visibleRows = buildRows();
+    renderStats(visibleRows);
+    renderTable(visibleRows);
+});
+searchInput.addEventListener('input', function () {
+    visibleRows = buildRows();
+    renderStats(visibleRows);
+    renderTable(visibleRows);
+});
+exportReportButton.addEventListener('click', exportCsv);
+reportsTableBody.addEventListener('click', function (event) {
+    const button = event.target.closest('.view-report-button');
+
+    if (!button) {
+        return;
+    }
+
+    openDetails(Number(button.dataset.homecellId));
+});
+
+(async function initReportsPage() {
+    anchorDateInput.value = getTodayDate();
+
+    try {
+        await loadBranches();
+        await refreshReports();
+    } catch (error) {
+        showError(error.message || 'Unable to load homecell reports right now.');
+        reportsTableBody.innerHTML = '<tr><td class="text-center text-muted py-4" colspan="10">Unable to load homecell reports right now.</td></tr>';
+    }
+})();
 </script>
 </body>
 

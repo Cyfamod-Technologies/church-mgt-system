@@ -5,12 +5,12 @@
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
     <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="Church management section page using the ki-admin template." name="description">
-    <meta content="church management" name="keywords">
+    <meta content="Manage homecells, assign leaders, and link each homecell to a branch." name="description">
+    <meta content="homecells" name="keywords">
     <meta content="la-themes" name="author">
     <link href="assets/images/logo/favicon.png" rel="icon" type="image/x-icon">
     <link href="assets/images/logo/favicon.png" rel="shortcut icon" type="image/x-icon">
-    <title>Church Management</title>
+    <title>Homecells - LFC</title>
     <link href="assets/vendor/animation/animate.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com" rel="preconnect">
     <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
@@ -23,23 +23,741 @@
     <link href="assets/css/responsive.css" rel="stylesheet" type="text/css">
 </head>
 
-<body data-section-key="homecells">
+<body data-title="Homecells" data-subtitle="Create homecells, assign leaders, and link each cell to the right branch.">
 <div class="app-wrapper">
     <div class="loader-wrapper"><div class="loader_24"></div></div>
     <nav id="church-nav"></nav>
     <div class="app-content">
         <div class="">
             <header class="header-main" id="church-header"></header>
-            <main id="church-section-root"></main>
+            <main>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                                        <div>
+                                            <h4 class="mb-1">Homecells</h4>
+                                            <p class="text-secondary mb-0">Create each homecell, assign one or more leaders, and connect the cell to a branch for local oversight.</p>
+                                        </div>
+                                        <button class="btn btn-primary" id="openAddHomecellButton" type="button">
+                                            <i class="ti ti-plus me-1"></i>Create Homecell
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="alert alert-success d-none" id="homecellSuccessAlert" role="alert"></div>
+                            <div class="alert alert-danger d-none" id="homecellErrorAlert" role="alert"></div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="card overview-details-box b-s-3-primary">
+                                <div class="card-body">
+                                    <p class="text-dark f-w-600 mb-1">Total Homecells</p>
+                                    <h3 class="text-primary mb-0" id="totalHomecellsStat">0</h3>
+                                    <span class="badge text-light-primary mt-2">All cells in your church</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card overview-details-box b-s-3-success">
+                                <div class="card-body">
+                                    <p class="text-dark f-w-600 mb-1">Assigned To Branches</p>
+                                    <h3 class="text-success mb-0" id="assignedHomecellsStat">0</h3>
+                                    <span class="badge text-light-success mt-2">Linked to a branch</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card overview-details-box b-s-3-warning">
+                                <div class="card-body">
+                                    <p class="text-dark f-w-600 mb-1">Leaders Assigned</p>
+                                    <h3 class="text-warning mb-0" id="leadersAssignedStat">0</h3>
+                                    <span class="badge text-light-warning mt-2">Across all homecells</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                    <h5 class="mb-0">Homecell Registry</h5>
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        <select class="form-select form-select-sm" id="branchFilter" style="width: 220px;">
+                                            <option value="">All Branches</option>
+                                        </select>
+                                        <input class="form-control form-control-sm" id="homecellSearchInput" placeholder="Search homecells or leaders..." style="width: 240px;" type="text">
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover align-middle">
+                                            <thead>
+                                            <tr>
+                                                <th>Homecell</th>
+                                                <th>Branch</th>
+                                                <th>Leaders</th>
+                                                <th>Meeting</th>
+                                                <th>Location</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody id="homecellsTableBody">
+                                            <tr>
+                                                <td class="text-center text-muted py-4" colspan="7">Loading homecells...</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="alert alert-info mb-0">
+                                <i class="ti ti-info-circle me-2"></i>
+                                <strong>How it works:</strong> Each homecell belongs to your church, can optionally be linked to a branch, and can carry multiple assigned leaders such as Leader, Assistant Leader, or Secretary.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="homecellFormModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="homecellFormModalTitle">Create Homecell</h5>
+                <button class="btn-close" data-bs-dismiss="modal" type="button"></button>
+            </div>
+            <div class="modal-body">
+                <form id="homecellForm">
+                    <input id="homecellIdInput" type="hidden">
+                    <div class="row">
+                        <div class="col-lg-7">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="homecellNameInput">Homecell Name <span class="text-danger">*</span></label>
+                                        <input class="form-control" id="homecellNameInput" placeholder="e.g. Grace Cell" type="text">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="homecellCodeInput">Homecell Code</label>
+                                        <input class="form-control" id="homecellCodeInput" placeholder="Leave blank to auto-generate" type="text">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="homecellBranchInput">Assign To Branch</label>
+                                        <select class="form-select" id="homecellBranchInput">
+                                            <option value="">No branch assigned</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="homecellStatusInput">Status</label>
+                                        <select class="form-select" id="homecellStatusInput">
+                                            <option value="active">Active</option>
+                                            <option value="review">Review</option>
+                                            <option value="inactive">Inactive</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="homecellMeetingDayInput">Meeting Day</label>
+                                        <select class="form-select" id="homecellMeetingDayInput">
+                                            <option value="">Select day</option>
+                                            <option value="Monday">Monday</option>
+                                            <option value="Tuesday">Tuesday</option>
+                                            <option value="Wednesday">Wednesday</option>
+                                            <option value="Thursday">Thursday</option>
+                                            <option value="Friday">Friday</option>
+                                            <option value="Saturday">Saturday</option>
+                                            <option value="Sunday">Sunday</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="homecellMeetingTimeInput">Meeting Time</label>
+                                        <input class="form-control" id="homecellMeetingTimeInput" type="time">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="homecellHostNameInput">Host Name</label>
+                                        <input class="form-control" id="homecellHostNameInput" placeholder="Host full name" type="text">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="homecellHostPhoneInput">Host Phone</label>
+                                        <input class="form-control" id="homecellHostPhoneInput" placeholder="+234 801 234 5678" type="text">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="homecellCityAreaInput">City / Area</label>
+                                        <input class="form-control" id="homecellCityAreaInput" placeholder="e.g. Lekki Phase 1" type="text">
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="homecellAddressInput">Meeting Address</label>
+                                        <textarea class="form-control" id="homecellAddressInput" placeholder="Homecell meeting address" rows="2"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="mb-0">
+                                        <label class="form-label" for="homecellNotesInput">Notes</label>
+                                        <textarea class="form-control" id="homecellNotesInput" placeholder="Any note about the cell or leadership structure" rows="2"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-5">
+                            <div class="border rounded p-3 h-100">
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <div>
+                                        <h6 class="mb-1">Assigned Leaders</h6>
+                                        <p class="text-secondary small mb-0">Add one or more leaders for this homecell.</p>
+                                    </div>
+                                    <button class="btn btn-sm btn-light-primary" id="addHomecellLeaderButton" type="button">
+                                        <i class="ti ti-plus me-1"></i>Add Leader
+                                    </button>
+                                </div>
+                                <div class="d-grid gap-3" id="homecellLeadersContainer">
+                                    <div class="text-secondary" id="homecellLeadersEmptyState">No leaders added yet.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Cancel</button>
+                <button class="btn btn-primary" id="saveHomecellButton" type="button">
+                    <i class="ti ti-device-floppy me-1"></i>Save Homecell
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="homecellDetailsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="ti ti-home me-2"></i>Homecell Details</h5>
+                <button class="btn-close" data-bs-dismiss="modal" type="button"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3" id="homecellDetailsBody">
+                    <div class="col-12 text-secondary">Loading homecell details...</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="assets/js/jquery-3.6.3.min.js"></script>
 <script src="assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
 <script src="assets/vendor/simplebar/simplebar.js"></script>
-<script src="assets/js/church-section-pages.js"></script>
+<script src="assets/js/app-config.js"></script>
+<script src="assets/js/app-api.js"></script>
 <script src="assets/js/church-template.js"></script>
 <script src="assets/js/script.js"></script>
+<script>
+const homecellsSession = window.LFC_API.getSession();
+const activeChurch = homecellsSession ? homecellsSession.church : null;
+const activeBranch = homecellsSession ? homecellsSession.branch : null;
+
+const successAlert = document.getElementById('homecellSuccessAlert');
+const errorAlert = document.getElementById('homecellErrorAlert');
+const homecellsTableBody = document.getElementById('homecellsTableBody');
+const branchFilter = document.getElementById('branchFilter');
+const homecellSearchInput = document.getElementById('homecellSearchInput');
+const homecellBranchInput = document.getElementById('homecellBranchInput');
+const saveHomecellButton = document.getElementById('saveHomecellButton');
+const addHomecellLeaderButton = document.getElementById('addHomecellLeaderButton');
+const homecellLeadersContainer = document.getElementById('homecellLeadersContainer');
+
+const homecellFormModal = new bootstrap.Modal(document.getElementById('homecellFormModal'));
+const homecellDetailsModal = new bootstrap.Modal(document.getElementById('homecellDetailsModal'));
+
+let branches = [];
+let homecells = [];
+
+if (!activeChurch || !activeChurch.id) {
+    window.location.replace('sign_in.html');
+    throw new Error('Missing active church session.');
+}
+
+function showError(message) {
+    errorAlert.textContent = message;
+    errorAlert.classList.remove('d-none');
+}
+
+function hideError() {
+    errorAlert.classList.add('d-none');
+    errorAlert.textContent = '';
+}
+
+function showSuccess(message) {
+    successAlert.textContent = message;
+    successAlert.classList.remove('d-none');
+}
+
+function hideSuccess() {
+    successAlert.classList.add('d-none');
+    successAlert.textContent = '';
+}
+
+function escapeHtml(value) {
+    return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function getStatusBadgeClass(status) {
+    const normalized = (status || '').toLowerCase();
+    if (normalized === 'active') {
+        return 'bg-success';
+    }
+    if (normalized === 'review') {
+        return 'bg-warning text-dark';
+    }
+    if (normalized === 'inactive') {
+        return 'bg-danger';
+    }
+    return 'bg-secondary';
+}
+
+function formatMeeting(homecell) {
+    if (!homecell.meeting_day && !homecell.meeting_time) {
+        return '--';
+    }
+
+    return [homecell.meeting_day, homecell.meeting_time ? formatTime(homecell.meeting_time) : null]
+        .filter(Boolean)
+        .join(', ');
+}
+
+function formatTime(value) {
+    if (!value) {
+        return '--';
+    }
+
+    const [hours, minutes] = value.slice(0, 5).split(':').map(Number);
+    const period = hours >= 12 ? 'PM' : 'AM';
+    const normalizedHours = hours % 12 || 12;
+    return normalizedHours + ':' + String(minutes).padStart(2, '0') + ' ' + period;
+}
+
+function formatLeaderSummary(leaders) {
+    if (!leaders || !leaders.length) {
+        return 'No leaders assigned';
+    }
+
+    return leaders.map(function (leader) {
+        return leader.name + (leader.role ? ' (' + leader.role + ')' : '');
+    }).join(', ');
+}
+
+function renderStats(visibleHomecells) {
+    document.getElementById('totalHomecellsStat').textContent = String(visibleHomecells.length);
+    document.getElementById('assignedHomecellsStat').textContent = String(visibleHomecells.filter(function (homecell) {
+        return Boolean(homecell.branch);
+    }).length);
+    document.getElementById('leadersAssignedStat').textContent = String(visibleHomecells.reduce(function (total, homecell) {
+        return total + (homecell.leaders ? homecell.leaders.length : 0);
+    }, 0));
+}
+
+function renderBranchOptions() {
+    const branchOptions = branches.map(function (branch) {
+        return `<option value="${branch.id}">${escapeHtml(branch.name)}</option>`;
+    }).join('');
+
+    branchFilter.innerHTML = '<option value="">All Branches</option>' + branchOptions;
+    homecellBranchInput.innerHTML = '<option value="">No branch assigned</option>' + branchOptions;
+
+    if (activeBranch && activeBranch.id) {
+        branchFilter.value = String(activeBranch.id);
+    }
+}
+
+function renderHomecellsTable() {
+    const selectedBranchId = Number(branchFilter.value || 0) || null;
+    const search = homecellSearchInput.value.trim().toLowerCase();
+    const visibleHomecells = homecells.filter(function (homecell) {
+        const branchMatches = !selectedBranchId || (homecell.branch && homecell.branch.id === selectedBranchId);
+        const searchMatches = !search || [
+            homecell.name,
+            homecell.branch ? homecell.branch.name : '',
+            homecell.city_area,
+            homecell.host_name,
+            formatLeaderSummary(homecell.leaders)
+        ].some(function (value) {
+            return String(value || '').toLowerCase().includes(search);
+        });
+
+        return branchMatches && searchMatches;
+    });
+
+    renderStats(visibleHomecells);
+
+    if (!visibleHomecells.length) {
+        homecellsTableBody.innerHTML = '<tr><td class="text-center text-muted py-4" colspan="7">No homecells found for the current filters.</td></tr>';
+        return;
+    }
+
+    homecellsTableBody.innerHTML = visibleHomecells.map(function (homecell) {
+        return `
+            <tr>
+                <td>
+                    <strong>${escapeHtml(homecell.name)}</strong>
+                    <div class="small text-secondary">${escapeHtml(homecell.code || '--')}</div>
+                </td>
+                <td>${homecell.branch ? escapeHtml(homecell.branch.name) : '<span class="text-muted">Unassigned</span>'}</td>
+                <td><span class="small">${escapeHtml(formatLeaderSummary(homecell.leaders))}</span></td>
+                <td>${escapeHtml(formatMeeting(homecell))}</td>
+                <td>${escapeHtml([homecell.city_area, homecell.address].filter(Boolean).join(' / ') || '--')}</td>
+                <td><span class="badge ${getStatusBadgeClass(homecell.status)}">${escapeHtml(homecell.status || 'active')}</span></td>
+                <td>
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-light-secondary dropdown-toggle" data-bs-toggle="dropdown" type="button">Actions</button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item homecell-action" data-action="view" data-homecell-id="${homecell.id}" href="#"><i class="ti ti-eye me-2"></i>View Details</a></li>
+                            <li><a class="dropdown-item homecell-action" data-action="edit" data-homecell-id="${homecell.id}" href="#"><i class="ti ti-edit me-2"></i>Edit</a></li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function renderLeaderRows(leaders) {
+    if (!leaders.length) {
+        homecellLeadersContainer.innerHTML = '<div class="text-secondary" id="homecellLeadersEmptyState">No leaders added yet.</div>';
+        return;
+    }
+
+    homecellLeadersContainer.innerHTML = leaders.map(function (leader, index) {
+        return `
+            <div class="border rounded p-3 homecell-leader-item" data-index="${index}">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <strong>Leader ${index + 1}</strong>
+                    <button class="btn btn-sm btn-link text-danger p-0 remove-homecell-leader" type="button">Remove</button>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <input class="form-control homecell-leader-name" type="text" value="${escapeHtml(leader.name || '')}" placeholder="Leader full name">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Role</label>
+                            <input class="form-control homecell-leader-role" type="text" value="${escapeHtml(leader.role || '')}" placeholder="e.g. Leader, Assistant Leader">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3 mb-md-0">
+                            <label class="form-label">Phone</label>
+                            <input class="form-control homecell-leader-phone" type="text" value="${escapeHtml(leader.phone || '')}" placeholder="+234 801 234 5678">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3 mb-md-0">
+                            <label class="form-label">Email</label>
+                            <input class="form-control homecell-leader-email" type="email" value="${escapeHtml(leader.email || '')}" placeholder="leader@church.org">
+                        </div>
+                    </div>
+                    <div class="col-12 mt-3">
+                        <div class="form-check">
+                            <input class="form-check-input homecell-leader-primary" id="homecellLeaderPrimary${index}" type="checkbox" ${leader.is_primary ? 'checked' : ''}>
+                            <label class="form-check-label" for="homecellLeaderPrimary${index}">Primary leader for this homecell</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function readLeaders() {
+    return Array.from(document.querySelectorAll('.homecell-leader-item')).map(function (item) {
+        return {
+            name: item.querySelector('.homecell-leader-name').value.trim(),
+            role: item.querySelector('.homecell-leader-role').value.trim() || 'Leader',
+            phone: item.querySelector('.homecell-leader-phone').value.trim() || null,
+            email: item.querySelector('.homecell-leader-email').value.trim() || null,
+            is_primary: item.querySelector('.homecell-leader-primary').checked
+        };
+    }).filter(function (leader) {
+        return leader.name || leader.phone || leader.email;
+    });
+}
+
+function resetForm() {
+    document.getElementById('homecellForm').reset();
+    document.getElementById('homecellIdInput').value = '';
+    document.getElementById('homecellFormModalTitle').textContent = 'Create Homecell';
+    saveHomecellButton.innerHTML = '<i class="ti ti-device-floppy me-1"></i>Save Homecell';
+    if (activeBranch && activeBranch.id) {
+        homecellBranchInput.value = String(activeBranch.id);
+    } else {
+        homecellBranchInput.value = '';
+    }
+    renderLeaderRows([]);
+}
+
+function fillForm(homecell) {
+    document.getElementById('homecellIdInput').value = homecell.id;
+    document.getElementById('homecellNameInput').value = homecell.name || '';
+    document.getElementById('homecellCodeInput').value = homecell.code || '';
+    document.getElementById('homecellBranchInput').value = homecell.branch ? String(homecell.branch.id) : '';
+    document.getElementById('homecellStatusInput').value = homecell.status || 'active';
+    document.getElementById('homecellMeetingDayInput').value = homecell.meeting_day || '';
+    document.getElementById('homecellMeetingTimeInput').value = homecell.meeting_time ? homecell.meeting_time.slice(0, 5) : '';
+    document.getElementById('homecellHostNameInput').value = homecell.host_name || '';
+    document.getElementById('homecellHostPhoneInput').value = homecell.host_phone || '';
+    document.getElementById('homecellCityAreaInput').value = homecell.city_area || '';
+    document.getElementById('homecellAddressInput').value = homecell.address || '';
+    document.getElementById('homecellNotesInput').value = homecell.notes || '';
+    document.getElementById('homecellFormModalTitle').textContent = 'Edit Homecell';
+    saveHomecellButton.innerHTML = '<i class="ti ti-device-floppy me-1"></i>Update Homecell';
+    renderLeaderRows(homecell.leaders || []);
+}
+
+function buildPayload() {
+    return {
+        name: document.getElementById('homecellNameInput').value.trim(),
+        code: document.getElementById('homecellCodeInput').value.trim() || null,
+        branch_id: Number(document.getElementById('homecellBranchInput').value || 0) || null,
+        meeting_day: document.getElementById('homecellMeetingDayInput').value || null,
+        meeting_time: document.getElementById('homecellMeetingTimeInput').value || null,
+        host_name: document.getElementById('homecellHostNameInput').value.trim() || null,
+        host_phone: document.getElementById('homecellHostPhoneInput').value.trim() || null,
+        city_area: document.getElementById('homecellCityAreaInput').value.trim() || null,
+        address: document.getElementById('homecellAddressInput').value.trim() || null,
+        notes: document.getElementById('homecellNotesInput').value.trim() || null,
+        status: document.getElementById('homecellStatusInput').value || 'active',
+        leaders: readLeaders()
+    };
+}
+
+function validateLeaders(leaders) {
+    leaders.forEach(function (leader, index) {
+        if (!leader.name) {
+            throw new Error('Leader ' + (index + 1) + ' name is required.');
+        }
+    });
+}
+
+async function loadBranches() {
+    const response = await window.LFC_API.request('branches?church_id=' + encodeURIComponent(activeChurch.id));
+    branches = response.data || [];
+    renderBranchOptions();
+}
+
+async function loadHomecells() {
+    const response = await window.LFC_API.request('homecells?church_id=' + encodeURIComponent(activeChurch.id));
+    homecells = response.data || [];
+    renderHomecellsTable();
+}
+
+async function openHomecellDetails(homecellId) {
+    const detailsBody = document.getElementById('homecellDetailsBody');
+    detailsBody.innerHTML = '<div class="col-12 text-secondary">Loading homecell details...</div>';
+    homecellDetailsModal.show();
+
+    try {
+        const response = await window.LFC_API.request('homecells/' + encodeURIComponent(homecellId));
+        const homecell = response.data;
+
+        detailsBody.innerHTML = `
+            <div class="col-md-6">
+                <div class="border rounded p-3 h-100">
+                    <span class="text-secondary small d-block mb-1">Homecell</span>
+                    <strong>${escapeHtml(homecell.name)}</strong>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="border rounded p-3 h-100">
+                    <span class="text-secondary small d-block mb-1">Assigned Branch</span>
+                    <strong>${escapeHtml(homecell.branch ? homecell.branch.name : 'Unassigned')}</strong>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="border rounded p-3 h-100">
+                    <span class="text-secondary small d-block mb-1">Meeting</span>
+                    <strong>${escapeHtml(formatMeeting(homecell))}</strong>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="border rounded p-3 h-100">
+                    <span class="text-secondary small d-block mb-1">Host</span>
+                    <strong>${escapeHtml(homecell.host_name || '--')}</strong>
+                    <div class="small text-secondary mt-1">${escapeHtml(homecell.host_phone || '--')}</div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="border rounded p-3">
+                    <span class="text-secondary small d-block mb-2">Leaders</span>
+                    <div class="d-grid gap-2">
+                        ${(homecell.leaders || []).length ? homecell.leaders.map(function (leader) {
+                            return `<div class="border rounded p-3">
+                                <strong>${escapeHtml(leader.name)}</strong>
+                                <div class="small text-secondary">${escapeHtml(leader.role || 'Leader')}</div>
+                                <div class="small text-secondary">${escapeHtml([leader.phone, leader.email].filter(Boolean).join(' / ') || '--')}</div>
+                            </div>`;
+                        }).join('') : '<div class="text-secondary">No leaders assigned yet.</div>'}
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="border rounded p-3 h-100">
+                    <span class="text-secondary small d-block mb-1">Location / Notes</span>
+                    <strong>${escapeHtml([homecell.city_area, homecell.address].filter(Boolean).join(' / ') || '--')}</strong>
+                    <div class="small text-secondary mt-2">${escapeHtml(homecell.notes || '--')}</div>
+                </div>
+            </div>
+        `;
+    } catch (error) {
+        detailsBody.innerHTML = `<div class="col-12 text-danger">${escapeHtml(error.message)}</div>`;
+    }
+}
+
+async function bootstrapHomecellsPage() {
+    hideError();
+    hideSuccess();
+    await loadBranches();
+    await loadHomecells();
+}
+
+document.getElementById('openAddHomecellButton').addEventListener('click', function () {
+    resetForm();
+    homecellFormModal.show();
+});
+
+addHomecellLeaderButton.addEventListener('click', function () {
+    const leaders = readLeaders();
+    leaders.push({
+        name: '',
+        role: 'Leader',
+        phone: '',
+        email: '',
+        is_primary: leaders.length === 0
+    });
+    renderLeaderRows(leaders);
+});
+
+homecellLeadersContainer.addEventListener('click', function (event) {
+    if (!event.target.classList.contains('remove-homecell-leader')) {
+        return;
+    }
+
+    const item = event.target.closest('.homecell-leader-item');
+    const index = Number(item.dataset.index);
+    const leaders = readLeaders().filter(function (_, leaderIndex) {
+        return leaderIndex !== index;
+    });
+    renderLeaderRows(leaders);
+});
+
+branchFilter.addEventListener('change', renderHomecellsTable);
+homecellSearchInput.addEventListener('input', renderHomecellsTable);
+
+saveHomecellButton.addEventListener('click', async function () {
+    hideError();
+    hideSuccess();
+    saveHomecellButton.disabled = true;
+    const originalLabel = saveHomecellButton.innerHTML;
+    saveHomecellButton.innerHTML = '<i class="ti ti-loader me-1"></i>Saving...';
+
+    try {
+        const homecellId = Number(document.getElementById('homecellIdInput').value || 0) || null;
+        const payload = buildPayload();
+        validateLeaders(payload.leaders);
+
+        if (!homecellId) {
+            payload.church_id = activeChurch.id;
+        }
+
+        await window.LFC_API.request(homecellId ? 'homecells/' + encodeURIComponent(homecellId) : 'homecells', {
+            method: homecellId ? 'PUT' : 'POST',
+            body: payload
+        });
+
+        homecellFormModal.hide();
+        resetForm();
+        await bootstrapHomecellsPage();
+        showSuccess(homecellId ? 'Homecell updated successfully.' : 'Homecell created successfully.');
+    } catch (error) {
+        showError(error.message);
+    } finally {
+        saveHomecellButton.disabled = false;
+        saveHomecellButton.innerHTML = originalLabel;
+    }
+});
+
+homecellsTableBody.addEventListener('click', async function (event) {
+    const actionLink = event.target.closest('.homecell-action');
+    if (!actionLink) {
+        return;
+    }
+
+    event.preventDefault();
+
+    const homecellId = Number(actionLink.dataset.homecellId);
+    const action = actionLink.dataset.action;
+    const homecell = homecells.find(function (candidate) {
+        return candidate.id === homecellId;
+    });
+
+    if (!homecell) {
+        showError('Homecell not found.');
+        return;
+    }
+
+    if (action === 'view') {
+        await openHomecellDetails(homecellId);
+        return;
+    }
+
+    if (action === 'edit') {
+        fillForm(homecell);
+        homecellFormModal.show();
+    }
+});
+
+bootstrapHomecellsPage().catch(function (error) {
+    showError(error.message);
+});
+</script>
 </body>
 
 </html>

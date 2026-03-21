@@ -42,10 +42,13 @@
                                             <p class="text-secondary mb-0">Review recent submissions by period, branch, or homecell, then open any record back in the office page for editing.</p>
                                         </div>
                                         <div class="d-flex gap-2 flex-wrap">
-                                            <a class="btn btn-outline-secondary" href="homecell-office.html">
+                                            <button class="btn btn-outline-success" id="exportHomecellRecordsButton" type="button">
+                                                <i class="ti ti-file-spreadsheet me-1"></i>Export Excel
+                                            </button>
+                                            <a class="btn btn-outline-secondary" href="homecell-office.html" id="recordAttendanceButton">
                                                 <i class="ti ti-clipboard-plus me-1"></i>Record Attendance
                                             </a>
-                                            <a class="btn btn-primary" href="homecell-reports.html">
+                                            <a class="btn btn-primary" href="homecell-reports.html" id="viewHomecellReportsButton">
                                                 <i class="ti ti-chart-bar me-1"></i>View Reports
                                             </a>
                                         </div>
@@ -165,6 +168,8 @@
 const recordsSession = window.LFC_API.getSession();
 const activeChurch = recordsSession ? recordsSession.church : null;
 const activeBranch = recordsSession ? recordsSession.branch : null;
+const activeHomecellContext = recordsSession ? recordsSession.homecell : null;
+const isHomecellLeader = window.LFC_API.isHomecellLeaderSession(recordsSession);
 const recordsPageParams = new URLSearchParams(window.location.search);
 
 const successAlert = document.getElementById('recordsSuccessAlert');
@@ -174,6 +179,9 @@ const homecellFilterInput = document.getElementById('homecellFilterInput');
 const summaryPeriodInput = document.getElementById('summaryPeriodInput');
 const summaryDateInput = document.getElementById('summaryDateInput');
 const homecellAttendanceTableBody = document.getElementById('homecellAttendanceTableBody');
+const exportHomecellRecordsButton = document.getElementById('exportHomecellRecordsButton');
+const recordAttendanceButton = document.getElementById('recordAttendanceButton');
+const viewHomecellReportsButton = document.getElementById('viewHomecellReportsButton');
 
 let branches = [];
 let homecells = [];
@@ -286,6 +294,13 @@ function getTodayDate() {
 }
 
 function renderBranchOptions() {
+    if (isHomecellLeader && activeHomecellContext && activeHomecellContext.branch) {
+        branchFilterInput.innerHTML = '<option value="' + activeHomecellContext.branch.id + '">' + escapeHtml(activeHomecellContext.branch.name) + '</option>';
+        branchFilterInput.value = String(activeHomecellContext.branch.id);
+        branchFilterInput.disabled = true;
+        return;
+    }
+
     const branchOptions = branches.map(function (branch) {
         return '<option value="' + branch.id + '">' + escapeHtml(branch.name) + '</option>';
     }).join('');
@@ -299,6 +314,13 @@ function renderBranchOptions() {
 }
 
 function renderHomecellOptions() {
+    if (isHomecellLeader && activeHomecellContext && activeHomecellContext.id) {
+        homecellFilterInput.innerHTML = '<option value="' + activeHomecellContext.id + '">' + escapeHtml(activeHomecellContext.name) + '</option>';
+        homecellFilterInput.value = String(activeHomecellContext.id);
+        homecellFilterInput.disabled = true;
+        return;
+    }
+
     const selectedBranchId = Number(branchFilterInput.value || 0) || null;
     const filteredHomecells = homecells.filter(function (homecell) {
         return !selectedBranchId || (homecell.branch && homecell.branch.id === selectedBranchId);
@@ -372,11 +394,15 @@ function buildListQuery() {
     const homecellId = Number(homecellFilterInput.value || 0) || null;
     const anchorDate = summaryDateInput.value || getTodayDate();
 
-    if (branchId) {
+    if (isHomecellLeader && activeHomecellContext && activeHomecellContext.branch) {
+        params.set('branch_id', String(activeHomecellContext.branch.id));
+    } else if (branchId) {
         params.set('branch_id', String(branchId));
     }
 
-    if (homecellId) {
+    if (isHomecellLeader && activeHomecellContext && activeHomecellContext.id) {
+        params.set('homecell_id', String(activeHomecellContext.id));
+    } else if (homecellId) {
         params.set('homecell_id', String(homecellId));
     }
 
@@ -407,11 +433,15 @@ function buildSummaryQuery() {
     const branchId = Number(branchFilterInput.value || 0) || null;
     const homecellId = Number(homecellFilterInput.value || 0) || null;
 
-    if (branchId) {
+    if (isHomecellLeader && activeHomecellContext && activeHomecellContext.branch) {
+        params.set('branch_id', String(activeHomecellContext.branch.id));
+    } else if (branchId) {
         params.set('branch_id', String(branchId));
     }
 
-    if (homecellId) {
+    if (isHomecellLeader && activeHomecellContext && activeHomecellContext.id) {
+        params.set('homecell_id', String(activeHomecellContext.id));
+    } else if (homecellId) {
         params.set('homecell_id', String(homecellId));
     }
 
@@ -425,6 +455,12 @@ async function loadChurchUsers() {
 }
 
 async function loadBranches() {
+    if (isHomecellLeader && activeHomecellContext && activeHomecellContext.branch) {
+        branches = [activeHomecellContext.branch];
+        renderBranchOptions();
+        return;
+    }
+
     if (activeBranch && activeBranch.id) {
         branches = [activeBranch];
         renderBranchOptions();
@@ -437,6 +473,12 @@ async function loadBranches() {
 }
 
 async function loadHomecells() {
+    if (isHomecellLeader && activeHomecellContext && activeHomecellContext.id) {
+        homecells = [activeHomecellContext];
+        renderHomecellOptions();
+        return;
+    }
+
     const params = new URLSearchParams({
         church_id: String(activeChurch.id)
     });
@@ -461,6 +503,70 @@ async function loadRecords() {
     renderRecords(latestRecords);
 }
 
+function exportRecordsAsExcel() {
+    if (!latestRecords.length) {
+        showError('There are no homecell records to export for the current filters.');
+        return;
+    }
+
+    const rows = latestRecords.map(function (record) {
+        return [
+            formatDate(record.meeting_date),
+            record.homecell ? record.homecell.name : '--',
+            record.branch ? record.branch.name : 'Unassigned',
+            record.male_count,
+            record.female_count,
+            record.children_count,
+            record.total_count,
+            record.first_timers_count,
+            record.new_converts_count,
+            record.offering_amount === null || record.offering_amount === undefined ? '' : record.offering_amount,
+            getResolvedRecorderName(record.recorded_by)
+        ];
+    });
+
+    const tableHtml = `
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Homecell</th>
+                    <th>Branch</th>
+                    <th>Male</th>
+                    <th>Female</th>
+                    <th>Children</th>
+                    <th>Total</th>
+                    <th>First Timers</th>
+                    <th>New Converts</th>
+                    <th>Offering</th>
+                    <th>Recorded By</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${rows.map(function (columns) {
+                    return '<tr>' + columns.map(function (value) {
+                        return '<td>' + escapeHtml(value) + '</td>';
+                    }).join('') + '</tr>';
+                }).join('')}
+            </tbody>
+        </table>
+    `;
+
+    const blob = new Blob(['\ufeff' + tableHtml], {
+        type: 'application/vnd.ms-excel'
+    });
+    const downloadUrl = URL.createObjectURL(blob);
+    const downloadLink = document.createElement('a');
+    const prefix = isHomecellLeader && activeHomecellContext ? activeHomecellContext.name : 'homecell-records';
+
+    downloadLink.href = downloadUrl;
+    downloadLink.download = prefix.toLowerCase().replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '') + '.xls';
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+    URL.revokeObjectURL(downloadUrl);
+}
+
 async function reloadRecordsPage() {
     hideError();
     await loadSummary();
@@ -475,6 +581,7 @@ branchFilterInput.addEventListener('change', async function () {
 homecellFilterInput.addEventListener('change', reloadRecordsPage);
 summaryPeriodInput.addEventListener('change', reloadRecordsPage);
 summaryDateInput.addEventListener('change', reloadRecordsPage);
+exportHomecellRecordsButton.addEventListener('click', exportRecordsAsExcel);
 
 homecellAttendanceTableBody.addEventListener('click', function (event) {
     const button = event.target.closest('.edit-homecell-attendance-button');
@@ -495,6 +602,14 @@ homecellAttendanceTableBody.addEventListener('click', function (event) {
 
 (async function initHomecellAttendanceRecordsPage() {
     summaryDateInput.value = getTodayDate();
+    if (isHomecellLeader) {
+        if (viewHomecellReportsButton) {
+            viewHomecellReportsButton.classList.add('d-none');
+        }
+        if (recordAttendanceButton) {
+            recordAttendanceButton.innerHTML = '<i class="ti ti-clipboard-plus me-1"></i>Record My Attendance';
+        }
+    }
 
     if (recordsPageParams.get('updated') === '1') {
         showSuccess('Attendance record updated successfully.');

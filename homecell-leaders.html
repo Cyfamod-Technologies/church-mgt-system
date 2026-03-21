@@ -149,6 +149,7 @@
             <div class="modal-body">
                 <form id="leaderForm">
                     <input id="editingLeaderIdInput" type="hidden">
+                    <input id="editingLeaderUserIdInput" type="hidden">
                     <input id="sourceHomecellIdInput" type="hidden">
                     <div class="mb-3">
                         <label class="form-label" for="leaderHomecellInput">Homecell <span class="text-danger">*</span></label>
@@ -171,6 +172,11 @@
                     <div class="mb-3">
                         <label class="form-label" for="leaderEmailInput">Email</label>
                         <input class="form-control" id="leaderEmailInput" placeholder="leader@church.org" type="email">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="leaderPasswordInput">Login Password</label>
+                        <input class="form-control" id="leaderPasswordInput" placeholder="Set a password to enable leader login" type="password">
+                        <div class="form-text">Leave blank while editing if you want to keep the current password.</div>
                     </div>
                     <div class="mb-0">
                         <div class="form-check">
@@ -260,6 +266,9 @@ function flattenLeaders(sourceHomecells) {
                 phone: leader.phone,
                 email: leader.email,
                 is_primary: leader.is_primary,
+                user_id: leader.user_id || null,
+                can_login: Boolean(leader.can_login),
+                login_account: leader.login_account || null,
                 homecell_id: homecell.id,
                 homecell_name: homecell.name,
                 branch_id: homecell.branch ? homecell.branch.id : null,
@@ -342,7 +351,12 @@ function renderLeadersTable() {
                 <td>${escapeHtml(leader.role || 'Leader')}</td>
                 <td>${escapeHtml(leader.homecell_name)}</td>
                 <td>${leader.branch_name ? escapeHtml(leader.branch_name) : '<span class="text-muted">Unassigned</span>'}</td>
-                <td><span class="small">${escapeHtml([leader.phone, leader.email].filter(Boolean).join(' / ') || '--')}</span></td>
+                <td>
+                    <span class="small d-block">${escapeHtml([leader.phone, leader.email].filter(Boolean).join(' / ') || '--')}</span>
+                    <span class="badge ${leader.can_login ? 'bg-light-success text-success' : 'bg-light-secondary text-secondary'} mt-1">
+                        ${leader.can_login ? 'Login Enabled' : 'No Login'}
+                    </span>
+                </td>
                 <td>${leader.is_primary ? '<span class="badge bg-light-success text-success">Primary</span>' : '<span class="text-muted">No</span>'}</td>
                 <td>
                     <div class="dropdown">
@@ -362,6 +376,7 @@ function renderLeadersTable() {
 function resetForm() {
     document.getElementById('leaderForm').reset();
     document.getElementById('editingLeaderIdInput').value = '';
+    document.getElementById('editingLeaderUserIdInput').value = '';
     document.getElementById('sourceHomecellIdInput').value = '';
     document.getElementById('leaderFormModalTitle').textContent = 'Assign Homecell Leader';
     saveLeaderButton.innerHTML = '<i class="ti ti-device-floppy me-1"></i>Save Leader';
@@ -381,12 +396,14 @@ function openCreateModal() {
 function openEditModal(leaderRecord) {
     resetForm();
     document.getElementById('editingLeaderIdInput').value = leaderRecord.id;
+    document.getElementById('editingLeaderUserIdInput').value = leaderRecord.user_id || '';
     document.getElementById('sourceHomecellIdInput').value = leaderRecord.homecell_id;
     document.getElementById('leaderHomecellInput').value = String(leaderRecord.homecell_id);
     document.getElementById('leaderNameInput').value = leaderRecord.name || '';
     document.getElementById('leaderRoleInput').value = leaderRecord.role || '';
     document.getElementById('leaderPhoneInput').value = leaderRecord.phone || '';
     document.getElementById('leaderEmailInput').value = leaderRecord.email || '';
+    document.getElementById('leaderPasswordInput').value = '';
     document.getElementById('leaderPrimaryInput').checked = Boolean(leaderRecord.is_primary);
     document.getElementById('leaderFormModalTitle').textContent = 'Edit Homecell Leader';
     saveLeaderButton.innerHTML = '<i class="ti ti-device-floppy me-1"></i>Update Leader';
@@ -397,11 +414,13 @@ function buildLeaderPayload() {
     return {
         homecell_id: Number(document.getElementById('leaderHomecellInput').value || 0) || null,
         leader_id: Number(document.getElementById('editingLeaderIdInput').value || 0) || null,
+        user_id: Number(document.getElementById('editingLeaderUserIdInput').value || 0) || null,
         source_homecell_id: Number(document.getElementById('sourceHomecellIdInput').value || 0) || null,
         name: document.getElementById('leaderNameInput').value.trim(),
         role: document.getElementById('leaderRoleInput').value.trim() || 'Leader',
         phone: document.getElementById('leaderPhoneInput').value.trim() || null,
         email: document.getElementById('leaderEmailInput').value.trim() || null,
+        password: document.getElementById('leaderPasswordInput').value,
         is_primary: document.getElementById('leaderPrimaryInput').checked
     };
 }
@@ -415,10 +434,13 @@ function normalizeLeadersForSave(leaders) {
         })
         .map(function (leader, index) {
             const nextLeader = {
+                id: leader.id || null,
+                user_id: leader.user_id || null,
                 name: leader.name,
                 role: leader.role || 'Leader',
                 phone: leader.phone || null,
                 email: leader.email || null,
+                password: leader.password || null,
                 is_primary: Boolean(leader.is_primary) && !primaryAssigned
             };
 
@@ -481,16 +503,21 @@ async function saveLeaderAssignment(payload) {
     }
 
     const nextLeader = {
+        id: payload.leader_id,
+        user_id: payload.user_id || null,
         name: payload.name,
         role: payload.role,
         phone: payload.phone,
         email: payload.email,
+        password: payload.password || null,
         is_primary: payload.is_primary
     };
 
     if (!payload.leader_id) {
         const updatedLeaders = (targetHomecell.leaders || []).map(function (leader) {
             return {
+                id: leader.id,
+                user_id: leader.user_id || null,
                 name: leader.name,
                 role: leader.role,
                 phone: leader.phone,
@@ -516,6 +543,8 @@ async function saveLeaderAssignment(payload) {
         const updatedLeaders = (sourceHomecell.leaders || []).map(function (leader) {
             if (leader.id !== payload.leader_id) {
                 return {
+                    id: leader.id,
+                    user_id: leader.user_id || null,
                     name: leader.name,
                     role: leader.role,
                     phone: leader.phone,
@@ -537,6 +566,8 @@ async function saveLeaderAssignment(payload) {
         })
         .map(function (leader) {
             return {
+                id: leader.id,
+                user_id: leader.user_id || null,
                 name: leader.name,
                 role: leader.role,
                 phone: leader.phone,
@@ -547,6 +578,8 @@ async function saveLeaderAssignment(payload) {
 
     const targetLeaders = (targetHomecell.leaders || []).map(function (leader) {
         return {
+            id: leader.id,
+            user_id: leader.user_id || null,
             name: leader.name,
             role: leader.role,
             phone: leader.phone,
@@ -575,11 +608,13 @@ async function removeLeaderAssignment(homecellId, leaderId) {
             return leader.id !== leaderId;
         })
         .map(function (leader) {
-            return {
-                name: leader.name,
-                role: leader.role,
-                phone: leader.phone,
-                email: leader.email,
+        return {
+            id: leader.id,
+            user_id: leader.user_id || null,
+            name: leader.name,
+            role: leader.role,
+            phone: leader.phone,
+            email: leader.email,
                 is_primary: leader.is_primary
             };
         });

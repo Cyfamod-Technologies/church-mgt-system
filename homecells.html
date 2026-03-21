@@ -466,6 +466,8 @@ function renderLeaderRows(leaders) {
     homecellLeadersContainer.innerHTML = leaders.map(function (leader, index) {
         return `
             <div class="border rounded p-3 homecell-leader-item" data-index="${index}">
+                <input class="homecell-leader-id" type="hidden" value="${leader.id ? escapeHtml(leader.id) : ''}">
+                <input class="homecell-leader-user-id" type="hidden" value="${leader.user_id ? escapeHtml(leader.user_id) : ''}">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <strong>Leader ${index + 1}</strong>
                     <button class="btn btn-sm btn-link text-danger p-0 remove-homecell-leader" type="button">Remove</button>
@@ -510,6 +512,8 @@ function renderLeaderRows(leaders) {
 function readLeaders() {
     return Array.from(document.querySelectorAll('.homecell-leader-item')).map(function (item) {
         return {
+            id: Number(item.querySelector('.homecell-leader-id').value || 0) || null,
+            user_id: Number(item.querySelector('.homecell-leader-user-id').value || 0) || null,
             name: item.querySelector('.homecell-leader-name').value.trim(),
             role: item.querySelector('.homecell-leader-role').value.trim() || 'Leader',
             phone: item.querySelector('.homecell-leader-phone').value.trim() || null,

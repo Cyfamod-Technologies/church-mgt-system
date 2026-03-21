@@ -7,9 +7,20 @@
   const normalizedPage = pageAliases[currentPage] || currentPage;
   const sessionKey = "lfc_session";
   const session = getSession();
+  const homecellLeaderAllowedPages = [
+    "homecell-leader-dashboard.html",
+    "homecell-office.html",
+    "homecell-attendance-records.html",
+    "homecell-leader-profile.html"
+  ];
 
   if (!hasValidSession(session)) {
     window.location.replace("sign_in.html");
+    return;
+  }
+
+  if (isHomecellLeaderSession(session) && !homecellLeaderAllowedPages.includes(normalizedPage)) {
+    window.location.replace("homecell-leader-dashboard.html");
     return;
   }
 
@@ -56,7 +67,7 @@
     }
   };
 
-  const navGroups = [
+  const adminNavGroups = [
     {
       title: "Dashboard",
       icon: "stack",
@@ -126,6 +137,34 @@
     }
   ];
 
+  const homecellLeaderNavGroups = [
+    {
+      title: "Dashboard",
+      icon: "stack",
+      directHref: "homecell-leader-dashboard.html",
+      items: [
+        { label: "Dashboard", href: "homecell-leader-dashboard.html" }
+      ]
+    },
+    {
+      title: "Homecell Management",
+      id: "homecell-mgmt",
+      icon: "home",
+      items: [
+        { label: "Homecell Attendance", href: "homecell-office.html" },
+        { label: "Homecell Records", href: "homecell-attendance-records.html" }
+      ]
+    },
+    {
+      title: "Profile",
+      icon: "briefcase",
+      directHref: "homecell-leader-profile.html",
+      items: [
+        { label: "My Profile", href: "homecell-leader-profile.html" }
+      ]
+    }
+  ];
+
   function getSession() {
     const raw = window.localStorage.getItem(sessionKey);
 
@@ -155,6 +194,22 @@
     window.localStorage.removeItem(sessionKey);
   }
 
+  function isHomecellLeaderSession(value) {
+    return Boolean(
+      value &&
+      value.user &&
+      value.user.role === "homecell_leader" &&
+      value.homecell &&
+      value.homecell.id
+    );
+  }
+
+  function getDefaultDashboardPath() {
+    return isHomecellLeaderSession(session)
+      ? "homecell-leader-dashboard.html"
+      : "dashboard.html";
+  }
+
   function icon(sprite) {
     const iconDef = iconMarkup[sprite];
     if (!iconDef) {
@@ -177,6 +232,14 @@
   }
 
   function resolveChurchAdminName() {
+    if (isHomecellLeaderSession(session)) {
+      const leaderName = session.homecell_leader && session.homecell_leader.name
+        ? session.homecell_leader.name
+        : (session.user && session.user.name ? session.user.name : "");
+
+      return escapeHtml(leaderName || "Homecell Leader");
+    }
+
     const churchUsers = session.church && Array.isArray(session.church.users)
       ? session.church.users
       : [];
@@ -196,13 +259,17 @@
   function buildNav() {
     const nav = document.getElementById("church-nav");
     if (!nav) return;
+    const navGroups = isHomecellLeaderSession(session) ? homecellLeaderNavGroups : adminNavGroups;
     const churchName = escapeHtml(session.church.name || "Church Workspace");
-    const branchName = session.branch && session.branch.name
-      ? escapeHtml(session.branch.name)
-      : "";
-    const workspaceLabel = branchName
-      ? `${churchName} / ${branchName}`
-      : churchName;
+    const branchName = session.branch && session.branch.name ? escapeHtml(session.branch.name) : "";
+    const homecellName = session.homecell && session.homecell.name ? escapeHtml(session.homecell.name) : "";
+    let workspaceLabel = churchName;
+
+    if (isHomecellLeaderSession(session) && homecellName) {
+      workspaceLabel = `${churchName} / ${homecellName}`;
+    } else if (branchName) {
+      workspaceLabel = `${churchName} / ${branchName}`;
+    }
 
     const groupsHtml = navGroups.map((group) => {
       if (group.directHref) {
@@ -231,9 +298,19 @@
       `;
     }).join("");
 
+    const supportHtml = isHomecellLeaderSession(session) ? "" : `
+          <li class="menu-title"><span>Support</span></li>
+          <li class="no-sub">
+            <a href="support.html">
+              ${icon("chat-bubble")}
+              Support
+            </a>
+          </li>
+    `;
+
     nav.innerHTML = `
       <div class="app-logo">
-        <a class="logo d-inline-block" href="dashboard.html">
+        <a class="logo d-inline-block" href="${getDefaultDashboardPath()}">
           <!-- <img alt="logo" src="assets/images/logo/1.png"> -->
         </a>
 
@@ -254,13 +331,7 @@
       <div class="app-nav" id="app-simple-bar">
         <ul class="main-nav p-0 mt-2">
           ${groupsHtml}
-          <li class="menu-title"><span>Support</span></li>
-          <li class="no-sub">
-            <a href="support.html">
-              ${icon("chat-bubble")}
-              Support
-            </a>
-          </li>
+          ${supportHtml}
         </ul>
       </div>
       <div class="menu-navs">
@@ -277,7 +348,12 @@
     const title = document.body.dataset.title || "Church Management System";
     const subtitle = document.body.dataset.subtitle || "Administrative workspace";
     const userName = resolveChurchAdminName();
-    const churchName = escapeHtml(session.church.name || "Church Workspace");
+    const churchName = isHomecellLeaderSession(session) && session.homecell && session.homecell.name
+      ? escapeHtml(session.homecell.name)
+      : escapeHtml(session.church.name || "Church Workspace");
+    const searchPlaceholder = isHomecellLeaderSession(session)
+      ? "Search my homecell records..."
+      : "Search members, districts, homecells...";
 
     header.innerHTML = `
       <div class="container-fluid">
@@ -289,7 +365,7 @@
             <div class="header-searchbar w-100">
               <form action="#" class="mx-3 app-form app-icon-form">
                 <div class="position-relative">
-                  <input aria-label="Search" class="form-control" placeholder="Search members, districts, homecells..." type="search">
+                  <input aria-label="Search" class="form-control" placeholder="${searchPlaceholder}" type="search">
                   <i class="ti ti-search text-dark"></i>
                 </div>
               </form>
@@ -299,7 +375,7 @@
           <div class="col-6 col-sm-6 d-flex align-items-center justify-content-end header-right p-0">
             <ul class="d-flex align-items-center">
               <li class="header-notification">
-                <a class="d-block head-icon position-relative" href="dashboard.html#notifications">
+                <a class="d-block head-icon position-relative" href="${getDefaultDashboardPath()}#notifications">
                   <i class="ti ti-bell-ringing"></i>
                   <span class="position-absolute translate-middle badge rounded-pill bg-danger" style="top: 8px; right: -6px;">8</span>
                 </a>
@@ -316,7 +392,7 @@
                   <li><hr class="dropdown-divider"></li>
                   <li><span class="dropdown-item-text text-muted f-s-12">${escapeHtml(title)}<br>${escapeHtml(subtitle)}</span></li>
                   <li><hr class="dropdown-divider"></li>
-                  <li><a class="dropdown-item" href="settings.html">Settings</a></li>
+                  <li><a class="dropdown-item" href="${isHomecellLeaderSession(session) ? "homecell-leader-profile.html" : "settings.html"}">${isHomecellLeaderSession(session) ? "My Profile" : "Settings"}</a></li>
                   <li><a class="dropdown-item text-danger" href="#" id="logoutLink">Logout</a></li>
                 </ul>
               </li>

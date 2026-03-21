@@ -55,9 +55,27 @@
             user: data && Object.prototype.hasOwnProperty.call(data, 'user') ? data.user : existing.user,
             church: data && Object.prototype.hasOwnProperty.call(data, 'church') ? data.church : existing.church,
             branch: data && Object.prototype.hasOwnProperty.call(data, 'branch') ? data.branch : existing.branch,
+            homecell: data && Object.prototype.hasOwnProperty.call(data, 'homecell') ? data.homecell : existing.homecell,
+            homecell_leader: data && Object.prototype.hasOwnProperty.call(data, 'homecell_leader') ? data.homecell_leader : existing.homecell_leader,
         };
 
         window.localStorage.setItem(sessionKey, JSON.stringify(nextSession));
+    }
+
+    function isHomecellLeaderSession(session) {
+        return Boolean(
+            session &&
+            session.user &&
+            session.user.role === 'homecell_leader' &&
+            session.homecell &&
+            session.homecell.id
+        );
+    }
+
+    function getDefaultDashboardPath(session) {
+        return isHomecellLeaderSession(session || getSession())
+            ? 'homecell-leader-dashboard.html'
+            : 'dashboard.html';
     }
 
     function clearSession() {
@@ -68,6 +86,8 @@
         request: request,
         saveSession: saveSession,
         getSession: getSession,
+        getDefaultDashboardPath: getDefaultDashboardPath,
+        isHomecellLeaderSession: isHomecellLeaderSession,
         clearSession: clearSession
     });
 })(window);

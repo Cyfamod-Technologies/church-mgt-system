@@ -42,10 +42,10 @@
                                             <p class="text-secondary mb-0">Use this page for entry and editing. Attendance records listing and filters now live on a separate records page.</p>
                                         </div>
                                         <div class="d-flex gap-2 flex-wrap">
-                                            <a class="btn btn-outline-secondary" href="homecells.html">
+                                            <a class="btn btn-outline-secondary" href="homecells.html" id="manageHomecellsLink">
                                                 <i class="ti ti-home me-1"></i>Manage Homecells
                                             </a>
-                                            <a class="btn btn-primary" href="homecell-attendance-records.html">
+                                            <a class="btn btn-primary" href="homecell-attendance-records.html" id="viewHomecellRecordsButton">
                                                 <i class="ti ti-table me-1"></i>View Homecell Records
                                             </a>
                                         </div>
@@ -211,7 +211,7 @@
                                     </div>
                                 </div>
                                 <div class="card-footer">
-                                    <a class="btn btn-outline-primary w-100" href="homecell-attendance-records.html">
+                                    <a class="btn btn-outline-primary w-100" href="homecell-attendance-records.html" id="openHomecellRecordsFooterButton">
                                         <i class="ti ti-list-details me-1"></i>Open Homecell Records
                                     </a>
                                 </div>
@@ -242,6 +242,9 @@
 const homecellAttendanceSession = window.LFC_API.getSession();
 const activeChurch = homecellAttendanceSession ? homecellAttendanceSession.church : null;
 const activeBranch = homecellAttendanceSession ? homecellAttendanceSession.branch : null;
+const activeHomecellLeader = homecellAttendanceSession ? homecellAttendanceSession.homecell_leader : null;
+const activeHomecellContext = homecellAttendanceSession ? homecellAttendanceSession.homecell : null;
+const isHomecellLeader = window.LFC_API.isHomecellLeaderSession(homecellAttendanceSession);
 const officePageParams = new URLSearchParams(window.location.search);
 const preloadRecordId = Number(officePageParams.get('record_id') || 0) || null;
 const returnToRecords = officePageParams.get('return_to') === 'records';
@@ -263,6 +266,9 @@ const saveHomecellAttendanceButton = document.getElementById('saveHomecellAttend
 const cancelEditHomecellAttendanceButton = document.getElementById('cancelEditHomecellAttendanceButton');
 const attendanceRecorderLabel = document.getElementById('attendanceRecorderLabel');
 const attendanceFormTitle = document.getElementById('attendanceFormTitle');
+const manageHomecellsLink = document.getElementById('manageHomecellsLink');
+const viewHomecellRecordsButton = document.getElementById('viewHomecellRecordsButton');
+const openHomecellRecordsFooterButton = document.getElementById('openHomecellRecordsFooterButton');
 
 let homecells = [];
 let churchUsers = [];
@@ -382,6 +388,9 @@ function resetForm() {
     attendanceNewConvertsInput.value = '0';
     attendanceTotalInput.value = '0';
     currentEditRecordId = null;
+    if (isHomecellLeader && activeHomecellContext && activeHomecellContext.id) {
+        attendanceHomecellInput.value = String(activeHomecellContext.id);
+    }
     updateSelectedHomecellMeta();
     syncEditState();
 }
@@ -437,7 +446,12 @@ function buildWeeklySummaryQuery() {
         date: getTodayDate()
     });
 
-    if (activeBranch && activeBranch.id) {
+    if (isHomecellLeader && activeHomecellContext && activeHomecellContext.id) {
+        params.set('homecell_id', String(activeHomecellContext.id));
+        if (activeHomecellContext.branch && activeHomecellContext.branch.id) {
+            params.set('branch_id', String(activeHomecellContext.branch.id));
+        }
+    } else if (activeBranch && activeBranch.id) {
         params.set('branch_id', String(activeBranch.id));
     }
 
@@ -445,6 +459,16 @@ function buildWeeklySummaryQuery() {
 }
 
 async function loadRecorderContext() {
+    if (isHomecellLeader && activeHomecellLeader && homecellAttendanceSession.user) {
+        currentRecorder = {
+            id: homecellAttendanceSession.user.id,
+            name: activeHomecellLeader.name || homecellAttendanceSession.user.name,
+            role: activeHomecellLeader.role || homecellAttendanceSession.user.role
+        };
+        syncRecorderLabel();
+        return;
+    }
+
     const response = await window.LFC_API.request('churches/' + encodeURIComponent(activeChurch.id));
     const church = response.data || {};
     churchUsers = church.users || [];
@@ -462,6 +486,15 @@ async function loadRecorderContext() {
 }
 
 async function loadHomecells() {
+    if (isHomecellLeader && activeHomecellContext && activeHomecellContext.id) {
+        homecells = [activeHomecellContext];
+        renderHomecellSelectors();
+        attendanceHomecellInput.value = String(activeHomecellContext.id);
+        attendanceHomecellInput.disabled = true;
+        updateSelectedHomecellMeta();
+        return;
+    }
+
     const params = new URLSearchParams({
         church_id: String(activeChurch.id)
     });
@@ -506,6 +539,10 @@ async function loadExistingRecordForSelection() {
     const response = await window.LFC_API.request('homecell-attendance?' + params.toString());
     const existingRecord = (response.data || [])[0] || null;
 
+    if (isHomecellLeader && existingRecord && (!existingRecord.homecell || existingRecord.homecell.id !== activeHomecellContext.id)) {
+        throw new Error('You can only access attendance records for your assigned homecell.');
+    }
+
     if (existingRecord) {
         fillFormFromRecord(existingRecord);
         showSuccess('Existing record loaded for editing for this homecell and date.');
@@ -535,8 +572,13 @@ async function findExistingRecordForSelection() {
     }
 
     const response = await window.LFC_API.request('homecell-attendance?' + params.toString());
+    const existingRecord = (response.data || [])[0] || null;
 
-    return (response.data || [])[0] || null;
+    if (isHomecellLeader && existingRecord && (!existingRecord.homecell || existingRecord.homecell.id !== activeHomecellContext.id)) {
+        return null;
+    }
+
+    return existingRecord;
 }
 
 async function loadRecordById(recordId) {
@@ -545,6 +587,10 @@ async function loadRecordById(recordId) {
 
     if (!record) {
         throw new Error('Unable to load the selected attendance record.');
+    }
+
+    if (isHomecellLeader && (!record.homecell || record.homecell.id !== activeHomecellContext.id)) {
+        throw new Error('You can only edit attendance records for your assigned homecell.');
     }
 
     fillFormFromRecord(record);
@@ -566,7 +612,9 @@ async function saveAttendance() {
         church_id: activeChurch.id,
         branch_id: selectedHomecell.branch ? selectedHomecell.branch.id : null,
         homecell_id: selectedHomecell.id,
-        recorded_by_user_id: currentRecorder && currentRecorder.id ? currentRecorder.id : null,
+        recorded_by_user_id: isHomecellLeader && homecellAttendanceSession.user && homecellAttendanceSession.user.id
+            ? homecellAttendanceSession.user.id
+            : (currentRecorder && currentRecorder.id ? currentRecorder.id : null),
         meeting_date: attendanceMeetingDateInput.value,
         male_count: toPositiveNumber(attendanceMaleInput.value),
         female_count: toPositiveNumber(attendanceFemaleInput.value),
@@ -648,6 +696,17 @@ cancelEditHomecellAttendanceButton.addEventListener('click', function () {
     attendanceMeetingDateInput.value = getTodayDate();
     updateAttendanceTotal();
     syncRecorderLabel();
+    if (isHomecellLeader) {
+        if (manageHomecellsLink) {
+            manageHomecellsLink.classList.add('d-none');
+        }
+        if (viewHomecellRecordsButton) {
+            viewHomecellRecordsButton.innerHTML = '<i class="ti ti-table me-1"></i>View My Homecell Records';
+        }
+        if (openHomecellRecordsFooterButton) {
+            openHomecellRecordsFooterButton.innerHTML = '<i class="ti ti-list-details me-1"></i>Open My Homecell Records';
+        }
+    }
 
     try {
         await loadRecorderContext();

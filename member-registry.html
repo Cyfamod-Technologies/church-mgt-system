@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="Member registry page." name="description">
+    <meta content="member registry, members" name="keywords">
+    <meta content="la-themes" name="author">
+    <link href="assets/images/logo/favicon.png" rel="icon" type="image/x-icon">
+    <link href="assets/images/logo/favicon.png" rel="shortcut icon" type="image/x-icon">
+    <title>Member Registry - LFC</title>
+    <link href="assets/vendor/animation/animate.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <link href="assets/vendor/flag-icons-master/flag-icon.css" rel="stylesheet" type="text/css">
+    <link href="assets/vendor/tabler-icons/tabler-icons.css" rel="stylesheet" type="text/css">
+    <link href="assets/vendor/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="assets/vendor/simplebar/simplebar.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/style.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/responsive.css" rel="stylesheet" type="text/css">
+</head>
+
+<body data-title="Member Registry" data-subtitle="Filter, review, and reopen member journey records from one registry page.">
+<div class="app-wrapper">
+    <div class="loader-wrapper"><div class="loader_24"></div></div>
+    <nav id="church-nav"></nav>
+    <div class="app-content">
+        <div class="">
+            <header class="header-main" id="church-header"></header>
+            <main>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                                        <div>
+                                            <h4 class="mb-1">Member Registry</h4>
+                                            <p class="text-secondary mb-0">Filter by category, branch, milestone, unit, date, or search and reopen any member record for editing.</p>
+                                        </div>
+                                        <a class="btn btn-primary" href="members.html">
+                                            <i class="ti ti-user-plus me-1"></i>Add Member
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="alert alert-success d-none" id="registrySuccessAlert" role="alert"></div>
+                            <div class="alert alert-danger d-none" id="registryErrorAlert" role="alert"></div>
+                        </div>
+
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card overview-details-box b-s-3-primary">
+                                <div class="card-body">
+                                    <p class="text-dark f-w-600 mb-1">Visible Records</p>
+                                    <h3 class="text-primary mb-0" id="visibleMembersStat">0</h3>
+                                    <span class="badge text-light-primary mt-2">Current filters</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card overview-details-box b-s-3-success">
+                                <div class="card-body">
+                                    <p class="text-dark f-w-600 mb-1">Foundation Done</p>
+                                    <h3 class="text-success mb-0" id="foundationDoneStat">0</h3>
+                                    <span class="badge text-light-success mt-2">Journey progress</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card overview-details-box b-s-3-warning">
+                                <div class="card-body">
+                                    <p class="text-dark f-w-600 mb-1">Baptised</p>
+                                    <h3 class="text-warning mb-0" id="baptisedStat">0</h3>
+                                    <span class="badge text-light-warning mt-2">Journey progress</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card overview-details-box b-s-3-info">
+                                <div class="card-body">
+                                    <p class="text-dark f-w-600 mb-1">WOFBI Complete</p>
+                                    <h3 class="text-info mb-0" id="wofbiDoneStat">0</h3>
+                                    <span class="badge text-light-info mt-2">BCC / LCC / LDC</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                    <h5 class="mb-0">Member Registry</h5>
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        <select class="form-select form-select-sm" id="typeFilterInput" style="width: 170px;">
+                                            <option value="">All Categories</option>
+                                            <option value="first_timer">First Timers</option>
+                                            <option value="new_convert">New Converts</option>
+                                            <option value="rededication">Re-Dedications</option>
+                                        </select>
+                                        <select class="form-select form-select-sm" id="branchFilterInput" style="width: 170px;">
+                                            <option value="">All Branches</option>
+                                        </select>
+                                        <select class="form-select form-select-sm" id="milestoneFilterInput" style="width: 190px;">
+                                            <option value="">All Milestones</option>
+                                            <option value="foundation_done">Foundation Done</option>
+                                            <option value="foundation_pending">Foundation Pending</option>
+                                            <option value="baptism_done">Baptism Done</option>
+                                            <option value="baptism_pending">Baptism Pending</option>
+                                            <option value="holy_ghost_done">Holy Ghost Baptism Done</option>
+                                            <option value="holy_ghost_pending">Holy Ghost Baptism Pending</option>
+                                            <option value="wofbi_done">WOFBI Done</option>
+                                            <option value="wofbi_pending">WOFBI Pending</option>
+                                            <option value="wofbi_bcc">WOFBI - BCC</option>
+                                            <option value="wofbi_lcc">WOFBI - LCC</option>
+                                            <option value="wofbi_ldc">WOFBI - LDC</option>
+                                        </select>
+                                        <select class="form-select form-select-sm" id="unitFilterInput" style="width: 170px;">
+                                            <option value="">All Units</option>
+                                        </select>
+                                        <input class="form-control form-control-sm" id="dateFilterInput" style="width: 170px;" type="date">
+                                        <input class="form-control form-control-sm" id="searchInput" placeholder="Search name, phone..." style="width: 220px;" type="text">
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover align-middle">
+                                            <thead>
+                                            <tr>
+                                                <th>Member</th>
+                                                <th>Category</th>
+                                                <th>Branch</th>
+                                                <th>Journey</th>
+                                                <th>Date</th>
+                                                <th>Recorded By</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody id="membersTableBody">
+                                            <tr>
+                                                <td class="text-center text-muted py-4" colspan="7">Loading members...</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</div>
+
+<script src="assets/js/jquery-3.6.3.min.js"></script>
+<script src="assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
+<script src="assets/vendor/simplebar/simplebar.js"></script>
+<script src="assets/js/app-config.js"></script>
+<script src="assets/js/app-api.js"></script>
+<script src="assets/js/church-template.js"></script>
+<script src="assets/js/script.js"></script>
+<script>
+const registrySession = window.LFC_API.getSession();
+const activeChurch = registrySession ? registrySession.church : null;
+const activeBranch = registrySession ? registrySession.branch : null;
+
+const successAlert = document.getElementById('registrySuccessAlert');
+const errorAlert = document.getElementById('registryErrorAlert');
+const typeFilterInput = document.getElementById('typeFilterInput');
+const branchFilterInput = document.getElementById('branchFilterInput');
+const milestoneFilterInput = document.getElementById('milestoneFilterInput');
+const unitFilterInput = document.getElementById('unitFilterInput');
+const dateFilterInput = document.getElementById('dateFilterInput');
+const searchInput = document.getElementById('searchInput');
+const membersTableBody = document.getElementById('membersTableBody');
+
+let branches = [];
+let churchUnits = [];
+let churchUsers = [];
+let latestEntries = [];
+
+if (!activeChurch || !activeChurch.id) {
+    window.location.replace('sign_in.html');
+    throw new Error('Missing active church session.');
+}
+
+function showError(message) {
+    errorAlert.textContent = message;
+    errorAlert.classList.remove('d-none');
+}
+
+function hideError() {
+    errorAlert.textContent = '';
+    errorAlert.classList.add('d-none');
+}
+
+function showSuccess(message) {
+    successAlert.textContent = message;
+    successAlert.classList.remove('d-none');
+}
+
+function escapeHtml(value) {
+    return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function formatDate(value) {
+    if (!value) {
+        return '--';
+    }
+
+    const date = new Date(value + 'T00:00:00');
+
+    if (Number.isNaN(date.getTime())) {
+        return value;
+    }
+
+    return date.toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+    });
+}
+
+function labelForEntryType(value) {
+    return {
+        first_timer: 'First Timer',
+        new_convert: 'New Convert',
+        rededication: 'Re-Dedication'
+    }[value] || 'Member';
+}
+
+function looksLikeRoleLabel(value) {
+    const normalized = String(value || '').trim().toLowerCase();
+
+    return [
+        'church_admin',
+        'branch_admin',
+        'admin',
+        'church admin',
+        'branch admin'
+    ].includes(normalized);
+}
+
+function resolveRecorderName(recorder) {
+    if (!recorder) {
+        return 'System';
+    }
+
+    if (recorder.name && !looksLikeRoleLabel(recorder.name)) {
+        return recorder.name;
+    }
+
+    const matchedUser = churchUsers.find(function (user) {
+        return recorder.id && user.id === recorder.id && user.name && !looksLikeRoleLabel(user.name);
+    });
+
+    return matchedUser ? matchedUser.name : (recorder.name || 'System');
+}
+
+function renderBranchOptions() {
+    const options = branches.map(function (branch) {
+        return '<option value="' + branch.id + '">' + escapeHtml(branch.name) + '</option>';
+    }).join('');
+
+    const mainChurchLabel = escapeHtml((activeChurch && activeChurch.name ? activeChurch.name : 'Main Church') + ' (Main Church)');
+
+    branchFilterInput.innerHTML = '<option value="">All Branches</option><option value="main">' + mainChurchLabel + '</option>' + options;
+
+    if (activeBranch && activeBranch.id) {
+        branchFilterInput.value = String(activeBranch.id);
+        branchFilterInput.disabled = true;
+    }
+}
+
+function renderUnitOptions() {
+    unitFilterInput.innerHTML = '<option value="">All Units</option>' + churchUnits.map(function (unit) {
+        return '<option value="' + unit.id + '">' + escapeHtml(unit.name) + '</option>';
+    }).join('');
+}
+
+function entryMatchesMilestoneFilter(entry) {
+    switch (milestoneFilterInput.value) {
+    case 'foundation_done':
+        return Boolean(entry.foundation_class_completed);
+    case 'foundation_pending':
+        return !entry.foundation_class_completed;
+    case 'baptism_done':
+        return Boolean(entry.baptism_completed);
+    case 'baptism_pending':
+        return !entry.baptism_completed;
+    case 'holy_ghost_done':
+        return Boolean(entry.holy_ghost_baptism_completed);
+    case 'holy_ghost_pending':
+        return !entry.holy_ghost_baptism_completed;
+    case 'wofbi_done':
+        return Boolean(entry.wofbi_completed);
+    case 'wofbi_pending':
+        return !entry.wofbi_completed;
+    case 'wofbi_bcc':
+        return Array.isArray(entry.wofbi_levels) && entry.wofbi_levels.includes('BCC');
+    case 'wofbi_lcc':
+        return Array.isArray(entry.wofbi_levels) && entry.wofbi_levels.includes('LCC');
+    case 'wofbi_ldc':
+        return Array.isArray(entry.wofbi_levels) && entry.wofbi_levels.includes('LDC');
+    default:
+        return true;
+    }
+}
+
+function getFilteredEntries() {
+    return latestEntries.filter(function (entry) {
+        const filterBranchValue = branchFilterInput.value;
+        const branchMatches = !filterBranchValue
+            || (filterBranchValue === 'main' && !entry.branch)
+            || (entry.branch && String(entry.branch.id) === filterBranchValue);
+
+        const typeMatches = !typeFilterInput.value || entry.entry_type === typeFilterInput.value;
+        const unitMatches = !unitFilterInput.value || (entry.church_units || []).some(function (unit) {
+            return String(unit.id) === unitFilterInput.value;
+        });
+        const dateMatches = !dateFilterInput.value || entry.service_date === dateFilterInput.value;
+        const searchValue = searchInput.value.trim().toLowerCase();
+        const searchMatches = !searchValue || [
+            entry.full_name,
+            entry.phone,
+            entry.email,
+            entry.invited_by,
+            entry.branch ? entry.branch.name : '',
+            (entry.church_units || []).map(function (unit) { return unit.name; }).join(' ')
+        ].some(function (value) {
+            return String(value || '').toLowerCase().includes(searchValue);
+        });
+
+        return branchMatches && typeMatches && unitMatches && dateMatches && searchMatches && entryMatchesMilestoneFilter(entry);
+    });
+}
+
+function renderStats(entries) {
+    const foundationDone = entries.filter(function (entry) {
+        return entry.foundation_class_completed;
+    }).length;
+    const baptised = entries.filter(function (entry) {
+        return entry.baptism_completed;
+    }).length;
+    const wofbiDone = entries.filter(function (entry) {
+        return entry.wofbi_completed;
+    }).length;
+
+    document.getElementById('visibleMembersStat').textContent = String(entries.length);
+    document.getElementById('foundationDoneStat').textContent = String(foundationDone);
+    document.getElementById('baptisedStat').textContent = String(baptised);
+    document.getElementById('wofbiDoneStat').textContent = String(wofbiDone);
+}
+
+function renderJourneyBadges(entry) {
+    const badges = [];
+
+    badges.push(entry.foundation_class_completed
+        ? '<span class="badge text-light-success">Foundation</span>'
+        : '<span class="badge text-light-secondary">Foundation Pending</span>');
+    badges.push(entry.baptism_completed
+        ? '<span class="badge text-light-primary">Baptism</span>'
+        : '<span class="badge text-light-secondary">Baptism Pending</span>');
+    badges.push(entry.holy_ghost_baptism_completed
+        ? '<span class="badge text-light-warning">Holy Ghost</span>'
+        : '<span class="badge text-light-secondary">Holy Ghost Pending</span>');
+
+    if (entry.wofbi_completed) {
+        badges.push('<span class="badge text-light-info">WOFBI ' + escapeHtml((entry.wofbi_levels || []).join(', ')) + '</span>');
+    } else {
+        badges.push('<span class="badge text-light-secondary">WOFBI Pending</span>');
+    }
+
+    return badges.join(' ');
+}
+
+function renderEntries() {
+    const filteredEntries = getFilteredEntries();
+
+    renderStats(filteredEntries);
+
+    if (!filteredEntries.length) {
+        membersTableBody.innerHTML = '<tr><td class="text-center text-muted py-4" colspan="7">No member records found for the current filters.</td></tr>';
+        return;
+    }
+
+    membersTableBody.innerHTML = filteredEntries.map(function (entry) {
+        return `
+            <tr>
+                <td>
+                    <strong>${escapeHtml(entry.full_name)}</strong>
+                    <div class="small text-secondary">${escapeHtml(entry.phone || entry.email || '--')}</div>
+                    <div class="small text-secondary">${escapeHtml((entry.church_units || []).map(function (unit) { return unit.name; }).join(', ') || 'No unit assigned')}</div>
+                </td>
+                <td><span class="badge text-light-primary">${escapeHtml(labelForEntryType(entry.entry_type))}</span></td>
+                <td>${entry.branch ? escapeHtml(entry.branch.name) : '<span class="text-muted">' + escapeHtml(activeChurch.name || 'Main Church') + '</span>'}</td>
+                <td><div class="d-flex flex-wrap gap-1">${renderJourneyBadges(entry)}</div></td>
+                <td>${escapeHtml(formatDate(entry.service_date))}</td>
+                <td>${escapeHtml(resolveRecorderName(entry.recorded_by))}</td>
+                <td>
+                    <button class="btn btn-sm btn-light-primary edit-member-button" data-entry-id="${entry.id}" type="button">
+                        <i class="ti ti-edit me-1"></i>Edit
+                    </button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function buildListQuery() {
+    const params = new URLSearchParams({
+        church_id: String(activeChurch.id),
+        limit: '100'
+    });
+
+    if (activeBranch && activeBranch.id) {
+        params.set('branch_id', String(activeBranch.id));
+    }
+
+    return params.toString();
+}
+
+async function loadChurchContext() {
+    const response = await window.LFC_API.request('churches/' + encodeURIComponent(activeChurch.id));
+    const church = response.data || {};
+    churchUsers = church.users || [];
+}
+
+async function loadBranches() {
+    if (activeBranch && activeBranch.id) {
+        branches = [activeBranch];
+        renderBranchOptions();
+        return;
+    }
+
+    const response = await window.LFC_API.request('branches?church_id=' + encodeURIComponent(activeChurch.id));
+    branches = response.data || [];
+    renderBranchOptions();
+}
+
+async function loadChurchUnits() {
+    const response = await window.LFC_API.request('church-units?church_id=' + encodeURIComponent(activeChurch.id));
+    churchUnits = response.data || [];
+    renderUnitOptions();
+}
+
+async function loadEntries() {
+    const response = await window.LFC_API.request('guest-response-entries?' + buildListQuery());
+    latestEntries = response.data || [];
+    renderEntries();
+}
+
+typeFilterInput.addEventListener('change', renderEntries);
+branchFilterInput.addEventListener('change', renderEntries);
+milestoneFilterInput.addEventListener('change', renderEntries);
+unitFilterInput.addEventListener('change', renderEntries);
+dateFilterInput.addEventListener('change', renderEntries);
+searchInput.addEventListener('input', function () {
+    window.clearTimeout(searchInput._debounceId);
+    searchInput._debounceId = window.setTimeout(renderEntries, 200);
+});
+
+membersTableBody.addEventListener('click', function (event) {
+    const button = event.target.closest('.edit-member-button');
+
+    if (!button) {
+        return;
+    }
+
+    const entryId = Number(button.dataset.entryId || 0);
+
+    if (!entryId) {
+        showError('Unable to open the selected member record.');
+        return;
+    }
+
+    window.location.href = 'members.html?edit=' + encodeURIComponent(entryId) + '&return_to=registry';
+});
+
+(async function initMemberRegistryPage() {
+    if (new URLSearchParams(window.location.search).get('updated') === '1') {
+        showSuccess('Member record updated successfully.');
+    }
+
+    try {
+        await loadChurchContext();
+        await loadBranches();
+        await loadChurchUnits();
+        await loadEntries();
+    } catch (error) {
+        showError(error.message || 'Unable to load the member registry right now.');
+        membersTableBody.innerHTML = '<tr><td class="text-center text-muted py-4" colspan="7">Unable to load member registry right now.</td></tr>';
+    }
+})();
+</script>
+</body>
+
+</html>

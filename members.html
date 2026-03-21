@@ -5,12 +5,12 @@
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
     <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="Church management section page using the ki-admin template." name="description">
-    <meta content="church management" name="keywords">
+    <meta content="Add and edit member journey records." name="description">
+    <meta content="add member, member journey" name="keywords">
     <meta content="la-themes" name="author">
     <link href="assets/images/logo/favicon.png" rel="icon" type="image/x-icon">
     <link href="assets/images/logo/favicon.png" rel="shortcut icon" type="image/x-icon">
-    <title>Church Management</title>
+    <title>Add Member - LFC</title>
     <link href="assets/vendor/animation/animate.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com" rel="preconnect">
     <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
@@ -23,23 +23,586 @@
     <link href="assets/css/responsive.css" rel="stylesheet" type="text/css">
 </head>
 
-<body data-section-key="members">
+<body data-title="Add Member" data-subtitle="Create or update member journey records, milestones, and unit assignments.">
 <div class="app-wrapper">
     <div class="loader-wrapper"><div class="loader_24"></div></div>
     <nav id="church-nav"></nav>
     <div class="app-content">
         <div class="">
             <header class="header-main" id="church-header"></header>
-            <main id="church-section-root"></main>
+            <main>
+                <div class="container-fluid">
+                    <div class="row justify-content-center">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                                        <div>
+                                            <h4 class="mb-1" id="pageTitle">Add Member</h4>
+                                            <p class="text-secondary mb-0">Capture first timers, new converts, and re-dedications once, then keep their milestones and unit assignments updated over time.</p>
+                                        </div>
+                                        <a class="btn btn-outline-primary" href="member-registry.html">
+                                            <i class="ti ti-table me-1"></i>Open Member Registry
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-8">
+                            <div class="alert alert-success d-none" id="memberSuccessAlert" role="alert"></div>
+                            <div class="alert alert-danger d-none" id="memberErrorAlert" role="alert"></div>
+                        </div>
+
+                        <div class="col-xl-8">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0" id="memberFormTitle">Add Member Record</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form id="memberForm">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label" for="entryTypeInput">Member Category <span class="text-danger">*</span></label>
+                                                    <select class="form-select" id="entryTypeInput">
+                                                        <option value="">Select category</option>
+                                                        <option value="first_timer">First Timer</option>
+                                                        <option value="new_convert">New Convert</option>
+                                                        <option value="rededication">Re-Dedication</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label" for="entryDateInput">Service Date <span class="text-danger">*</span></label>
+                                                    <input class="form-control" id="entryDateInput" type="date">
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="mb-3">
+                                                    <label class="form-label" for="fullNameInput">Full Name <span class="text-danger">*</span></label>
+                                                    <input class="form-control" id="fullNameInput" placeholder="Enter full name" type="text">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label" for="phoneInput">Phone</label>
+                                                    <input class="form-control" id="phoneInput" placeholder="+234..." type="text">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label" for="emailInput">Email</label>
+                                                    <input class="form-control" id="emailInput" placeholder="name@example.com" type="email">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label" for="genderInput">Gender</label>
+                                                    <select class="form-select" id="genderInput">
+                                                        <option value="">Select gender</option>
+                                                        <option value="male">Male</option>
+                                                        <option value="female">Female</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label" for="branchInput">Branch</label>
+                                                    <select class="form-select" id="branchInput">
+                                                        <option value="">Main Church</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="mb-3">
+                                                    <label class="form-label" for="invitedByInput">Invited By / Contact Person</label>
+                                                    <input class="form-control" id="invitedByInput" placeholder="Who brought or followed up this person?" type="text">
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="mb-3">
+                                                    <label class="form-label" for="addressInput">Address</label>
+                                                    <input class="form-control" id="addressInput" placeholder="Address or area" type="text">
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="p-3 rounded border bg-light mb-3">
+                                                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+                                                        <div>
+                                                            <h6 class="mb-1">Journey Milestones</h6>
+                                                            <p class="text-secondary small mb-0">Tick what this person has already completed. WOFBI can carry one level or all three.</p>
+                                                        </div>
+                                                        <span class="badge text-light-primary">Editable anytime</span>
+                                                    </div>
+                                                    <div class="form-check mb-2">
+                                                        <input class="form-check-input" id="foundationCompletedInput" type="checkbox">
+                                                        <label class="form-check-label" for="foundationCompletedInput">Foundation Class Completed</label>
+                                                    </div>
+                                                    <div class="form-check mb-2">
+                                                        <input class="form-check-input" id="baptismCompletedInput" type="checkbox">
+                                                        <label class="form-check-label" for="baptismCompletedInput">Baptism Completed</label>
+                                                    </div>
+                                                    <div class="form-check mb-2">
+                                                        <input class="form-check-input" id="holyGhostBaptismCompletedInput" type="checkbox">
+                                                        <label class="form-check-label" for="holyGhostBaptismCompletedInput">Holy Ghost Baptism Completed</label>
+                                                    </div>
+                                                    <div class="form-check mb-3">
+                                                        <input class="form-check-input" id="wofbiCompletedInput" type="checkbox">
+                                                        <label class="form-check-label" for="wofbiCompletedInput">WOFBI Completed</label>
+                                                    </div>
+                                                    <div>
+                                                        <label class="form-label mb-2">WOFBI Levels</label>
+                                                        <div class="d-flex flex-wrap gap-3">
+                                                            <div class="form-check">
+                                                                <input class="form-check-input wofbi-level-input" id="wofbiLevelBccInput" type="checkbox" value="BCC">
+                                                                <label class="form-check-label" for="wofbiLevelBccInput">BCC</label>
+                                                            </div>
+                                                            <div class="form-check">
+                                                                <input class="form-check-input wofbi-level-input" id="wofbiLevelLccInput" type="checkbox" value="LCC">
+                                                                <label class="form-check-label" for="wofbiLevelLccInput">LCC</label>
+                                                            </div>
+                                                            <div class="form-check">
+                                                                <input class="form-check-input wofbi-level-input" id="wofbiLevelLdcInput" type="checkbox" value="LDC">
+                                                                <label class="form-check-label" for="wofbiLevelLdcInput">LDC</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="p-3 rounded border bg-light mb-3">
+                                                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+                                                        <div>
+                                                            <h6 class="mb-1">Church Units</h6>
+                                                            <p class="text-secondary small mb-0">Select one or more units for this member. Add new units from the Church Units page.</p>
+                                                        </div>
+                                                        <a class="btn btn-sm btn-outline-primary" href="church-units.html">Manage Units</a>
+                                                    </div>
+                                                    <div class="row g-2" id="unitSelectionContainer">
+                                                        <div class="col-12">
+                                                            <div class="border rounded p-3 text-muted small">Loading unit options...</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="mb-0">
+                                                    <label class="form-label" for="notesInput">Notes</label>
+                                                    <textarea class="form-control" id="notesInput" placeholder="Follow-up, counselling, or growth notes." rows="3"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="card-footer d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                    <div class="text-secondary small" id="recorderLabel">Recorder: Active session</div>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-outline-secondary d-none" id="cancelEditButton" type="button">Cancel Edit</button>
+                                        <button class="btn btn-primary" id="saveMemberButton" type="button">
+                                            <i class="ti ti-device-floppy me-1"></i>Save Member
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-8">
+                            <div class="alert alert-info mb-0">
+                                <i class="ti ti-info-circle me-2"></i>
+                                <strong>Workflow:</strong> add the person once, then return later to update milestones and units as they progress.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
         </div>
     </div>
 </div>
+
 <script src="assets/js/jquery-3.6.3.min.js"></script>
 <script src="assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
 <script src="assets/vendor/simplebar/simplebar.js"></script>
-<script src="assets/js/church-section-pages.js"></script>
+<script src="assets/js/app-config.js"></script>
+<script src="assets/js/app-api.js"></script>
 <script src="assets/js/church-template.js"></script>
 <script src="assets/js/script.js"></script>
+<script>
+const memberSession = window.LFC_API.getSession();
+const activeChurch = memberSession ? memberSession.church : null;
+const activeBranch = memberSession ? memberSession.branch : null;
+const sessionUser = memberSession ? memberSession.user : null;
+const pageParams = new URLSearchParams(window.location.search);
+const editEntryId = Number(pageParams.get('edit') || 0);
+const returnTo = pageParams.get('return_to') || '';
+
+const successAlert = document.getElementById('memberSuccessAlert');
+const errorAlert = document.getElementById('memberErrorAlert');
+const pageTitle = document.getElementById('pageTitle');
+const memberFormTitle = document.getElementById('memberFormTitle');
+const recorderLabel = document.getElementById('recorderLabel');
+const cancelEditButton = document.getElementById('cancelEditButton');
+const saveMemberButton = document.getElementById('saveMemberButton');
+const branchInput = document.getElementById('branchInput');
+const entryTypeInput = document.getElementById('entryTypeInput');
+const entryDateInput = document.getElementById('entryDateInput');
+const fullNameInput = document.getElementById('fullNameInput');
+const phoneInput = document.getElementById('phoneInput');
+const emailInput = document.getElementById('emailInput');
+const genderInput = document.getElementById('genderInput');
+const invitedByInput = document.getElementById('invitedByInput');
+const addressInput = document.getElementById('addressInput');
+const notesInput = document.getElementById('notesInput');
+const foundationCompletedInput = document.getElementById('foundationCompletedInput');
+const baptismCompletedInput = document.getElementById('baptismCompletedInput');
+const holyGhostBaptismCompletedInput = document.getElementById('holyGhostBaptismCompletedInput');
+const wofbiCompletedInput = document.getElementById('wofbiCompletedInput');
+const wofbiLevelInputs = Array.from(document.querySelectorAll('.wofbi-level-input'));
+const unitSelectionContainer = document.getElementById('unitSelectionContainer');
+
+let branches = [];
+let churchUnits = [];
+let churchUsers = [];
+let currentRecorder = null;
+let currentEditEntryId = null;
+
+if (!activeChurch || !activeChurch.id) {
+    window.location.replace('sign_in.html');
+    throw new Error('Missing active church session.');
+}
+
+function showError(message) {
+    errorAlert.textContent = message;
+    errorAlert.classList.remove('d-none');
+}
+
+function hideError() {
+    errorAlert.textContent = '';
+    errorAlert.classList.add('d-none');
+}
+
+function showSuccess(message) {
+    successAlert.textContent = message;
+    successAlert.classList.remove('d-none');
+}
+
+function hideSuccess() {
+    successAlert.textContent = '';
+    successAlert.classList.add('d-none');
+}
+
+function escapeHtml(value) {
+    return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function getTodayDate() {
+    return new Date().toISOString().slice(0, 10);
+}
+
+function looksLikeRoleLabel(value) {
+    const normalized = String(value || '').trim().toLowerCase();
+
+    return [
+        'church_admin',
+        'branch_admin',
+        'admin',
+        'church admin',
+        'branch admin'
+    ].includes(normalized);
+}
+
+function syncRecorderLabel() {
+    recorderLabel.textContent = currentRecorder && currentRecorder.name
+        ? 'Recorder: ' + currentRecorder.name
+        : 'Recorder: Active session';
+}
+
+function syncEditState() {
+    const isEditing = Boolean(currentEditEntryId);
+
+    pageTitle.textContent = isEditing ? 'Edit Member' : 'Add Member';
+    memberFormTitle.textContent = isEditing ? 'Edit Member Record' : 'Add Member Record';
+    cancelEditButton.classList.toggle('d-none', !isEditing);
+    saveMemberButton.innerHTML = isEditing
+        ? '<i class="ti ti-device-floppy me-1"></i>Update Member'
+        : '<i class="ti ti-device-floppy me-1"></i>Save Member';
+}
+
+function syncWofbiLevelState() {
+    const enabled = wofbiCompletedInput.checked;
+
+    wofbiLevelInputs.forEach(function (input) {
+        input.disabled = !enabled;
+
+        if (!enabled) {
+            input.checked = false;
+        }
+    });
+}
+
+function getSelectedWofbiLevels() {
+    return wofbiLevelInputs.filter(function (input) {
+        return input.checked;
+    }).map(function (input) {
+        return input.value;
+    });
+}
+
+function renderBranchOptions() {
+    const options = branches.map(function (branch) {
+        return '<option value="' + branch.id + '">' + escapeHtml(branch.name) + '</option>';
+    }).join('');
+
+    const mainChurchLabel = escapeHtml((activeChurch && activeChurch.name ? activeChurch.name : 'Main Church') + ' (Main Church)');
+
+    branchInput.innerHTML = '<option value="">' + mainChurchLabel + '</option>' + options;
+
+    if (activeBranch && activeBranch.id) {
+        branchInput.value = String(activeBranch.id);
+        branchInput.disabled = true;
+    }
+}
+
+function renderUnitOptions() {
+    if (!churchUnits.length) {
+        unitSelectionContainer.innerHTML = '<div class="col-12"><div class="border rounded p-3 text-muted small">No church units yet. Create units first, then return here to assign members.</div></div>';
+        return;
+    }
+
+    unitSelectionContainer.innerHTML = churchUnits.map(function (unit) {
+        return `
+            <div class="col-md-6">
+                <label class="border rounded p-3 d-flex align-items-start gap-2 h-100">
+                    <input class="form-check-input mt-1 church-unit-input" data-unit-id="${unit.id}" type="checkbox" value="${unit.id}">
+                    <span>
+                        <strong class="d-block">${escapeHtml(unit.name)}</strong>
+                        <span class="text-secondary small">${escapeHtml(unit.description || unit.code || 'Church unit')}</span>
+                        ${unit.status === 'inactive' ? '<span class="badge text-light-warning mt-2">Inactive</span>' : ''}
+                    </span>
+                </label>
+            </div>
+        `;
+    }).join('');
+}
+
+function getSelectedChurchUnitIds() {
+    return Array.from(document.querySelectorAll('.church-unit-input:checked')).map(function (input) {
+        return Number(input.value);
+    }).filter(Boolean);
+}
+
+function syncSelectedChurchUnits(unitIds) {
+    const selectedIds = Array.isArray(unitIds) ? unitIds.map(function (id) {
+        return Number(id);
+    }) : [];
+
+    document.querySelectorAll('.church-unit-input').forEach(function (input) {
+        input.checked = selectedIds.includes(Number(input.value));
+    });
+}
+
+function resetForm() {
+    document.getElementById('memberForm').reset();
+    entryDateInput.value = getTodayDate();
+    currentEditEntryId = null;
+
+    if (activeBranch && activeBranch.id) {
+        branchInput.value = String(activeBranch.id);
+    } else {
+        branchInput.value = '';
+    }
+
+    foundationCompletedInput.checked = false;
+    baptismCompletedInput.checked = false;
+    holyGhostBaptismCompletedInput.checked = false;
+    wofbiCompletedInput.checked = false;
+    syncSelectedChurchUnits([]);
+    syncWofbiLevelState();
+    syncEditState();
+}
+
+function fillForm(entry) {
+    currentEditEntryId = entry.id;
+    entryTypeInput.value = entry.entry_type || '';
+    entryDateInput.value = entry.service_date || '';
+    fullNameInput.value = entry.full_name || '';
+    phoneInput.value = entry.phone || '';
+    emailInput.value = entry.email || '';
+    genderInput.value = entry.gender || '';
+    branchInput.value = entry.branch ? String(entry.branch.id) : '';
+    invitedByInput.value = entry.invited_by || '';
+    addressInput.value = entry.address || '';
+    notesInput.value = entry.notes || '';
+    foundationCompletedInput.checked = Boolean(entry.foundation_class_completed);
+    baptismCompletedInput.checked = Boolean(entry.baptism_completed);
+    holyGhostBaptismCompletedInput.checked = Boolean(entry.holy_ghost_baptism_completed);
+    wofbiCompletedInput.checked = Boolean(entry.wofbi_completed);
+    wofbiLevelInputs.forEach(function (input) {
+        input.checked = Array.isArray(entry.wofbi_levels) && entry.wofbi_levels.includes(input.value);
+    });
+    syncSelectedChurchUnits((entry.church_units || []).map(function (unit) {
+        return unit.id;
+    }));
+    syncWofbiLevelState();
+    syncEditState();
+}
+
+async function loadChurchContext() {
+    const response = await window.LFC_API.request('churches/' + encodeURIComponent(activeChurch.id));
+    const church = response.data || {};
+    churchUsers = church.users || [];
+
+    currentRecorder = churchUsers.find(function (user) {
+        return sessionUser && user.id === sessionUser.id && user.name && !looksLikeRoleLabel(user.name);
+    }) || churchUsers.find(function (user) {
+        return user.role === 'church_admin' && user.name && !looksLikeRoleLabel(user.name);
+    }) || sessionUser || null;
+
+    syncRecorderLabel();
+}
+
+async function loadBranches() {
+    if (activeBranch && activeBranch.id) {
+        branches = [activeBranch];
+        renderBranchOptions();
+        return;
+    }
+
+    const response = await window.LFC_API.request('branches?church_id=' + encodeURIComponent(activeChurch.id));
+    branches = response.data || [];
+    renderBranchOptions();
+}
+
+async function loadChurchUnits() {
+    const response = await window.LFC_API.request('church-units?church_id=' + encodeURIComponent(activeChurch.id));
+    churchUnits = response.data || [];
+    renderUnitOptions();
+}
+
+async function loadEntryForEdit(entryId) {
+    if (!entryId) {
+        return;
+    }
+
+    const response = await window.LFC_API.request('guest-response-entries/' + encodeURIComponent(entryId));
+    const entry = response.data || null;
+
+    if (!entry || entry.church_id && Number(entry.church_id) !== Number(activeChurch.id)) {
+        throw new Error('Unable to load the selected member for editing.');
+    }
+
+    fillForm(entry);
+    showSuccess('Member record loaded for editing.');
+}
+
+async function saveEntry() {
+    hideError();
+    hideSuccess();
+
+    const payload = {
+        church_id: activeChurch.id,
+        branch_id: activeBranch && activeBranch.id ? activeBranch.id : (Number(branchInput.value || 0) || null),
+        recorded_by_user_id: currentRecorder && currentRecorder.id ? currentRecorder.id : null,
+        entry_type: entryTypeInput.value,
+        full_name: fullNameInput.value.trim(),
+        phone: phoneInput.value.trim() || null,
+        email: emailInput.value.trim() || null,
+        gender: genderInput.value || null,
+        service_date: entryDateInput.value,
+        invited_by: invitedByInput.value.trim() || null,
+        address: addressInput.value.trim() || null,
+        notes: notesInput.value.trim() || null,
+        foundation_class_completed: foundationCompletedInput.checked,
+        baptism_completed: baptismCompletedInput.checked,
+        holy_ghost_baptism_completed: holyGhostBaptismCompletedInput.checked,
+        wofbi_completed: wofbiCompletedInput.checked,
+        wofbi_levels: wofbiCompletedInput.checked ? getSelectedWofbiLevels() : [],
+        church_unit_ids: getSelectedChurchUnitIds()
+    };
+
+    if (!payload.entry_type) {
+        showError('Select whether this record is a first timer, new convert, or re-dedication.');
+        return;
+    }
+
+    if (!payload.full_name) {
+        showError('Enter the full name for this record.');
+        return;
+    }
+
+    if (!payload.service_date) {
+        showError('Select the service date for this record.');
+        return;
+    }
+
+    if (payload.wofbi_completed && !payload.wofbi_levels.length) {
+        showError('Select at least one completed WOFBI level.');
+        return;
+    }
+
+    saveMemberButton.disabled = true;
+
+    try {
+        const isEditing = Boolean(currentEditEntryId);
+
+        await window.LFC_API.request(currentEditEntryId ? 'guest-response-entries/' + encodeURIComponent(currentEditEntryId) : 'guest-response-entries', {
+            method: currentEditEntryId ? 'PUT' : 'POST',
+            body: payload
+        });
+
+        if (returnTo === 'registry') {
+            window.location.replace('member-registry.html?updated=1');
+            return;
+        }
+
+        resetForm();
+        showSuccess(isEditing ? 'Member record updated successfully.' : 'Member record saved successfully.');
+    } catch (error) {
+        showError(error.message || 'Unable to save this member record right now.');
+    } finally {
+        saveMemberButton.disabled = false;
+    }
+}
+
+wofbiCompletedInput.addEventListener('change', syncWofbiLevelState);
+saveMemberButton.addEventListener('click', saveEntry);
+cancelEditButton.addEventListener('click', function () {
+    if (returnTo === 'registry') {
+        window.location.replace('member-registry.html');
+        return;
+    }
+
+    hideError();
+    hideSuccess();
+    resetForm();
+});
+
+(async function initMembersPage() {
+    entryDateInput.value = getTodayDate();
+    syncWofbiLevelState();
+    syncRecorderLabel();
+    syncEditState();
+
+    try {
+        await loadChurchContext();
+        await loadBranches();
+        await loadChurchUnits();
+        resetForm();
+
+        if (editEntryId) {
+            await loadEntryForEdit(editEntryId);
+        }
+    } catch (error) {
+        showError(error.message || 'Unable to load the member page right now.');
+    }
+})();
+</script>
 </body>
 
 </html>

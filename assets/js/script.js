@@ -216,6 +216,44 @@ let calcScrollValue = () => {
 window.onscroll = calcScrollValue;
 
 
+// >>-- Shared footer --<<
+(function () {
+    const footerId = 'cyfamod-shared-footer';
+
+    function createFooterElement() {
+        const footer = document.createElement('footer');
+        footer.id = footerId;
+        footer.className = 'text-center text-secondary small py-3 mt-4';
+        footer.innerHTML = 'Built in service by <span class="fw-semibold">Cyfamod Technologies</span>';
+        return footer;
+    }
+
+    function appendSharedFooter() {
+        if (document.getElementById(footerId)) {
+            return;
+        }
+
+        const target = document.querySelector('.app-content > div')
+            || document.querySelector('.app-wrapper > main')
+            || document.querySelector('main')
+            || document.querySelector('.app-wrapper')
+            || document.body;
+
+        if (!target) {
+            return;
+        }
+
+        target.appendChild(createFooterElement());
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', appendSharedFooter);
+    } else {
+        appendSharedFooter();
+    }
+})();
+
+
 // >>-- 09 Flag dropdown --<<
 $(function () {
     const $flagImg = $(".flag img");

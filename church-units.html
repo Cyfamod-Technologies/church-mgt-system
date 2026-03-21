@@ -5,12 +5,12 @@
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
     <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="Church management section page using the ki-admin template." name="description">
-    <meta content="church management" name="keywords">
+    <meta content="Church units management page." name="description">
+    <meta content="church units, member units" name="keywords">
     <meta content="la-themes" name="author">
     <link href="assets/images/logo/favicon.png" rel="icon" type="image/x-icon">
     <link href="assets/images/logo/favicon.png" rel="shortcut icon" type="image/x-icon">
-    <title>Church Management</title>
+    <title>Church Units - LFC</title>
     <link href="assets/vendor/animation/animate.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com" rel="preconnect">
     <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
@@ -23,23 +23,393 @@
     <link href="assets/css/responsive.css" rel="stylesheet" type="text/css">
 </head>
 
-<body data-section-key="church-units">
+<body data-title="Church Units" data-subtitle="Create unit registries once, then assign members into one or more units from the member journey page.">
 <div class="app-wrapper">
     <div class="loader-wrapper"><div class="loader_24"></div></div>
     <nav id="church-nav"></nav>
     <div class="app-content">
         <div class="">
             <header class="header-main" id="church-header"></header>
-            <main id="church-section-root"></main>
+            <main>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                                        <div>
+                                            <h4 class="mb-1">Church Units</h4>
+                                            <p class="text-secondary mb-0">Build the unit list for your church here, then assign one member to one or many units from the Members page.</p>
+                                        </div>
+                                        <a class="btn btn-outline-primary" href="member-registry.html">
+                                            <i class="ti ti-users me-1"></i>Back to Member Registry
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="alert alert-success d-none" id="unitSuccessAlert" role="alert"></div>
+                            <div class="alert alert-danger d-none" id="unitErrorAlert" role="alert"></div>
+                        </div>
+
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card overview-details-box b-s-3-primary">
+                                <div class="card-body">
+                                    <p class="text-dark f-w-600 mb-1">Total Units</p>
+                                    <h3 class="text-primary mb-0" id="totalUnitsStat">0</h3>
+                                    <span class="badge text-light-primary mt-2">Configured registry</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card overview-details-box b-s-3-success">
+                                <div class="card-body">
+                                    <p class="text-dark f-w-600 mb-1">Active Units</p>
+                                    <h3 class="text-success mb-0" id="activeUnitsStat">0</h3>
+                                    <span class="badge text-light-success mt-2">Available for members</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card overview-details-box b-s-3-warning">
+                                <div class="card-body">
+                                    <p class="text-dark f-w-600 mb-1">Inactive Units</p>
+                                    <h3 class="text-warning mb-0" id="inactiveUnitsStat">0</h3>
+                                    <span class="badge text-light-warning mt-2">Hidden from assignment</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card overview-details-box b-s-3-info">
+                                <div class="card-body">
+                                    <p class="text-dark f-w-600 mb-1">Member Assignments</p>
+                                    <h3 class="text-info mb-0" id="memberAssignmentsStat">0</h3>
+                                    <span class="badge text-light-info mt-2">Across all units</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0" id="unitFormTitle">Add Church Unit</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form id="unitForm">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="unitNameInput">Unit Name <span class="text-danger">*</span></label>
+                                            <input class="form-control" id="unitNameInput" placeholder="Choir, Ushering, Media..." type="text">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label" for="unitCodeInput">Unit Code</label>
+                                            <input class="form-control" id="unitCodeInput" placeholder="Optional short code" type="text">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label" for="unitStatusInput">Status</label>
+                                            <select class="form-select" id="unitStatusInput">
+                                                <option value="active">Active</option>
+                                                <option value="inactive">Inactive</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-0">
+                                            <label class="form-label" for="unitDescriptionInput">Description</label>
+                                            <textarea class="form-control" id="unitDescriptionInput" placeholder="What does this unit cover?" rows="4"></textarea>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="card-footer d-flex justify-content-end gap-2">
+                                    <button class="btn btn-outline-secondary d-none" id="cancelUnitEditButton" type="button">Cancel Edit</button>
+                                    <button class="btn btn-primary" id="saveUnitButton" type="button">
+                                        <i class="ti ti-device-floppy me-1"></i>Save Unit
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-8">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                    <h5 class="mb-0">Unit Registry</h5>
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        <select class="form-select form-select-sm" id="unitStatusFilterInput" style="width: 150px;">
+                                            <option value="">All Statuses</option>
+                                            <option value="active">Active</option>
+                                            <option value="inactive">Inactive</option>
+                                        </select>
+                                        <input class="form-control form-control-sm" id="unitSearchInput" placeholder="Search units..." style="width: 220px;" type="text">
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover align-middle">
+                                            <thead>
+                                            <tr>
+                                                <th>Unit</th>
+                                                <th>Code</th>
+                                                <th>Members</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody id="unitsTableBody">
+                                            <tr>
+                                                <td class="text-center text-muted py-4" colspan="5">Loading units...</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="alert alert-info mb-0">
+                                <i class="ti ti-info-circle me-2"></i>
+                                <strong>Tip:</strong> keep this registry clean. Members can be assigned to more than one unit, so create each unit once and reuse it everywhere.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
         </div>
     </div>
 </div>
+
 <script src="assets/js/jquery-3.6.3.min.js"></script>
 <script src="assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
 <script src="assets/vendor/simplebar/simplebar.js"></script>
-<script src="assets/js/church-section-pages.js"></script>
+<script src="assets/js/app-config.js"></script>
+<script src="assets/js/app-api.js"></script>
 <script src="assets/js/church-template.js"></script>
 <script src="assets/js/script.js"></script>
+<script>
+const unitSession = window.LFC_API.getSession();
+const activeChurch = unitSession ? unitSession.church : null;
+
+const unitSuccessAlert = document.getElementById('unitSuccessAlert');
+const unitErrorAlert = document.getElementById('unitErrorAlert');
+const unitFormTitle = document.getElementById('unitFormTitle');
+const unitNameInput = document.getElementById('unitNameInput');
+const unitCodeInput = document.getElementById('unitCodeInput');
+const unitStatusInput = document.getElementById('unitStatusInput');
+const unitDescriptionInput = document.getElementById('unitDescriptionInput');
+const saveUnitButton = document.getElementById('saveUnitButton');
+const cancelUnitEditButton = document.getElementById('cancelUnitEditButton');
+const unitStatusFilterInput = document.getElementById('unitStatusFilterInput');
+const unitSearchInput = document.getElementById('unitSearchInput');
+const unitsTableBody = document.getElementById('unitsTableBody');
+
+let currentEditUnitId = null;
+let units = [];
+
+if (!activeChurch || !activeChurch.id) {
+    window.location.replace('sign_in.html');
+    throw new Error('Missing active church session.');
+}
+
+function showError(message) {
+    unitErrorAlert.textContent = message;
+    unitErrorAlert.classList.remove('d-none');
+}
+
+function hideError() {
+    unitErrorAlert.textContent = '';
+    unitErrorAlert.classList.add('d-none');
+}
+
+function showSuccess(message) {
+    unitSuccessAlert.textContent = message;
+    unitSuccessAlert.classList.remove('d-none');
+}
+
+function hideSuccess() {
+    unitSuccessAlert.textContent = '';
+    unitSuccessAlert.classList.add('d-none');
+}
+
+function escapeHtml(value) {
+    return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function syncEditState() {
+    unitFormTitle.textContent = currentEditUnitId ? 'Edit Church Unit' : 'Add Church Unit';
+    cancelUnitEditButton.classList.toggle('d-none', !currentEditUnitId);
+    saveUnitButton.innerHTML = currentEditUnitId
+        ? '<i class="ti ti-device-floppy me-1"></i>Update Unit'
+        : '<i class="ti ti-device-floppy me-1"></i>Save Unit';
+}
+
+function resetForm() {
+    document.getElementById('unitForm').reset();
+    currentEditUnitId = null;
+    unitStatusInput.value = 'active';
+    syncEditState();
+}
+
+function fillForm(unit) {
+    currentEditUnitId = unit.id;
+    unitNameInput.value = unit.name || '';
+    unitCodeInput.value = unit.code || '';
+    unitStatusInput.value = unit.status || 'active';
+    unitDescriptionInput.value = unit.description || '';
+    syncEditState();
+}
+
+function getFilteredUnits() {
+    const searchValue = unitSearchInput.value.trim().toLowerCase();
+
+    return units.filter(function (unit) {
+        const statusMatches = !unitStatusFilterInput.value || unit.status === unitStatusFilterInput.value;
+        const searchMatches = !searchValue || [
+            unit.name,
+            unit.code,
+            unit.description
+        ].some(function (value) {
+            return String(value || '').toLowerCase().includes(searchValue);
+        });
+
+        return statusMatches && searchMatches;
+    });
+}
+
+function renderStats(meta) {
+    const stats = meta && meta.stats ? meta.stats : {};
+    document.getElementById('totalUnitsStat').textContent = String(stats.total_units || 0);
+    document.getElementById('activeUnitsStat').textContent = String(stats.active_units || 0);
+    document.getElementById('inactiveUnitsStat').textContent = String(stats.inactive_units || 0);
+    document.getElementById('memberAssignmentsStat').textContent = String(stats.member_assignments || 0);
+}
+
+function renderUnits() {
+    const filteredUnits = getFilteredUnits();
+
+    if (!filteredUnits.length) {
+        unitsTableBody.innerHTML = '<tr><td class="text-center text-muted py-4" colspan="5">No units found for the current filters.</td></tr>';
+        return;
+    }
+
+    unitsTableBody.innerHTML = filteredUnits.map(function (unit) {
+        return `
+            <tr>
+                <td>
+                    <strong>${escapeHtml(unit.name)}</strong>
+                    <div class="small text-secondary">${escapeHtml(unit.description || '--')}</div>
+                </td>
+                <td>${escapeHtml(unit.code || '--')}</td>
+                <td>${escapeHtml(String(unit.members_count || 0))}</td>
+                <td><span class="badge ${unit.status === 'active' ? 'text-light-success' : 'text-light-warning'}">${escapeHtml(unit.status || 'active')}</span></td>
+                <td>
+                    <button class="btn btn-sm btn-light-primary edit-unit-button" data-unit-id="${unit.id}" type="button">
+                        <i class="ti ti-edit me-1"></i>Edit
+                    </button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+async function loadUnits() {
+    const response = await window.LFC_API.request('church-units?church_id=' + encodeURIComponent(activeChurch.id));
+    units = response.data || [];
+    renderStats(response.meta || {});
+    renderUnits();
+}
+
+async function saveUnit() {
+    hideError();
+    hideSuccess();
+
+    const payload = {
+        church_id: activeChurch.id,
+        name: unitNameInput.value.trim(),
+        code: unitCodeInput.value.trim() || null,
+        description: unitDescriptionInput.value.trim() || null,
+        status: unitStatusInput.value || 'active'
+    };
+
+    if (!payload.name) {
+        showError('Enter the church unit name.');
+        return;
+    }
+
+    saveUnitButton.disabled = true;
+
+    try {
+        const isEditing = Boolean(currentEditUnitId);
+
+        await window.LFC_API.request(currentEditUnitId ? 'church-units/' + encodeURIComponent(currentEditUnitId) : 'church-units', {
+            method: currentEditUnitId ? 'PUT' : 'POST',
+            body: currentEditUnitId ? {
+                name: payload.name,
+                code: payload.code,
+                description: payload.description,
+                status: payload.status
+            } : payload
+        });
+
+        resetForm();
+        showSuccess(isEditing ? 'Church unit updated successfully.' : 'Church unit created successfully.');
+        await loadUnits();
+    } catch (error) {
+        showError(error.message || 'Unable to save this church unit right now.');
+    } finally {
+        saveUnitButton.disabled = false;
+    }
+}
+
+unitStatusFilterInput.addEventListener('change', renderUnits);
+unitSearchInput.addEventListener('input', function () {
+    window.clearTimeout(unitSearchInput._debounceId);
+    unitSearchInput._debounceId = window.setTimeout(renderUnits, 200);
+});
+
+saveUnitButton.addEventListener('click', saveUnit);
+cancelUnitEditButton.addEventListener('click', function () {
+    hideError();
+    hideSuccess();
+    resetForm();
+});
+
+unitsTableBody.addEventListener('click', function (event) {
+    const button = event.target.closest('.edit-unit-button');
+
+    if (!button) {
+        return;
+    }
+
+    const unitId = Number(button.dataset.unitId || 0);
+    const unit = units.find(function (candidate) {
+        return candidate.id === unitId;
+    });
+
+    if (!unit) {
+        showError('Unable to load the selected unit for editing.');
+        return;
+    }
+
+    fillForm(unit);
+    hideError();
+    showSuccess('Church unit loaded for editing.');
+});
+
+(async function initChurchUnitsPage() {
+    syncEditState();
+
+    try {
+        await loadUnits();
+    } catch (error) {
+        showError(error.message || 'Unable to load church units right now.');
+        unitsTableBody.innerHTML = '<tr><td class="text-center text-muted py-4" colspan="5">Unable to load church units right now.</td></tr>';
+    }
+})();
+</script>
 </body>
 
 </html>

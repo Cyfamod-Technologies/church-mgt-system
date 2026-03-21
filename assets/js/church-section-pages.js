@@ -324,8 +324,8 @@
       title: "Member Report",
       subtitle: "People-flow reporting across first timers, new converts, re-dedications and follow-up readiness.",
       actions: [
-        { label: "Open Guest Entry", href: "guest-response-entry.html", variant: "primary" },
-        { label: "View Members", href: "members.html", variant: "light-primary" }
+        { label: "Add Member", href: "members.html", variant: "primary" },
+        { label: "View Members", href: "member-registry.html", variant: "light-primary" }
       ],
       cards: [
         {

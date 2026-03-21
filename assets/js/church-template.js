@@ -80,8 +80,17 @@
       id: "operations",
       icon: "stack",
       items: [
-        { label: "Record Attendance", href: "attendance.html" },
-        { label: "Guest Entry", href: "guest-response-entry.html" }
+        { label: "Record Attendance", href: "attendance.html" }
+      ]
+    },
+    {
+      title: "Members",
+      id: "member-journey",
+      icon: "queue-list",
+      items: [
+        { label: "Add Member", href: "members.html" },
+        { label: "Member Registry", href: "member-registry.html" },
+        { label: "Church Units", href: "church-units.html" }
       ]
     },
     {
@@ -94,20 +103,6 @@
         { label: "Homecell Attendance", href: "homecell-office.html" },
         { label: "Homecell Records", href: "homecell-attendance-records.html" },
         { label: "Homecell Reports", href: "homecell-reports.html" }
-      ]
-    },
-    {
-      title: "Member Journey",
-      id: "member-journey",
-      icon: "queue-list",
-      items: [
-        { label: "First Timers", href: "first-timers.html" },
-        { label: "Follow-Up", href: "follow-up.html" },
-        { label: "Foundation Class", href: "foundation-class.html" },
-        { label: "Baptism Records", href: "baptism-reports.html" },
-        { label: "WOFBI (BCC/LCC/LDC)", href: "wofbi.html" },
-        { label: "Members", href: "members.html" },
-        { label: "Church Units", href: "church-units.html" }
       ]
     },
     {

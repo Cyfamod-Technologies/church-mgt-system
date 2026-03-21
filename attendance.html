@@ -75,7 +75,7 @@
                                             <div class="mb-3">
                                                 <label class="form-label">Branch</label>
                                                 <select class="form-select" id="attendanceBranch">
-                                                    <option value="">Church-wide / No branch</option>
+                                                    <option value="">Main Church</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -281,11 +281,8 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="d-grid gap-2">
-                                        <a href="first-timers.html" class="btn btn-light-success">
-                                            <i class="ti ti-user-plus me-1"></i>Register First Timers
-                                        </a>
-                                        <a href="new-converts.html" class="btn btn-light-primary">
-                                            <i class="ti ti-heart me-1"></i>Add New Converts
+                                        <a href="guest-response-entry.html" class="btn btn-light-success">
+                                            <i class="ti ti-user-plus me-1"></i>Guest &amp; Response Entry
                                         </a>
                                         <a href="homecell-office.html" class="btn btn-light-warning">
                                             <i class="ti ti-home me-1"></i>Homecell Attendance
@@ -410,7 +407,10 @@ function formatTime(value) {
 }
 
 function populateBranchOptions() {
-    const options = ['<option value="">Church-wide / No branch</option>'].concat(attendanceBranches.map(function (branch) {
+    const mainChurchLabel = activeChurch && activeChurch.name
+        ? activeChurch.name + ' (Main Church)'
+        : 'Main Church';
+    const options = [`<option value="">${mainChurchLabel}</option>`].concat(attendanceBranches.map(function (branch) {
         return `<option value="${branch.id}">${branch.name}</option>`;
     }));
 

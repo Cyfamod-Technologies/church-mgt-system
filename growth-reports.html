@@ -5,12 +5,12 @@
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
     <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="Church management section page using the ki-admin template." name="description">
-    <meta content="church management" name="keywords">
+    <meta content="Branch report with live branch statistics and registry." name="description">
+    <meta content="branch report" name="keywords">
     <meta content="la-themes" name="author">
     <link href="assets/images/logo/favicon.png" rel="icon" type="image/x-icon">
     <link href="assets/images/logo/favicon.png" rel="shortcut icon" type="image/x-icon">
-    <title>Church Management</title>
+    <title>Branch Report - LFC</title>
     <link href="assets/vendor/animation/animate.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com" rel="preconnect">
     <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
@@ -23,23 +23,251 @@
     <link href="assets/css/responsive.css" rel="stylesheet" type="text/css">
 </head>
 
-<body data-section-key="growth-reports">
+<body data-title="Branch Report" data-subtitle="Review real branch counts and a simple branch registry.">
 <div class="app-wrapper">
     <div class="loader-wrapper"><div class="loader_24"></div></div>
     <nav id="church-nav"></nav>
     <div class="app-content">
         <div class="">
             <header class="header-main" id="church-header"></header>
-            <main id="church-section-root"></main>
+            <main>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                                        <div>
+                                            <h4 class="mb-1">Branch Report</h4>
+                                            <p class="text-secondary mb-0">See how many branches your church has created, how many are still directly under the church, and how many are now under other branches.</p>
+                                        </div>
+                                        <a class="btn btn-outline-primary" href="branches.html">
+                                            <i class="ti ti-building-arch me-1"></i>Manage Branches
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="alert alert-danger d-none" id="branchReportErrorAlert" role="alert"></div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="card overview-details-box b-s-3-primary">
+                                <div class="card-body">
+                                    <p class="text-dark f-w-600 mb-1">Total Branches</p>
+                                    <h3 class="text-primary mb-0" id="totalBranchesStat">0</h3>
+                                    <span class="badge text-light-primary mt-2">Created by your church</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card overview-details-box b-s-3-success">
+                                <div class="card-body">
+                                    <p class="text-dark f-w-600 mb-1">Direct Branches</p>
+                                    <h3 class="text-success mb-0" id="directBranchesStat">0</h3>
+                                    <span class="badge text-light-success mt-2">Currently under your church</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card overview-details-box b-s-3-warning">
+                                <div class="card-body">
+                                    <p class="text-dark f-w-600 mb-1">Sub-Branches</p>
+                                    <h3 class="text-warning mb-0" id="subBranchesStat">0</h3>
+                                    <span class="badge text-light-warning mt-2">Currently under another branch</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card overview-details-box b-s-3-info">
+                                <div class="card-body">
+                                    <p class="text-dark f-w-600 mb-1">Active Branches</p>
+                                    <h3 class="text-info mb-0" id="activeBranchesStat">0</h3>
+                                    <span class="badge text-light-info mt-2">Registry status</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                    <h5 class="mb-0">Branch Registry</h5>
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        <select class="form-select form-select-sm" id="branchTagFilter" style="width: 180px;">
+                                            <option value="">All Tags</option>
+                                        </select>
+                                        <input class="form-control form-control-sm" id="branchSearchInput" placeholder="Search branch, city, pastor..." style="width: 240px;" type="text">
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover align-middle">
+                                            <thead>
+                                            <tr>
+                                                <th>Branch</th>
+                                                <th>Tag</th>
+                                                <th>Current Parent</th>
+                                                <th>Lead</th>
+                                                <th>Status</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody id="branchRegistryTableBody">
+                                            <tr>
+                                                <td class="text-center text-muted py-4" colspan="5">Loading branch registry...</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
         </div>
     </div>
 </div>
+
 <script src="assets/js/jquery-3.6.3.min.js"></script>
 <script src="assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
 <script src="assets/vendor/simplebar/simplebar.js"></script>
-<script src="assets/js/church-section-pages.js"></script>
+<script src="assets/js/app-config.js"></script>
+<script src="assets/js/app-api.js"></script>
 <script src="assets/js/church-template.js"></script>
 <script src="assets/js/script.js"></script>
+<script>
+const branchReportSession = window.LFC_API.getSession();
+const activeChurch = branchReportSession ? branchReportSession.church : null;
+const branchReportErrorAlert = document.getElementById('branchReportErrorAlert');
+const branchTagFilter = document.getElementById('branchTagFilter');
+const branchSearchInput = document.getElementById('branchSearchInput');
+const branchRegistryTableBody = document.getElementById('branchRegistryTableBody');
+
+let branchTags = [];
+
+if (!activeChurch || !activeChurch.id) {
+    window.location.replace('sign_in.html');
+    throw new Error('Missing active church session.');
+}
+
+function showError(message) {
+    branchReportErrorAlert.textContent = message;
+    branchReportErrorAlert.classList.remove('d-none');
+}
+
+function hideError() {
+    branchReportErrorAlert.textContent = '';
+    branchReportErrorAlert.classList.add('d-none');
+}
+
+function escapeHtml(value) {
+    return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function renderTagOptions() {
+    const options = branchTags.map(function (tag) {
+        return '<option value="' + escapeHtml(tag.slug || tag.id) + '">' + escapeHtml(tag.name) + '</option>';
+    }).join('');
+
+    branchTagFilter.innerHTML = '<option value="">All Tags</option>' + options;
+}
+
+function renderStats(stats, branches) {
+    const activeCount = branches.filter(function (branch) {
+        return (branch.status || '').toLowerCase() === 'active';
+    }).length;
+
+    document.getElementById('totalBranchesStat').textContent = String(stats.total_branches || 0);
+    document.getElementById('directBranchesStat').textContent = String(stats.direct_branches || 0);
+    document.getElementById('subBranchesStat').textContent = String(stats.sub_branches || 0);
+    document.getElementById('activeBranchesStat').textContent = String(activeCount);
+}
+
+function renderRegistry(branches) {
+    if (!branches.length) {
+        branchRegistryTableBody.innerHTML = '<tr><td class="text-center text-muted py-4" colspan="5">No branches found for the current filters.</td></tr>';
+        return;
+    }
+
+    branchRegistryTableBody.innerHTML = branches.map(function (branch) {
+        const currentParent = branch.current_parent
+            ? branch.current_parent.name
+            : (activeChurch.name + ' (Main Church)');
+        const leadName = branch.local_admin && branch.local_admin.name
+            ? branch.local_admin.name
+            : (branch.pastor_name || '--');
+
+        return `
+            <tr>
+                <td>
+                    <strong>${escapeHtml(branch.name)}</strong>
+                    <div class="small text-secondary">${escapeHtml(branch.code || '--')}</div>
+                </td>
+                <td>${escapeHtml(branch.tag && branch.tag.name ? branch.tag.name : '--')}</td>
+                <td>${escapeHtml(currentParent)}</td>
+                <td>${escapeHtml(leadName)}</td>
+                <td><span class="badge text-light-${(branch.status || '').toLowerCase() === 'active' ? 'success' : 'warning'}">${escapeHtml(branch.status || 'unknown')}</span></td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function buildQuery() {
+    const params = new URLSearchParams({
+        church_id: String(activeChurch.id)
+    });
+
+    if (branchTagFilter.value) {
+        params.set('tag', branchTagFilter.value);
+    }
+
+    if (branchSearchInput.value.trim()) {
+        params.set('search', branchSearchInput.value.trim());
+    }
+
+    return params.toString();
+}
+
+async function loadTags() {
+    const response = await window.LFC_API.request('branch-tags?church_id=' + encodeURIComponent(activeChurch.id));
+    branchTags = response.data || [];
+    renderTagOptions();
+}
+
+async function loadBranchReport() {
+    hideError();
+
+    const response = await window.LFC_API.request('branches?' + buildQuery());
+    const branches = response.data || [];
+    const stats = response.meta && response.meta.stats ? response.meta.stats : {};
+
+    renderStats(stats, branches);
+    renderRegistry(branches);
+}
+
+branchTagFilter.addEventListener('change', loadBranchReport);
+branchSearchInput.addEventListener('input', function () {
+    window.clearTimeout(branchSearchInput._debounceId);
+    branchSearchInput._debounceId = window.setTimeout(loadBranchReport, 250);
+});
+
+(async function initBranchReportPage() {
+    try {
+        await loadTags();
+        await loadBranchReport();
+    } catch (error) {
+        showError(error.message || 'Unable to load the branch report right now.');
+        branchRegistryTableBody.innerHTML = '<tr><td class="text-center text-muted py-4" colspan="5">Unable to load branch registry right now.</td></tr>';
+    }
+})();
+</script>
 </body>
 
 </html>

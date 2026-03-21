@@ -283,33 +283,93 @@
       }
     },
     "homecell-reports": {
-      title: "Homecell Reports",
-      subtitle: "Homecell metrics by leader and submitted date.",
+      title: "Homecell Report",
+      subtitle: "Homecell attendance, submission coverage and leader-level reporting view.",
       table: {
-        title: "Homecell Reports",
-        headers: ["Homecell", "Leader", "Total", "Date Submitted"],
+        title: "Homecell Report",
+        headers: ["Homecell", "Leader", "Branch", "Total", "Date Submitted"],
         rows: [
-          ["Grace Cell", "Sis. Nkiru James", "31", "2026-03-14"],
-          ["Victory Cell", "Bro. Ayo Alabi", "22", "2026-03-14"]
+          ["Grace Cell", "Sis. Nkiru James", "Lekki Central", "31", "2026-03-14"],
+          ["Victory Cell", "Bro. Ayo Alabi", "Ajah Outreach", "22", "2026-03-14"]
         ]
       }
     },
     "growth-reports": {
-      title: "Growth Reports",
-      subtitle: "Membership, homecell and unit growth visibility.",
-      stats: [
-        { label: "New Members", value: "118", note: "This month" },
-        { label: "Homecell Growth", value: "12", note: "Net additions" },
-        { label: "Unit Growth", value: "37", note: "New placements" }
+      title: "Branch Report",
+      subtitle: "Branch network visibility across attendance, homecells, leadership coverage and structure health.",
+      actions: [
+        { label: "Export Branch Report", href: "#", variant: "primary" },
+        { label: "View Branches", href: "branches.html", variant: "light-primary" }
+      ],
+      cards: [
+        {
+          title: "Live Data Status",
+          items: [
+            "Demo branch figures have been removed from this page.",
+            "This report should eventually summarize branch attendance, homecells, and leadership coverage from live backend data."
+          ]
+        },
+        {
+          title: "Expected View",
+          items: [
+            "Branch name and tag",
+            "Parent church or parent branch",
+            "Homecell count and attendance totals",
+            "Coverage and leadership gaps"
+          ]
+        }
       ]
     },
     "retention-reports": {
-      title: "Retention Reports",
-      subtitle: "Retention of first timers, converts and homecell assignment consistency.",
-      stats: [
-        { label: "First Timers Retained", value: "74%", note: "90-day view" },
-        { label: "New Converts Retained", value: "79%", note: "Progress tracking" },
-        { label: "Assigned to Homecells", value: "91%", note: "Coverage" }
+      title: "Member Report",
+      subtitle: "People-flow reporting across first timers, new converts, re-dedications and follow-up readiness.",
+      actions: [
+        { label: "Open Guest Entry", href: "guest-response-entry.html", variant: "primary" },
+        { label: "View Members", href: "members.html", variant: "light-primary" }
+      ],
+      cards: [
+        {
+          title: "Live Data Status",
+          items: [
+            "Demo member report entries have been removed from this page.",
+            "This report should eventually summarize first timers, new converts, re-dedications, and follow-up progress from live records."
+          ]
+        },
+        {
+          title: "Expected View",
+          items: [
+            "Person name and entry type",
+            "Branch and service date",
+            "Invited by or contact person",
+            "Next action and follow-up status"
+          ]
+        }
+      ]
+    },
+    "attendance-reports": {
+      title: "Service Report",
+      subtitle: "Service-level reporting across attendance, altar response counts and branch submission visibility.",
+      actions: [
+        { label: "Record Attendance", href: "attendance.html", variant: "primary" },
+        { label: "View Schedule", href: "service-schedule.html", variant: "light-primary" }
+      ],
+      cards: [
+        {
+          title: "Live Data Status",
+          items: [
+            "Demo service report totals have been removed from this page.",
+            "This report should eventually summarize service attendance, first timers, new converts, re-dedications, and recorders from live attendance data."
+          ]
+        },
+        {
+          title: "Expected View",
+          items: [
+            "Service date and branch",
+            "Service label or schedule",
+            "Attendance totals and altar response counts",
+            "Recorded by and submission completeness"
+          ]
+        }
       ]
     },
     "baptism-reports": {

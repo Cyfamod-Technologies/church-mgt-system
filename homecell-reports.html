@@ -5,12 +5,12 @@
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
     <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="Homecell attendance reports with branch, leader, and submission coverage visibility." name="description">
+    <meta content="Homecell attendance report with branch, leader, and submission coverage visibility." name="description">
     <meta content="homecell reports" name="keywords">
     <meta content="la-themes" name="author">
     <link href="assets/images/logo/favicon.png" rel="icon" type="image/x-icon">
     <link href="assets/images/logo/favicon.png" rel="shortcut icon" type="image/x-icon">
-    <title>Homecell Reports - LFC</title>
+    <title>Homecell Report - LFC</title>
     <link href="assets/vendor/animation/animate.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com" rel="preconnect">
     <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
@@ -23,7 +23,7 @@
     <link href="assets/css/responsive.css" rel="stylesheet" type="text/css">
 </head>
 
-<body data-title="Homecell Reports" data-subtitle="Review homecell attendance totals, leadership coverage, and pending submissions.">
+<body data-title="Homecell Report" data-subtitle="Review homecell attendance totals, leadership coverage, and pending submissions.">
 <div class="app-wrapper">
     <div class="loader-wrapper"><div class="loader_24"></div></div>
     <nav id="church-nav"></nav>
@@ -38,7 +38,7 @@
                                 <div class="card-body">
                                     <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
                                         <div>
-                                            <h4 class="mb-1">Homecell Reports</h4>
+                                            <h4 class="mb-1">Homecell Report</h4>
                                             <p class="text-secondary mb-0">See which homecells submitted attendance, which ones are still pending, and how the period breaks down by leader and branch.</p>
                                         </div>
                                         <div class="d-flex gap-2 flex-wrap">
@@ -641,7 +641,7 @@ function exportCsv() {
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'homecell-reports-' + (anchorDateInput.value || getTodayDate()) + '.csv';
+    link.download = 'homecell-report-' + (anchorDateInput.value || getTodayDate()) + '.csv';
     link.click();
     window.URL.revokeObjectURL(url);
 }

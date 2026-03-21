@@ -5,12 +5,12 @@
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
     <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="Church management section page using the ki-admin template." name="description">
-    <meta content="church management" name="keywords">
+    <meta content="Member report using real guest and response entry data." name="description">
+    <meta content="member report" name="keywords">
     <meta content="la-themes" name="author">
     <link href="assets/images/logo/favicon.png" rel="icon" type="image/x-icon">
     <link href="assets/images/logo/favicon.png" rel="shortcut icon" type="image/x-icon">
-    <title>Church Management</title>
+    <title>Member Report - LFC</title>
     <link href="assets/vendor/animation/animate.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com" rel="preconnect">
     <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
@@ -23,23 +23,285 @@
     <link href="assets/css/responsive.css" rel="stylesheet" type="text/css">
 </head>
 
-<body data-section-key="retention-reports">
+<body data-title="Member Report" data-subtitle="Review live first timer, new convert, and re-dedication entries.">
 <div class="app-wrapper">
     <div class="loader-wrapper"><div class="loader_24"></div></div>
     <nav id="church-nav"></nav>
     <div class="app-content">
         <div class="">
             <header class="header-main" id="church-header"></header>
-            <main id="church-section-root"></main>
+            <main>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                                        <div>
+                                            <h4 class="mb-1">Member Report</h4>
+                                            <p class="text-secondary mb-0">Use real guest-entry records to review first timers, new converts, and re-dedications in one place.</p>
+                                        </div>
+                                        <a class="btn btn-outline-primary" href="guest-response-entry.html">
+                                            <i class="ti ti-user-plus me-1"></i>Open Guest Entry
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="alert alert-danger d-none" id="memberReportErrorAlert" role="alert"></div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="card overview-details-box b-s-3-primary">
+                                <div class="card-body">
+                                    <p class="text-dark f-w-600 mb-1">Total Entries</p>
+                                    <h3 class="text-primary mb-0" id="totalEntriesStat">0</h3>
+                                    <span class="badge text-light-primary mt-2">Visible records</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card overview-details-box b-s-3-success">
+                                <div class="card-body">
+                                    <p class="text-dark f-w-600 mb-1">First Timers</p>
+                                    <h3 class="text-success mb-0" id="firstTimerEntriesStat">0</h3>
+                                    <span class="badge text-light-success mt-2">Visible records</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card overview-details-box b-s-3-warning">
+                                <div class="card-body">
+                                    <p class="text-dark f-w-600 mb-1">New Converts</p>
+                                    <h3 class="text-warning mb-0" id="newConvertEntriesStat">0</h3>
+                                    <span class="badge text-light-warning mt-2">Visible records</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card overview-details-box b-s-3-info">
+                                <div class="card-body">
+                                    <p class="text-dark f-w-600 mb-1">Re-Dedications</p>
+                                    <h3 class="text-info mb-0" id="rededicationEntriesStat">0</h3>
+                                    <span class="badge text-light-info mt-2">Visible records</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                    <h5 class="mb-0">Member Intake Registry</h5>
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        <select class="form-select form-select-sm" id="memberTypeFilter" style="width: 170px;">
+                                            <option value="">All Types</option>
+                                            <option value="first_timer">First Timers</option>
+                                            <option value="new_convert">New Converts</option>
+                                            <option value="rededication">Re-Dedications</option>
+                                        </select>
+                                        <select class="form-select form-select-sm" id="memberBranchFilter" style="width: 220px;">
+                                            <option value="">All Branches</option>
+                                        </select>
+                                        <input class="form-control form-control-sm" id="memberDateFilter" style="width: 170px;" type="date">
+                                        <input class="form-control form-control-sm" id="memberSearchInput" placeholder="Search name, phone..." style="width: 220px;" type="text">
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover align-middle">
+                                            <thead>
+                                            <tr>
+                                                <th>Type</th>
+                                                <th>Name</th>
+                                                <th>Phone</th>
+                                                <th>Branch</th>
+                                                <th>Service Date</th>
+                                                <th>Invited By</th>
+                                                <th>Recorded By</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody id="memberReportTableBody">
+                                            <tr>
+                                                <td class="text-center text-muted py-4" colspan="7">Loading member report...</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
         </div>
     </div>
 </div>
+
 <script src="assets/js/jquery-3.6.3.min.js"></script>
 <script src="assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
 <script src="assets/vendor/simplebar/simplebar.js"></script>
-<script src="assets/js/church-section-pages.js"></script>
+<script src="assets/js/app-config.js"></script>
+<script src="assets/js/app-api.js"></script>
 <script src="assets/js/church-template.js"></script>
 <script src="assets/js/script.js"></script>
+<script>
+const memberReportSession = window.LFC_API.getSession();
+const activeChurch = memberReportSession ? memberReportSession.church : null;
+const memberReportErrorAlert = document.getElementById('memberReportErrorAlert');
+const memberTypeFilter = document.getElementById('memberTypeFilter');
+const memberBranchFilter = document.getElementById('memberBranchFilter');
+const memberDateFilter = document.getElementById('memberDateFilter');
+const memberSearchInput = document.getElementById('memberSearchInput');
+const memberReportTableBody = document.getElementById('memberReportTableBody');
+
+let memberBranches = [];
+
+if (!activeChurch || !activeChurch.id) {
+    window.location.replace('sign_in.html');
+    throw new Error('Missing active church session.');
+}
+
+function showError(message) {
+    memberReportErrorAlert.textContent = message;
+    memberReportErrorAlert.classList.remove('d-none');
+}
+
+function hideError() {
+    memberReportErrorAlert.textContent = '';
+    memberReportErrorAlert.classList.add('d-none');
+}
+
+function escapeHtml(value) {
+    return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function formatDate(value) {
+    if (!value) {
+        return '--';
+    }
+
+    return new Date(value + 'T00:00:00').toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+    });
+}
+
+function entryTypeLabel(value) {
+    return {
+        first_timer: 'First Timer',
+        new_convert: 'New Convert',
+        rededication: 'Re-Dedication'
+    }[value] || 'Entry';
+}
+
+function renderBranchOptions() {
+    const options = ['<option value="">All Branches</option>'].concat(memberBranches.map(function (branch) {
+        return '<option value="' + branch.id + '">' + escapeHtml(branch.name) + '</option>';
+    }));
+
+    memberBranchFilter.innerHTML = options.join('');
+}
+
+function renderStats(entries) {
+    document.getElementById('totalEntriesStat').textContent = String(entries.length);
+    document.getElementById('firstTimerEntriesStat').textContent = String(entries.filter(function (entry) { return entry.entry_type === 'first_timer'; }).length);
+    document.getElementById('newConvertEntriesStat').textContent = String(entries.filter(function (entry) { return entry.entry_type === 'new_convert'; }).length);
+    document.getElementById('rededicationEntriesStat').textContent = String(entries.filter(function (entry) { return entry.entry_type === 'rededication'; }).length);
+}
+
+function renderMemberRows(entries) {
+    renderStats(entries);
+
+    if (!entries.length) {
+        memberReportTableBody.innerHTML = '<tr><td class="text-center text-muted py-4" colspan="7">No member entries found for the current filters.</td></tr>';
+        return;
+    }
+
+    memberReportTableBody.innerHTML = entries.map(function (entry) {
+        const branchLabel = entry.branch ? entry.branch.name : (activeChurch.name + ' (Main Church)');
+
+        return `
+            <tr>
+                <td><span class="badge text-light-primary">${escapeHtml(entryTypeLabel(entry.entry_type))}</span></td>
+                <td>
+                    <strong>${escapeHtml(entry.full_name || '--')}</strong>
+                    <div class="small text-secondary">${escapeHtml(entry.email || '--')}</div>
+                </td>
+                <td>${escapeHtml(entry.phone || '--')}</td>
+                <td>${escapeHtml(branchLabel)}</td>
+                <td>${escapeHtml(formatDate(entry.service_date))}</td>
+                <td>${escapeHtml(entry.invited_by || '--')}</td>
+                <td>${entry.recorded_by ? escapeHtml(entry.recorded_by.name) : '<span class="text-muted">System</span>'}</td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function buildQuery() {
+    const params = new URLSearchParams({
+        church_id: String(activeChurch.id),
+        limit: '100'
+    });
+
+    if (memberTypeFilter.value) {
+        params.set('entry_type', memberTypeFilter.value);
+    }
+
+    if (memberBranchFilter.value) {
+        params.set('branch_id', memberBranchFilter.value);
+    }
+
+    if (memberDateFilter.value) {
+        params.set('date_from', memberDateFilter.value);
+        params.set('date_to', memberDateFilter.value);
+    }
+
+    if (memberSearchInput.value.trim()) {
+        params.set('search', memberSearchInput.value.trim());
+    }
+
+    return params.toString();
+}
+
+async function loadBranches() {
+    const response = await window.LFC_API.request('branches?church_id=' + encodeURIComponent(activeChurch.id));
+    memberBranches = response.data || [];
+    renderBranchOptions();
+}
+
+async function loadMemberReport() {
+    hideError();
+
+    const response = await window.LFC_API.request('guest-response-entries?' + buildQuery());
+    renderMemberRows(response.data || []);
+}
+
+memberTypeFilter.addEventListener('change', loadMemberReport);
+memberBranchFilter.addEventListener('change', loadMemberReport);
+memberDateFilter.addEventListener('change', loadMemberReport);
+memberSearchInput.addEventListener('input', function () {
+    window.clearTimeout(memberSearchInput._debounceId);
+    memberSearchInput._debounceId = window.setTimeout(loadMemberReport, 250);
+});
+
+(async function initMemberReportPage() {
+    try {
+        await loadBranches();
+        await loadMemberReport();
+    } catch (error) {
+        showError(error.message || 'Unable to load the member report right now.');
+        memberReportTableBody.innerHTML = '<tr><td class="text-center text-muted py-4" colspan="7">Unable to load member report right now.</td></tr>';
+    }
+})();
+</script>
 </body>
 
 </html>

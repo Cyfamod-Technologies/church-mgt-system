@@ -76,14 +76,12 @@
       ]
     },
     {
-      title: "Operations",
+      title: "Services",
       id: "operations",
       icon: "stack",
       items: [
         { label: "Record Attendance", href: "attendance.html" },
-        { label: "First Timers Entry", href: "first-timers.html" },
-        { label: "New Converts Entry", href: "new-converts.html" },
-        { label: "Rededications", href: "rededications.html" }
+        { label: "Guest Entry", href: "guest-response-entry.html" }
       ]
     },
     {
@@ -117,11 +115,10 @@
       id: "reports-group",
       icon: "chart",
       items: [
-        { label: "Attendance Reports", href: "attendance-reports.html" },
-        { label: "Growth Reports", href: "growth-reports.html" },
-        { label: "Retention Reports", href: "retention-reports.html" },
-        { label: "Foundation Class Reports", href: "foundation-class-reports.html" },
-        { label: "Baptism Reports", href: "baptism-reports.html" }
+        { label: "Branch Report", href: "growth-reports.html" },
+        { label: "Service Report", href: "attendance-reports.html" },
+        { label: "Homecell Report", href: "homecell-reports.html" },
+        { label: "Member Report", href: "retention-reports.html" }
       ]
     },
     {

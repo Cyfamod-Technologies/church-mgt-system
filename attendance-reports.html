@@ -5,12 +5,12 @@
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
     <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="Church management section page using the ki-admin template." name="description">
-    <meta content="church management" name="keywords">
+    <meta content="Service report using live attendance records." name="description">
+    <meta content="service report" name="keywords">
     <meta content="la-themes" name="author">
     <link href="assets/images/logo/favicon.png" rel="icon" type="image/x-icon">
     <link href="assets/images/logo/favicon.png" rel="shortcut icon" type="image/x-icon">
-    <title>Church Management</title>
+    <title>Service Report - LFC</title>
     <link href="assets/vendor/animation/animate.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com" rel="preconnect">
     <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
@@ -23,23 +23,314 @@
     <link href="assets/css/responsive.css" rel="stylesheet" type="text/css">
 </head>
 
-<body data-section-key="attendance-reports">
+<body data-title="Service Report" data-subtitle="Review live attendance totals and recorded services by branch and period.">
 <div class="app-wrapper">
     <div class="loader-wrapper"><div class="loader_24"></div></div>
     <nav id="church-nav"></nav>
     <div class="app-content">
         <div class="">
             <header class="header-main" id="church-header"></header>
-            <main id="church-section-root"></main>
+            <main>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                                        <div>
+                                            <h4 class="mb-1">Service Report</h4>
+                                            <p class="text-secondary mb-0">See real service attendance totals, averages, highest service, and a simple service record table.</p>
+                                        </div>
+                                        <a class="btn btn-outline-primary" href="attendance.html">
+                                            <i class="ti ti-checkup-list me-1"></i>Record Attendance
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="alert alert-danger d-none" id="serviceReportErrorAlert" role="alert"></div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="card overview-details-box b-s-3-primary">
+                                <div class="card-body">
+                                    <p class="text-dark f-w-600 mb-1">Services Recorded</p>
+                                    <h3 class="text-primary mb-0" id="servicesRecordedStat">0</h3>
+                                    <span class="badge text-light-primary mt-2" id="servicePeriodLabel">Selected period</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card overview-details-box b-s-3-success">
+                                <div class="card-body">
+                                    <p class="text-dark f-w-600 mb-1">Total Attendance</p>
+                                    <h3 class="text-success mb-0" id="serviceTotalAttendanceStat">0</h3>
+                                    <span class="badge text-light-success mt-2">Visible records</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card overview-details-box b-s-3-warning">
+                                <div class="card-body">
+                                    <p class="text-dark f-w-600 mb-1">Average Per Service</p>
+                                    <h3 class="text-warning mb-0" id="serviceAverageAttendanceStat">0</h3>
+                                    <span class="badge text-light-warning mt-2">Selected period</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card overview-details-box b-s-3-info">
+                                <div class="card-body">
+                                    <p class="text-dark f-w-600 mb-1">Highest Service</p>
+                                    <h3 class="text-info mb-0" id="serviceHighestAttendanceStat">0</h3>
+                                    <span class="badge text-light-info mt-2" id="serviceHighestLabel">No records yet</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                    <h5 class="mb-0">Service Records</h5>
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        <select class="form-select form-select-sm" id="servicePeriodInput" style="width: 140px;">
+                                            <option value="weekly">This Week</option>
+                                            <option value="monthly">This Month</option>
+                                        </select>
+                                        <input class="form-control form-control-sm" id="serviceDateInput" style="width: 170px;" type="date">
+                                        <select class="form-select form-select-sm" id="serviceBranchInput" style="width: 220px;">
+                                            <option value="">All Branches</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover align-middle">
+                                            <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Branch</th>
+                                                <th>Service</th>
+                                                <th>Attendance</th>
+                                                <th>First Timers</th>
+                                                <th>New Converts</th>
+                                                <th>Re-Dedications</th>
+                                                <th>Recorded By</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody id="serviceReportTableBody">
+                                            <tr>
+                                                <td class="text-center text-muted py-4" colspan="8">Loading service report...</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
         </div>
     </div>
 </div>
+
 <script src="assets/js/jquery-3.6.3.min.js"></script>
 <script src="assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
 <script src="assets/vendor/simplebar/simplebar.js"></script>
-<script src="assets/js/church-section-pages.js"></script>
+<script src="assets/js/app-config.js"></script>
+<script src="assets/js/app-api.js"></script>
 <script src="assets/js/church-template.js"></script>
 <script src="assets/js/script.js"></script>
+<script>
+const serviceReportSession = window.LFC_API.getSession();
+const activeChurch = serviceReportSession ? serviceReportSession.church : null;
+const serviceReportErrorAlert = document.getElementById('serviceReportErrorAlert');
+const servicePeriodInput = document.getElementById('servicePeriodInput');
+const serviceDateInput = document.getElementById('serviceDateInput');
+const serviceBranchInput = document.getElementById('serviceBranchInput');
+const serviceReportTableBody = document.getElementById('serviceReportTableBody');
+
+let serviceBranches = [];
+
+if (!activeChurch || !activeChurch.id) {
+    window.location.replace('sign_in.html');
+    throw new Error('Missing active church session.');
+}
+
+function showError(message) {
+    serviceReportErrorAlert.textContent = message;
+    serviceReportErrorAlert.classList.remove('d-none');
+}
+
+function hideError() {
+    serviceReportErrorAlert.textContent = '';
+    serviceReportErrorAlert.classList.add('d-none');
+}
+
+function escapeHtml(value) {
+    return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function getTodayDate() {
+    return new Date().toISOString().slice(0, 10);
+}
+
+function formatDate(value) {
+    if (!value) {
+        return '--';
+    }
+
+    return new Date(value + 'T00:00:00').toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+    });
+}
+
+function renderBranchOptions() {
+    const options = ['<option value="">All Branches</option>'].concat(serviceBranches.map(function (branch) {
+        return '<option value="' + branch.id + '">' + escapeHtml(branch.name) + '</option>';
+    }));
+
+    serviceBranchInput.innerHTML = options.join('');
+}
+
+function getDateRange() {
+    const anchorDate = serviceDateInput.value || getTodayDate();
+    const date = new Date(anchorDate + 'T00:00:00');
+
+    if (servicePeriodInput.value === 'monthly') {
+        const start = new Date(date.getFullYear(), date.getMonth(), 1);
+        const end = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+        return {
+            from: start.toISOString().slice(0, 10),
+            to: end.toISOString().slice(0, 10),
+        };
+    }
+
+    const dayOfWeek = date.getDay();
+    const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+    const start = new Date(date);
+    start.setDate(date.getDate() + diff);
+    const end = new Date(start);
+    end.setDate(start.getDate() + 6);
+
+    return {
+        from: start.toISOString().slice(0, 10),
+        to: end.toISOString().slice(0, 10),
+    };
+}
+
+function renderStats(summary, records) {
+    document.getElementById('servicesRecordedStat').textContent = String(records.length);
+    document.getElementById('serviceTotalAttendanceStat').textContent = String(summary.total_attendance || 0);
+    document.getElementById('serviceAverageAttendanceStat').textContent = String(summary.average_attendance || 0);
+    document.getElementById('servicePeriodLabel').textContent = servicePeriodInput.value === 'monthly' ? 'Current month' : 'Current week';
+    document.getElementById('serviceHighestAttendanceStat').textContent = summary.highest_service ? String(summary.highest_service.total_count) : '0';
+    document.getElementById('serviceHighestLabel').textContent = summary.highest_service
+        ? summary.highest_service.service_label
+        : 'No records yet';
+}
+
+function renderServiceRecords(records) {
+    if (!records.length) {
+        serviceReportTableBody.innerHTML = '<tr><td class="text-center text-muted py-4" colspan="8">No service records found for the selected filters.</td></tr>';
+        return;
+    }
+
+    serviceReportTableBody.innerHTML = records.map(function (record) {
+        const branchLabel = record.branch ? record.branch.name : (activeChurch.name + ' (Main Church)');
+
+        return `
+            <tr>
+                <td>${escapeHtml(formatDate(record.service_date))}</td>
+                <td>${escapeHtml(branchLabel)}</td>
+                <td>${escapeHtml(record.service_label || '--')}</td>
+                <td class="fw-semibold">${escapeHtml(record.total_count)}</td>
+                <td>${escapeHtml(record.first_timers_count)}</td>
+                <td>${escapeHtml(record.new_converts_count)}</td>
+                <td>${escapeHtml(record.rededications_count)}</td>
+                <td>${record.recorded_by ? escapeHtml(record.recorded_by.name) : '<span class="text-muted">System</span>'}</td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function buildSummaryQuery() {
+    const params = new URLSearchParams({
+        church_id: String(activeChurch.id),
+        period: servicePeriodInput.value,
+        date: serviceDateInput.value || getTodayDate(),
+    });
+
+    if (serviceBranchInput.value) {
+        params.set('branch_id', serviceBranchInput.value);
+    }
+
+    return params.toString();
+}
+
+function buildListQuery() {
+    const range = getDateRange();
+    const params = new URLSearchParams({
+        church_id: String(activeChurch.id),
+        date_from: range.from,
+        date_to: range.to,
+        per_page: '50'
+    });
+
+    if (serviceBranchInput.value) {
+        params.set('branch_id', serviceBranchInput.value);
+    }
+
+    return params.toString();
+}
+
+async function loadBranches() {
+    const response = await window.LFC_API.request('branches?church_id=' + encodeURIComponent(activeChurch.id));
+    serviceBranches = response.data || [];
+    renderBranchOptions();
+}
+
+async function loadServiceReport() {
+    hideError();
+
+    const [summaryResponse, listResponse] = await Promise.all([
+        window.LFC_API.request('attendance/summary?' + buildSummaryQuery()),
+        window.LFC_API.request('attendance?' + buildListQuery())
+    ]);
+
+    const summary = summaryResponse.data || {};
+    const records = listResponse.data || [];
+
+    renderStats(summary, records);
+    renderServiceRecords(records);
+}
+
+servicePeriodInput.addEventListener('change', loadServiceReport);
+serviceDateInput.addEventListener('change', loadServiceReport);
+serviceBranchInput.addEventListener('change', loadServiceReport);
+
+(async function initServiceReportPage() {
+    serviceDateInput.value = getTodayDate();
+
+    try {
+        await loadBranches();
+        await loadServiceReport();
+    } catch (error) {
+        showError(error.message || 'Unable to load the service report right now.');
+        serviceReportTableBody.innerHTML = '<tr><td class="text-center text-muted py-4" colspan="8">Unable to load service report right now.</td></tr>';
+    }
+})();
+</script>
 </body>
 
 </html>

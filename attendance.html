@@ -316,7 +316,7 @@
                                                     <th>Total</th>
                                                     <th>First Timers</th>
                                                     <th>New Converts</th>
-                                                    <th>Actions</th>
+                                                    <th>Recorded By</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="recentAttendanceTableBody"></tbody>
@@ -388,6 +388,25 @@ checkWOSE(); // Check on load
 
 function getOrdinal(value) {
     return value + (value === 1 ? 'st' : value === 2 ? 'nd' : value === 3 ? 'rd' : 'th');
+}
+
+function formatTime(value) {
+    if (!value) {
+        return '--';
+    }
+
+    const parts = String(value).split(':');
+    const hours = Number(parts[0]);
+    const minutes = parts[1] || '00';
+
+    if (Number.isNaN(hours)) {
+        return value;
+    }
+
+    const normalizedHour = ((hours + 11) % 12) + 1;
+    const suffix = hours >= 12 ? 'PM' : 'AM';
+
+    return normalizedHour + ':' + minutes.slice(0, 2) + ' ' + suffix;
 }
 
 function populateBranchOptions() {
@@ -530,7 +549,7 @@ function renderRecentAttendance(records) {
                 <td class="fw-bold">${record.total_count}</td>
                 <td><span class="text-success">${record.first_timers_count}</span></td>
                 <td><span class="text-primary">${record.new_converts_count}</span></td>
-                <td><span class="text-muted">Saved</span></td>
+                <td>${record.recorded_by ? record.recorded_by.name : '<span class="text-muted">System</span>'}</td>
             </tr>
         `;
     }).join('');

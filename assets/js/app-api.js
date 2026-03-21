@@ -32,10 +32,6 @@
         return payload;
     }
 
-    function saveSession(data) {
-        window.localStorage.setItem(sessionKey, JSON.stringify(data));
-    }
-
     function getSession() {
         const raw = window.localStorage.getItem(sessionKey);
 
@@ -49,6 +45,19 @@
             window.localStorage.removeItem(sessionKey);
             return null;
         }
+    }
+
+    function saveSession(data) {
+        const existing = getSession() || {};
+        const nextSession = {
+            ...existing,
+            ...data,
+            user: data && Object.prototype.hasOwnProperty.call(data, 'user') ? data.user : existing.user,
+            church: data && Object.prototype.hasOwnProperty.call(data, 'church') ? data.church : existing.church,
+            branch: data && Object.prototype.hasOwnProperty.call(data, 'branch') ? data.branch : existing.branch,
+        };
+
+        window.localStorage.setItem(sessionKey, JSON.stringify(nextSession));
     }
 
     function clearSession() {

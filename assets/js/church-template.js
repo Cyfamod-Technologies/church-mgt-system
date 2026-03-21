@@ -87,6 +87,18 @@
       ]
     },
     {
+      title: "Homecell Management",
+      id: "homecell-mgmt",
+      icon: "home",
+      items: [
+        { label: "Homecells", href: "homecells.html" },
+        { label: "Homecell Leaders", href: "homecell-leaders.html" },
+        { label: "Homecell Attendance", href: "homecell-office.html" },
+        { label: "Homecell Records", href: "homecell-attendance-records.html" },
+        { label: "Homecell Reports", href: "homecell-reports.html" }
+      ]
+    },
+    {
       title: "Member Journey",
       id: "member-journey",
       icon: "queue-list",
@@ -98,17 +110,6 @@
         { label: "WOFBI (BCC/LCC/LDC)", href: "wofbi.html" },
         { label: "Members", href: "members.html" },
         { label: "Church Units", href: "church-units.html" }
-      ]
-    },
-    {
-      title: "Homecell Management",
-      id: "homecell-mgmt",
-      icon: "home",
-      items: [
-        { label: "Homecells", href: "homecells.html" },
-        { label: "Homecell Leaders", href: "homecell-leaders.html" },
-        { label: "Homecell Attendance", href: "homecell-office.html" },
-        { label: "Homecell Reports", href: "homecell-reports.html" }
       ]
     },
     {
@@ -128,11 +129,7 @@
       id: "admin-group",
       icon: "table",
       items: [
-        { label: "Users", href: "users.html" },
-        { label: "Workers / Leaders", href: "workers.html" },
-        { label: "Roles & Permissions", href: "roles.html" },
-        { label: "Finance", href: "finance.html" },
-        { label: "Settings", href: "settings.html" }
+        { label: "Users", href: "users.html" }
       ]
     }
   ];
@@ -187,10 +184,26 @@
     return href.split("#")[0] === normalizedPage;
   }
 
+  function resolveChurchAdminName() {
+    const churchUsers = session.church && Array.isArray(session.church.users)
+      ? session.church.users
+      : [];
+    const churchAdmin = churchUsers.find((user) => user && user.role === "church_admin" && user.name);
+
+    if (churchAdmin && churchAdmin.name) {
+      return escapeHtml(churchAdmin.name);
+    }
+
+    if (session.user && session.user.role === "church_admin" && session.user.name) {
+      return escapeHtml(session.user.name);
+    }
+
+    return "Church Admin";
+  }
+
   function buildNav() {
     const nav = document.getElementById("church-nav");
     if (!nav) return;
-    const userName = escapeHtml(session.user.name || "Church Admin");
     const churchName = escapeHtml(session.church.name || "Church Workspace");
     const branchName = session.branch && session.branch.name
       ? escapeHtml(session.branch.name)
@@ -242,7 +255,6 @@
             <span class="position-absolute top-0 end-0 p-1 bg-success border border-light rounded-circle"></span>
           </span>
           <div class="flex-grow-1 ps-2">
-            <h6 class="text-primary mb-0">${userName}</h6>
             <p class="text-muted f-s-12 mb-0">${workspaceLabel}</p>
           </div>
         </div>
@@ -272,7 +284,7 @@
 
     const title = document.body.dataset.title || "Church Management System";
     const subtitle = document.body.dataset.subtitle || "Administrative workspace";
-    const userName = escapeHtml(session.user.name || "Church Admin");
+    const userName = resolveChurchAdminName();
     const churchName = escapeHtml(session.church.name || "Church Workspace");
 
     header.innerHTML = `

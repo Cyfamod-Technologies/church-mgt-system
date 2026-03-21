@@ -5,7 +5,7 @@
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
     <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="Church dashboard using the ki-admin template." name="description">
+    <meta content="Church dashboard with live setup, attendance, branch, and homecell visibility." name="description">
     <meta content="church dashboard" name="keywords">
     <meta content="la-themes" name="author">
     <link href="assets/images/logo/favicon.png" rel="icon" type="image/x-icon">
@@ -15,8 +15,7 @@
     <link href="assets/vendor/animation/animate.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com" rel="preconnect">
     <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
-    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap"
-          rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
     <link href="assets/vendor/flag-icons-master/flag-icon.css" rel="stylesheet" type="text/css">
     <link href="assets/vendor/tabler-icons/tabler-icons.css" rel="stylesheet" type="text/css">
     <link href="assets/vendor/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
@@ -25,7 +24,7 @@
     <link href="assets/css/responsive.css" rel="stylesheet" type="text/css">
 </head>
 
-<body data-title="Admin Dashboard" data-subtitle="Summary cards, quick actions and recent church activity.">
+<body data-title="Dashboard" data-subtitle="Live branch, setup, attendance, and homecell visibility for the current workspace.">
 <div class="app-wrapper">
     <div class="loader-wrapper">
         <div class="loader_24"></div>
@@ -43,93 +42,132 @@
                         <div class="col-12">
                             <div class="card">
                                 <div class="card-body">
-                                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
                                         <div>
-                                            <h4 class="mb-1">Living Faith Central Dashboard</h4>
-                                            <p class="text-secondary mb-0">Top summary cards, quick actions and recent operational activity from the PDF flow.</p>
+                                            <h4 class="mb-1" id="dashboardWorkspaceTitle">Dashboard</h4>
+                                            <p class="text-secondary mb-0" id="dashboardWorkspaceSubtitle">Loading church workspace details...</p>
                                         </div>
                                         <div class="d-flex gap-2 flex-wrap">
-                                            <a class="btn btn-primary" href="members.html">Add Member</a>
-                                            <a class="btn btn-outline-primary" href="members.html#users">Add User</a>
+                                            <a class="btn btn-primary" href="attendance.html">Record Attendance</a>
+                                            <a class="btn btn-outline-primary" href="homecell-office.html">Homecell Attendance</a>
                                             <a class="btn btn-light-primary" href="branches.html">Create Branch</a>
+                                            <a class="btn btn-light-secondary" href="church-profile.html">Church Setup</a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
+                        <div class="col-12">
+                            <div class="alert alert-danger d-none" id="dashboardAlert" role="alert"></div>
+                        </div>
+
                         <div class="col-md-6 col-xxl-3">
                             <div class="card overview-details-box b-s-3-primary">
                                 <div class="card-body">
-                                    <p class="text-dark f-w-600 mb-1">Total Members</p>
-                                    <h3 class="text-primary mb-0">2,864</h3>
-                                    <span class="badge text-light-primary mt-2">+118 this month</span>
+                                    <p class="text-dark f-w-600 mb-1">Branch Network</p>
+                                    <h3 class="text-primary mb-0" id="branchCountStat">0</h3>
+                                    <span class="badge text-light-primary mt-2" id="branchCountNote">No branches yet</span>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-6 col-xxl-3">
                             <div class="card overview-details-box b-s-3-success">
                                 <div class="card-body">
-                                    <p class="text-dark f-w-600 mb-1">First Timers</p>
-                                    <h3 class="text-success mb-0">126</h3>
-                                    <span class="badge text-light-success mt-2">34 pending follow-up</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-xxl-3">
-                            <div class="card overview-details-box b-s-3-danger">
-                                <div class="card-body">
-                                    <p class="text-dark f-w-600 mb-1">New Converts</p>
-                                    <h3 class="text-danger mb-0">64</h3>
-                                    <span class="badge text-light-danger mt-2">18 in foundation class</span>
+                                    <p class="text-dark f-w-600 mb-1">Homecells</p>
+                                    <h3 class="text-success mb-0" id="homecellCountStat">0</h3>
+                                    <span class="badge text-light-success mt-2" id="homecellCountNote">No homecells yet</span>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-6 col-xxl-3">
                             <div class="card overview-details-box b-s-3-warning">
                                 <div class="card-body">
-                                    <p class="text-dark f-w-600 mb-1">Members Without Homecell</p>
-                                    <h3 class="text-warning mb-0">94</h3>
-                                    <span class="badge text-light-warning mt-2">Homecell Office priority</span>
+                                    <p class="text-dark f-w-600 mb-1">Church Attendance</p>
+                                    <h3 class="text-warning mb-0" id="attendanceTotalStat">0</h3>
+                                    <span class="badge text-light-warning mt-2" id="attendanceTotalNote">This week</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-xxl-3">
+                            <div class="card overview-details-box b-s-3-info">
+                                <div class="card-body">
+                                    <p class="text-dark f-w-600 mb-1">Homecell Coverage</p>
+                                    <h3 class="text-info mb-0" id="homecellCoverageStat">0 / 0</h3>
+                                    <span class="badge text-light-info mt-2" id="homecellCoverageNote">This week</span>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="col-lg-8">
+                        <div class="col-lg-7">
                             <div class="card equal-card">
                                 <div class="card-header">
                                     <h5 class="mb-0">Quick Actions</h5>
                                 </div>
                                 <div class="card-body">
                                     <div class="row g-3">
-                                        <div class="col-md-4"><a class="btn btn-light-primary w-100" href="members.html">Add Member</a></div>
-                                        <div class="col-md-4"><a class="btn btn-light-success w-100" href="members.html#first-timers">Register First Timer</a></div>
-                                        <div class="col-md-4"><a class="btn btn-light-danger w-100" href="leadership.html">Add Pastor</a></div>
-                                        <div class="col-md-4"><a class="btn btn-light-warning w-100" href="branches.html">Create Branch</a></div>
-                                        <div class="col-md-4"><a class="btn btn-light-info w-100" href="church-profile.html">Church Setup</a></div>
-                                        <div class="col-md-4"><a class="btn btn-light-secondary w-100" href="leadership.html#assignments">Assign Leader</a></div>
+                                        <div class="col-md-4"><a class="btn btn-light-primary w-100" href="attendance.html">Record Church Attendance</a></div>
+                                        <div class="col-md-4"><a class="btn btn-light-success w-100" href="homecell-office.html">Record Homecell Attendance</a></div>
+                                        <div class="col-md-4"><a class="btn btn-light-warning w-100" href="homecells.html">Manage Homecells</a></div>
+                                        <div class="col-md-4"><a class="btn btn-light-info w-100" href="branches.html">Manage Branches</a></div>
+                                        <div class="col-md-4"><a class="btn btn-light-secondary w-100" href="church-profile.html">Church Profile</a></div>
+                                        <div class="col-md-4"><a class="btn btn-light-danger w-100" href="service-schedule.html">Service Schedule</a></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="col-lg-4" id="notifications">
+                        <div class="col-lg-5">
                             <div class="card">
                                 <div class="card-header">
-                                    <h5 class="mb-0">Notifications</h5>
+                                    <h5 class="mb-0">Operational Alerts</h5>
+                                </div>
+                                <div class="card-body" id="dashboardAlertsList">
+                                    <div class="text-secondary">Loading operational alerts...</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-5">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Church Snapshot</h5>
                                 </div>
                                 <div class="card-body">
-                                    <div class="mb-3">
-                                        <h6 class="mb-1">Pending foundation class</h6>
-                                        <p class="text-secondary mb-0">149 members have not completed foundation class.</p>
+                                    <div class="border rounded p-3 mb-3">
+                                        <span class="text-secondary small d-block mb-1">Church</span>
+                                        <strong id="snapshotChurchName">--</strong>
+                                        <div class="small text-secondary mt-1" id="snapshotChurchCode">Code: --</div>
                                     </div>
-                                    <div class="mb-3">
-                                        <h6 class="mb-1">Pending assignments</h6>
-                                        <p class="text-secondary mb-0">District 4 needs a district pastor and Chevron Zone needs a coordinator.</p>
+                                    <div class="border rounded p-3 mb-3">
+                                        <span class="text-secondary small d-block mb-1">Location</span>
+                                        <strong id="snapshotLocation">--</strong>
                                     </div>
-                                    <div>
-                                        <h6 class="mb-1">Recent follow-up tasks</h6>
-                                        <p class="text-secondary mb-0">12 first timers are ready to move into members.</p>
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <div class="border rounded p-3 h-100">
+                                                <span class="text-secondary small d-block mb-1">Admin Users</span>
+                                                <strong id="snapshotUsersCount">0</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="border rounded p-3 h-100">
+                                                <span class="text-secondary small d-block mb-1">Configured Services</span>
+                                                <strong id="snapshotServicesCount">0</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="border rounded p-3 h-100">
+                                                <span class="text-secondary small d-block mb-1">Finance</span>
+                                                <strong id="snapshotFinanceStatus">--</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="border rounded p-3 h-100">
+                                                <span class="text-secondary small d-block mb-1">Special Services</span>
+                                                <strong id="snapshotSpecialServicesStatus">--</strong>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -137,42 +175,53 @@
 
                         <div class="col-xl-7">
                             <div class="card">
-                                <div class="card-header">
-                                    <h5 class="mb-0">Recent Members</h5>
+                                <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                    <h5 class="mb-0">Branch Network</h5>
+                                    <a class="btn btn-sm btn-outline-primary" href="branches.html">View All</a>
                                 </div>
                                 <div class="card-body">
-                                    <div class="table-responsive app-scroll">
+                                    <div class="table-responsive">
                                         <table class="table table-bottom-border align-middle mb-0">
                                             <thead>
                                             <tr>
-                                                <th>Name</th>
-                                                <th>Date Joined</th>
-                                                <th>Homecell</th>
-                                                <th>Foundation</th>
+                                                <th>Branch</th>
+                                                <th>Tag</th>
+                                                <th>Current Parent</th>
                                                 <th>Status</th>
                                             </tr>
                                             </thead>
-                                            <tbody>
+                                            <tbody id="dashboardBranchesTableBody">
                                             <tr>
-                                                <td>Mercy Akinola</td>
-                                                <td>2026-03-15</td>
-                                                <td>Unassigned</td>
-                                                <td>Pending</td>
-                                                <td><span class="badge text-light-warning">Needs Homecell</span></td>
+                                                <td class="text-center text-muted py-4" colspan="4">Loading branches...</td>
                                             </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-7">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                    <h5 class="mb-0">Recent Church Attendance</h5>
+                                    <a class="btn btn-sm btn-outline-primary" href="attendance.html">Record More</a>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-bottom-border align-middle mb-0">
+                                            <thead>
                                             <tr>
-                                                <td>John Nwachukwu</td>
-                                                <td>2026-03-14</td>
-                                                <td>Grace Cell</td>
-                                                <td>Enrolled</td>
-                                                <td><span class="badge text-light-primary">In Progress</span></td>
+                                                <th>Date</th>
+                                                <th>Service</th>
+                                                <th>Branch</th>
+                                                <th>Total</th>
+                                                <th>Recorder</th>
                                             </tr>
+                                            </thead>
+                                            <tbody id="dashboardAttendanceTableBody">
                                             <tr>
-                                                <td>Faith Johnson</td>
-                                                <td>2026-03-13</td>
-                                                <td>Victory Cell</td>
-                                                <td>Completed</td>
-                                                <td><span class="badge text-light-success">Active</span></td>
+                                                <td class="text-center text-muted py-4" colspan="5">Loading attendance records...</td>
                                             </tr>
                                             </tbody>
                                         </table>
@@ -183,30 +232,27 @@
 
                         <div class="col-xl-5">
                             <div class="card">
-                                <div class="card-header">
-                                    <h5 class="mb-0">Recent Attendance Reports</h5>
+                                <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                    <h5 class="mb-0">Recent Homecell Attendance</h5>
+                                    <a class="btn btn-sm btn-outline-primary" href="homecell-reports.html">View Reports</a>
                                 </div>
                                 <div class="card-body">
-                                    <div class="mb-3">
-                                        <div class="d-flex justify-content-between">
-                                            <span>Sunday Service Attendance</span>
-                                            <span class="text-primary">3,402</span>
-                                        </div>
-                                            <p class="text-secondary mb-0">Submitted by Operations Admin</p>
-                                    </div>
-                                    <div class="mb-3">
-                                        <div class="d-flex justify-content-between">
-                                            <span>Homecell Attendance</span>
-                                            <span class="text-success">2,116</span>
-                                        </div>
-                                        <p class="text-secondary mb-0">3 homecells yet to submit.</p>
-                                    </div>
-                                    <div>
-                                        <div class="d-flex justify-content-between">
-                                            <span>Unit Attendance</span>
-                                            <span class="text-danger">512</span>
-                                        </div>
-                                        <p class="text-secondary mb-0">Technical, choir and protocol reviewed.</p>
+                                    <div class="table-responsive">
+                                        <table class="table table-bottom-border align-middle mb-0">
+                                            <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Homecell</th>
+                                                <th>Total</th>
+                                                <th>Recorder</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody id="dashboardHomecellAttendanceTableBody">
+                                            <tr>
+                                                <td class="text-center text-muted py-4" colspan="4">Loading homecell attendance...</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
@@ -221,8 +267,344 @@
 <script src="assets/js/jquery-3.6.3.min.js"></script>
 <script src="assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
 <script src="assets/vendor/simplebar/simplebar.js"></script>
+<script src="assets/js/app-config.js"></script>
+<script src="assets/js/app-api.js"></script>
 <script src="assets/js/church-template.js"></script>
 <script src="assets/js/script.js"></script>
+<script>
+const dashboardSession = window.LFC_API.getSession();
+const activeChurch = dashboardSession ? dashboardSession.church : null;
+const activeUser = dashboardSession ? dashboardSession.user : null;
+const activeBranch = dashboardSession ? dashboardSession.branch : null;
+const dashboardAlert = document.getElementById('dashboardAlert');
+
+if (!activeChurch || !activeChurch.id) {
+    window.location.replace('sign_in.html');
+    throw new Error('Missing active church session.');
+}
+
+function showDashboardError(message) {
+    dashboardAlert.textContent = message;
+    dashboardAlert.classList.remove('d-none');
+}
+
+function hideDashboardError() {
+    dashboardAlert.classList.add('d-none');
+    dashboardAlert.textContent = '';
+}
+
+function escapeHtml(value) {
+    return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function formatDate(value) {
+    if (!value) {
+        return '--';
+    }
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+        return value;
+    }
+
+    return date.toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+    });
+}
+
+function getTodayDate() {
+    return new Date().toISOString().slice(0, 10);
+}
+
+function buildWorkspaceLabel(church, branch) {
+    if (branch && branch.name) {
+        return branch.name + ' Branch Workspace';
+    }
+
+    return 'Church Workspace';
+}
+
+function getLocationLabel(church) {
+    return [church.city, church.district_area, church.state].filter(Boolean).join(', ') || 'No location set';
+}
+
+function getCurrentParentLabel(branch) {
+    if (!branch || !branch.current_parent) {
+        return 'Not assigned';
+    }
+
+    if (branch.current_parent.type === 'branch') {
+        return branch.current_parent.name;
+    }
+
+    return branch.current_parent.name + (branch.current_parent.code ? ' (' + branch.current_parent.code + ')' : '');
+}
+
+function getBranchScopedParams() {
+    const params = new URLSearchParams({
+        church_id: String(activeChurch.id)
+    });
+
+    if (activeBranch && activeBranch.id) {
+        params.set('branch_id', String(activeBranch.id));
+    }
+
+    return params;
+}
+
+function renderWorkspaceHeader(church) {
+    const workspaceTitle = activeBranch && activeBranch.name
+        ? activeBranch.name + ' Dashboard'
+        : (church.name || 'Church Dashboard');
+    const pieces = [
+        church.code ? 'Code: ' + church.code : null,
+        getLocationLabel(church),
+        buildWorkspaceLabel(church, activeBranch)
+    ].filter(Boolean);
+
+    document.getElementById('dashboardWorkspaceTitle').textContent = workspaceTitle;
+    document.getElementById('dashboardWorkspaceSubtitle').textContent = pieces.join(' • ');
+}
+
+function renderTopStats(branchesResponse, homecellsResponse, attendanceSummary, homecellSummary) {
+    const branchStats = branchesResponse.meta && branchesResponse.meta.stats ? branchesResponse.meta.stats : {};
+    const homecellStats = homecellsResponse.meta && homecellsResponse.meta.stats ? homecellsResponse.meta.stats : {};
+
+    document.getElementById('branchCountStat').textContent = String(branchStats.total_branches || 0);
+    document.getElementById('branchCountNote').textContent = (branchStats.direct_branches || 0) + ' direct / ' + (branchStats.sub_branches || 0) + ' under branches';
+
+    document.getElementById('homecellCountStat').textContent = String(homecellStats.total_homecells || 0);
+    document.getElementById('homecellCountNote').textContent = (homecellStats.assigned_to_branches || 0) + ' assigned / ' + (homecellStats.unassigned_homecells || 0) + ' unassigned';
+
+    document.getElementById('attendanceTotalStat').textContent = String(attendanceSummary.total_attendance || 0);
+    document.getElementById('attendanceTotalNote').textContent = attendanceSummary.highest_service
+        ? 'Highest: ' + attendanceSummary.highest_service.total_count + ' (' + attendanceSummary.highest_service.service_label + ')'
+        : 'No church attendance this week';
+
+    document.getElementById('homecellCoverageStat').textContent = String(homecellSummary.homecells_covered || 0) + ' / ' + String(homecellSummary.active_homecells || 0);
+    document.getElementById('homecellCoverageNote').textContent = String(homecellSummary.pending_homecells || 0) + ' pending this week';
+}
+
+function renderAlerts(church, branchesResponse, homecellsResponse, attendanceSummary, homecellSummary) {
+    const branchStats = branchesResponse.meta && branchesResponse.meta.stats ? branchesResponse.meta.stats : {};
+    const homecellStats = homecellsResponse.meta && homecellsResponse.meta.stats ? homecellsResponse.meta.stats : {};
+    const alerts = [];
+
+    if (!church.address || !church.state || !church.pastor_name) {
+        alerts.push({
+            title: 'Church setup incomplete',
+            message: 'Church profile is missing some core details such as address, state, or pastor information.'
+        });
+    }
+
+    if ((church.service_schedules || []).length === 0) {
+        alerts.push({
+            title: 'Service schedule not configured',
+            message: 'No service times are available yet. Add Sunday, Wednesday, WOSE, or other services.'
+        });
+    }
+
+    if ((branchStats.total_branches || 0) === 0) {
+        alerts.push({
+            title: 'No branches created yet',
+            message: 'Create your first branch if this church manages district, zone, or other branch structures.'
+        });
+    }
+
+    if ((homecellStats.total_homecells || 0) === 0) {
+        alerts.push({
+            title: 'No homecells created yet',
+            message: 'Homecell structure is still empty. Add homecells and assign leaders to start tracking attendance.'
+        });
+    }
+
+    if ((homecellSummary.pending_homecells || 0) > 0) {
+        alerts.push({
+            title: 'Pending homecell submissions',
+            message: homecellSummary.pending_homecells + ' active homecell(s) have not submitted attendance for the current week.'
+        });
+    }
+
+    if ((attendanceSummary.total_attendance || 0) === 0) {
+        alerts.push({
+            title: 'No church attendance recorded this week',
+            message: 'There are no church attendance submissions yet for the current weekly window.'
+        });
+    }
+
+    if (!alerts.length) {
+        alerts.push({
+            title: 'No urgent operational issues',
+            message: 'Core setup, attendance, and homecell reporting all look present for the current workspace.'
+        });
+    }
+
+    document.getElementById('dashboardAlertsList').innerHTML = alerts.slice(0, 5).map(function (item) {
+        return `
+            <div class="mb-3">
+                <h6 class="mb-1">${escapeHtml(item.title)}</h6>
+                <p class="text-secondary mb-0">${escapeHtml(item.message)}</p>
+            </div>
+        `;
+    }).join('');
+}
+
+function renderChurchSnapshot(church) {
+    document.getElementById('snapshotChurchName').textContent = church.name || '--';
+    document.getElementById('snapshotChurchCode').textContent = 'Code: ' + (church.code || '--');
+    document.getElementById('snapshotLocation').textContent = getLocationLabel(church);
+    document.getElementById('snapshotUsersCount').textContent = String((church.users || []).length);
+    document.getElementById('snapshotServicesCount').textContent = String((church.service_schedules || []).length);
+    document.getElementById('snapshotFinanceStatus').textContent = church.finance_enabled ? 'Enabled' : 'Disabled';
+    document.getElementById('snapshotSpecialServicesStatus').textContent = church.special_services_enabled ? 'Enabled' : 'Disabled';
+}
+
+function renderBranchesTable(branches) {
+    const tbody = document.getElementById('dashboardBranchesTableBody');
+    const visibleBranches = activeBranch && activeBranch.id
+        ? branches.filter(function (branch) {
+            return branch.id === activeBranch.id || (branch.current_parent && branch.current_parent.type === 'branch' && branch.current_parent.id === activeBranch.id);
+        })
+        : branches;
+
+    if (!visibleBranches.length) {
+        tbody.innerHTML = '<tr><td class="text-center text-muted py-4" colspan="4">No branches available for this workspace yet.</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = visibleBranches.slice(0, 6).map(function (branch) {
+        return `
+            <tr>
+                <td>
+                    <strong>${escapeHtml(branch.name)}</strong>
+                    <div class="small text-secondary">${escapeHtml(branch.code || '--')}</div>
+                </td>
+                <td>${escapeHtml(branch.tag ? branch.tag.name : '--')}</td>
+                <td>${escapeHtml(getCurrentParentLabel(branch))}</td>
+                <td><span class="badge ${branch.status === 'active' ? 'text-light-success' : 'text-light-warning'}">${escapeHtml(branch.status || 'active')}</span></td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function renderAttendanceTable(records) {
+    const tbody = document.getElementById('dashboardAttendanceTableBody');
+
+    if (!records.length) {
+        tbody.innerHTML = '<tr><td class="text-center text-muted py-4" colspan="5">No church attendance records yet.</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = records.map(function (record) {
+        return `
+            <tr>
+                <td>${escapeHtml(formatDate(record.service_date))}</td>
+                <td>${escapeHtml(record.service_label || '--')}</td>
+                <td>${record.branch ? escapeHtml(record.branch.name) : '<span class="text-muted">Church</span>'}</td>
+                <td><strong>${escapeHtml(record.total_count)}</strong></td>
+                <td>${record.recorded_by ? escapeHtml(record.recorded_by.name) : '<span class="text-muted">System</span>'}</td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function renderHomecellAttendanceTable(records) {
+    const tbody = document.getElementById('dashboardHomecellAttendanceTableBody');
+
+    if (!records.length) {
+        tbody.innerHTML = '<tr><td class="text-center text-muted py-4" colspan="4">No homecell attendance records yet.</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = records.map(function (record) {
+        return `
+            <tr>
+                <td>${escapeHtml(formatDate(record.meeting_date))}</td>
+                <td>
+                    <strong>${escapeHtml(record.homecell ? record.homecell.name : '--')}</strong>
+                    <div class="small text-secondary">${record.branch ? escapeHtml(record.branch.name) : 'Unassigned'}</div>
+                </td>
+                <td><strong>${escapeHtml(record.total_count)}</strong></td>
+                <td>${record.recorded_by ? escapeHtml(record.recorded_by.name) : '<span class="text-muted">System</span>'}</td>
+            </tr>
+        `;
+    }).join('');
+}
+
+async function loadDashboard() {
+    hideDashboardError();
+
+    const branchScopedParams = getBranchScopedParams();
+    const summaryParams = new URLSearchParams(branchScopedParams.toString());
+    summaryParams.set('period', 'weekly');
+    summaryParams.set('date', getTodayDate());
+
+    const attendanceListParams = new URLSearchParams(branchScopedParams.toString());
+    attendanceListParams.set('per_page', '5');
+
+    const homecellAttendanceParams = new URLSearchParams(branchScopedParams.toString());
+    homecellAttendanceParams.set('limit', '5');
+
+    const [
+        churchResponse,
+        branchesResponse,
+        homecellsResponse,
+        attendanceSummaryResponse,
+        attendanceResponse,
+        homecellSummaryResponse,
+        homecellAttendanceResponse
+    ] = await Promise.all([
+        window.LFC_API.request('churches/' + encodeURIComponent(activeChurch.id)),
+        window.LFC_API.request('branches?church_id=' + encodeURIComponent(activeChurch.id)),
+        window.LFC_API.request('homecells?' + branchScopedParams.toString()),
+        window.LFC_API.request('attendance/summary?' + summaryParams.toString()),
+        window.LFC_API.request('attendance?' + attendanceListParams.toString()),
+        window.LFC_API.request('homecell-attendance/summary?' + summaryParams.toString()),
+        window.LFC_API.request('homecell-attendance?' + homecellAttendanceParams.toString())
+    ]);
+
+    const church = churchResponse.data || {};
+    const branches = branchesResponse.data || [];
+    const homecellStatsResponse = homecellsResponse || {};
+    const attendanceSummary = attendanceSummaryResponse.data || {};
+    const attendanceRecords = attendanceResponse.data || [];
+    const homecellSummary = homecellSummaryResponse.data || {};
+    const homecellAttendanceRecords = homecellAttendanceResponse.data || [];
+
+    renderWorkspaceHeader(church);
+    renderTopStats(branchesResponse, homecellStatsResponse, attendanceSummary, homecellSummary);
+    renderAlerts(church, branchesResponse, homecellStatsResponse, attendanceSummary, homecellSummary);
+    renderChurchSnapshot(church);
+    renderBranchesTable(branches);
+    renderAttendanceTable(attendanceRecords);
+    renderHomecellAttendanceTable(homecellAttendanceRecords);
+
+    window.LFC_API.saveSession({
+        user: activeUser,
+        church: {
+            ...(dashboardSession && dashboardSession.church ? dashboardSession.church : {}),
+            ...church
+        },
+        branch: activeBranch || null
+    });
+}
+
+loadDashboard().catch(function (error) {
+    showDashboardError(error.message || 'Unable to load dashboard data right now.');
+    document.getElementById('dashboardBranchesTableBody').innerHTML = '<tr><td class="text-center text-muted py-4" colspan="4">Unable to load branches right now.</td></tr>';
+    document.getElementById('dashboardAttendanceTableBody').innerHTML = '<tr><td class="text-center text-muted py-4" colspan="5">Unable to load church attendance right now.</td></tr>';
+    document.getElementById('dashboardHomecellAttendanceTableBody').innerHTML = '<tr><td class="text-center text-muted py-4" colspan="4">Unable to load homecell attendance right now.</td></tr>';
+    document.getElementById('dashboardAlertsList').innerHTML = '<div class="text-secondary">Dashboard data is not available right now.</div>';
+});
+</script>
 </body>
 
 </html>

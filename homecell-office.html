@@ -5,7 +5,7 @@
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
     <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="Record homecell attendance and keep branch-level submission visibility." name="description">
+    <meta content="Record homecell attendance and update existing same-day entries." name="description">
     <meta content="homecell attendance" name="keywords">
     <meta content="la-themes" name="author">
     <link href="assets/images/logo/favicon.png" rel="icon" type="image/x-icon">
@@ -23,7 +23,7 @@
     <link href="assets/css/responsive.css" rel="stylesheet" type="text/css">
 </head>
 
-<body data-title="Homecell Attendance" data-subtitle="Submit homecell attendance records, track coverage, and monitor branch-level performance.">
+<body data-title="Homecell Attendance" data-subtitle="Submit one dated record per homecell meeting and edit existing entries when needed.">
 <div class="app-wrapper">
     <div class="loader-wrapper"><div class="loader_24"></div></div>
     <nav id="church-nav"></nav>
@@ -39,11 +39,16 @@
                                     <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
                                         <div>
                                             <h4 class="mb-1">Homecell Attendance</h4>
-                                            <p class="text-secondary mb-0">Select a homecell, enter attendance values, and keep a dated record for review and reporting.</p>
+                                            <p class="text-secondary mb-0">Use this page for entry and editing. Attendance records listing and filters now live on a separate records page.</p>
                                         </div>
-                                        <a class="btn btn-outline-secondary" href="homecells.html">
-                                            <i class="ti ti-home me-1"></i>Manage Homecells
-                                        </a>
+                                        <div class="d-flex gap-2 flex-wrap">
+                                            <a class="btn btn-outline-secondary" href="homecells.html">
+                                                <i class="ti ti-home me-1"></i>Manage Homecells
+                                            </a>
+                                            <a class="btn btn-primary" href="homecell-attendance-records.html">
+                                                <i class="ti ti-table me-1"></i>View Homecell Records
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -91,10 +96,10 @@
                             </div>
                         </div>
 
-                        <div class="col-xl-5">
+                        <div class="col-xl-8">
                             <div class="card">
                                 <div class="card-header">
-                                    <h5 class="mb-0">Add Attendance Record</h5>
+                                    <h5 class="mb-0" id="attendanceFormTitle">Add Attendance Record</h5>
                                 </div>
                                 <div class="card-body">
                                     <form id="homecellAttendanceForm">
@@ -172,53 +177,43 @@
                                 </div>
                                 <div class="card-footer d-flex justify-content-between align-items-center flex-wrap gap-2">
                                     <div class="text-secondary small" id="attendanceRecorderLabel">Recording with active session.</div>
-                                    <button class="btn btn-primary" id="saveHomecellAttendanceButton" type="button">
-                                        <i class="ti ti-device-floppy me-1"></i>Save Attendance
-                                    </button>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-outline-secondary d-none" id="cancelEditHomecellAttendanceButton" type="button">
+                                            Cancel Edit
+                                        </button>
+                                        <button class="btn btn-primary" id="saveHomecellAttendanceButton" type="button">
+                                            <i class="ti ti-device-floppy me-1"></i>Save Attendance
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="col-xl-7">
+                        <div class="col-xl-4">
                             <div class="card">
-                                <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
-                                    <h5 class="mb-0">Recent Records</h5>
-                                    <div class="d-flex gap-2 flex-wrap">
-                                        <select class="form-select form-select-sm" id="summaryPeriodInput" style="width: 140px;">
-                                            <option value="weekly">This Week</option>
-                                            <option value="monthly">This Month</option>
-                                        </select>
-                                        <input class="form-control form-control-sm" id="summaryDateInput" style="width: 170px;" type="date">
-                                        <select class="form-select form-select-sm" id="branchFilterInput" style="width: 200px;">
-                                            <option value="">All Branches</option>
-                                        </select>
-                                        <select class="form-select form-select-sm" id="homecellFilterInput" style="width: 220px;">
-                                            <option value="">All Homecells</option>
-                                        </select>
-                                    </div>
+                                <div class="card-header">
+                                    <h5 class="mb-0">Attendance Rules</h5>
                                 </div>
                                 <div class="card-body">
-                                    <div class="table-responsive">
-                                        <table class="table table-hover align-middle">
-                                            <thead>
-                                            <tr>
-                                                <th>Date</th>
-                                                <th>Homecell</th>
-                                                <th>Branch</th>
-                                                <th>Breakdown</th>
-                                                <th>Total</th>
-                                                <th>Guests</th>
-                                                <th>Offering</th>
-                                                <th>Recorded By</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody id="homecellAttendanceTableBody">
-                                            <tr>
-                                                <td class="text-center text-muted py-4" colspan="8">Loading homecell attendance...</td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
+                                    <div class="d-flex flex-column gap-3">
+                                        <div>
+                                            <p class="mb-1 fw-semibold">One record per day</p>
+                                            <p class="text-secondary mb-0">Each homecell can only have one attendance record for a given meeting date. Selecting the same date loads that record for editing.</p>
+                                        </div>
+                                        <div>
+                                            <p class="mb-1 fw-semibold">Branch assignment is automatic</p>
+                                            <p class="text-secondary mb-0">The selected homecell carries its assigned branch automatically, so reporting stays aligned with branch structure.</p>
+                                        </div>
+                                        <div>
+                                            <p class="mb-1 fw-semibold">Homecell records moved out</p>
+                                            <p class="text-secondary mb-0">Use the separate records page when you want filters, record history, or to jump into edit mode from an older entry.</p>
+                                        </div>
                                     </div>
+                                </div>
+                                <div class="card-footer">
+                                    <a class="btn btn-outline-primary w-100" href="homecell-attendance-records.html">
+                                        <i class="ti ti-list-details me-1"></i>Open Homecell Records
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -226,7 +221,7 @@
                         <div class="col-12">
                             <div class="alert alert-info mb-0">
                                 <i class="ti ti-info-circle me-2"></i>
-                                <strong>How it works:</strong> Homecell attendance is saved against a specific homecell and automatically carries its assigned branch. That means you can later filter by branch, by homecell, or by reporting period without losing where the record came from.
+                                <strong>How it works:</strong> Save attendance here, then review history and filters on the records page. If you pick a homecell and date that already has a record, the form switches into edit mode automatically.
                             </div>
                         </div>
                     </div>
@@ -246,8 +241,10 @@
 <script>
 const homecellAttendanceSession = window.LFC_API.getSession();
 const activeChurch = homecellAttendanceSession ? homecellAttendanceSession.church : null;
-const activeUser = homecellAttendanceSession ? homecellAttendanceSession.user : null;
 const activeBranch = homecellAttendanceSession ? homecellAttendanceSession.branch : null;
+const officePageParams = new URLSearchParams(window.location.search);
+const preloadRecordId = Number(officePageParams.get('record_id') || 0) || null;
+const returnToRecords = officePageParams.get('return_to') === 'records';
 
 const successAlert = document.getElementById('attendanceSuccessAlert');
 const errorAlert = document.getElementById('attendanceErrorAlert');
@@ -262,25 +259,20 @@ const attendanceFirstTimersInput = document.getElementById('attendanceFirstTimer
 const attendanceNewConvertsInput = document.getElementById('attendanceNewConvertsInput');
 const attendanceOfferingInput = document.getElementById('attendanceOfferingInput');
 const attendanceNotesInput = document.getElementById('attendanceNotesInput');
-const branchFilterInput = document.getElementById('branchFilterInput');
-const homecellFilterInput = document.getElementById('homecellFilterInput');
-const summaryPeriodInput = document.getElementById('summaryPeriodInput');
-const summaryDateInput = document.getElementById('summaryDateInput');
-const homecellAttendanceTableBody = document.getElementById('homecellAttendanceTableBody');
 const saveHomecellAttendanceButton = document.getElementById('saveHomecellAttendanceButton');
+const cancelEditHomecellAttendanceButton = document.getElementById('cancelEditHomecellAttendanceButton');
 const attendanceRecorderLabel = document.getElementById('attendanceRecorderLabel');
+const attendanceFormTitle = document.getElementById('attendanceFormTitle');
 
-let branches = [];
 let homecells = [];
+let churchUsers = [];
+let currentRecorder = null;
+let currentEditRecordId = null;
 
 if (!activeChurch || !activeChurch.id) {
     window.location.replace('sign_in.html');
     throw new Error('Missing active church session.');
 }
-
-attendanceRecorderLabel.textContent = activeUser && activeUser.name
-    ? 'Recording as ' + activeUser.name + '.'
-    : 'Recording with active session.';
 
 function showError(message) {
     errorAlert.textContent = message;
@@ -311,39 +303,32 @@ function escapeHtml(value) {
         .replace(/'/g, '&#39;');
 }
 
-function formatDate(value) {
-    if (!value) {
-        return '--';
-    }
+function looksLikeRoleLabel(value) {
+    const normalized = String(value || '').trim().toLowerCase();
 
-    const date = new Date(value + 'T00:00:00');
-
-    if (Number.isNaN(date.getTime())) {
-        return value;
-    }
-
-    return date.toLocaleDateString(undefined, {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-    });
+    return [
+        'church_admin',
+        'branch_admin',
+        'admin',
+        'homecell_office_admin',
+        'homecell leader',
+        'church admin',
+        'branch admin'
+    ].includes(normalized);
 }
 
-function formatCurrency(value) {
-    if (value === null || value === undefined || value === '') {
-        return '--';
-    }
+function syncRecorderLabel() {
+    attendanceRecorderLabel.textContent = currentRecorder && currentRecorder.name
+        ? 'Recorder: ' + currentRecorder.name
+        : 'Recorder: Active session';
+}
 
-    const numericValue = Number(value);
-
-    if (Number.isNaN(numericValue)) {
-        return '--';
-    }
-
-    return numericValue.toLocaleString(undefined, {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-    });
+function syncEditState() {
+    attendanceFormTitle.textContent = currentEditRecordId ? 'Edit Attendance Record' : 'Add Attendance Record';
+    cancelEditHomecellAttendanceButton.classList.toggle('d-none', !currentEditRecordId);
+    saveHomecellAttendanceButton.innerHTML = currentEditRecordId
+        ? '<i class="ti ti-device-floppy me-1"></i>Update Attendance'
+        : '<i class="ti ti-device-floppy me-1"></i>Save Attendance';
 }
 
 function getTodayDate() {
@@ -379,6 +364,14 @@ function updateSelectedHomecellMeta() {
         : 'Select a homecell';
 }
 
+function clearEditQueryParams() {
+    if (!preloadRecordId && !returnToRecords) {
+        return;
+    }
+
+    window.history.replaceState({}, '', 'homecell-office.html');
+}
+
 function resetForm() {
     document.getElementById('homecellAttendanceForm').reset();
     attendanceMeetingDateInput.value = getTodayDate();
@@ -388,20 +381,19 @@ function resetForm() {
     attendanceFirstTimersInput.value = '0';
     attendanceNewConvertsInput.value = '0';
     attendanceTotalInput.value = '0';
+    currentEditRecordId = null;
     updateSelectedHomecellMeta();
+    syncEditState();
 }
 
-function renderBranchOptions() {
-    const branchOptions = branches.map(function (branch) {
-        return '<option value="' + branch.id + '">' + escapeHtml(branch.name) + '</option>';
-    }).join('');
+function prepareNewEntryForSelection() {
+    const selectedHomecellId = attendanceHomecellInput.value;
+    const selectedMeetingDate = attendanceMeetingDateInput.value;
 
-    branchFilterInput.innerHTML = '<option value="">All Branches</option>' + branchOptions;
-
-    if (activeBranch && activeBranch.id) {
-        branchFilterInput.value = String(activeBranch.id);
-        branchFilterInput.disabled = true;
-    }
+    resetForm();
+    attendanceHomecellInput.value = selectedHomecellId;
+    attendanceMeetingDateInput.value = selectedMeetingDate;
+    updateSelectedHomecellMeta();
 }
 
 function renderHomecellSelectors() {
@@ -411,49 +403,22 @@ function renderHomecellSelectors() {
     }).join('');
 
     attendanceHomecellInput.innerHTML = '<option value="">Select homecell</option>' + formOptions;
-
-    const selectedBranchId = Number(branchFilterInput.value || 0) || null;
-    const filteredHomecells = homecells.filter(function (homecell) {
-        return !selectedBranchId || (homecell.branch && homecell.branch.id === selectedBranchId);
-    });
-
-    const filterOptions = filteredHomecells.map(function (homecell) {
-        return '<option value="' + homecell.id + '">' + escapeHtml(homecell.name) + '</option>';
-    }).join('');
-
-    homecellFilterInput.innerHTML = '<option value="">All Homecells</option>' + filterOptions;
 }
 
-function renderRecords(records) {
-    if (!records.length) {
-        homecellAttendanceTableBody.innerHTML = '<tr><td class="text-center text-muted py-4" colspan="8">No homecell attendance records found for the current filters.</td></tr>';
-        return;
-    }
-
-    homecellAttendanceTableBody.innerHTML = records.map(function (record) {
-        return `
-            <tr>
-                <td>${escapeHtml(formatDate(record.meeting_date))}</td>
-                <td>
-                    <strong>${escapeHtml(record.homecell ? record.homecell.name : '--')}</strong>
-                    <div class="small text-secondary">${escapeHtml(record.homecell && record.homecell.code ? record.homecell.code : '--')}</div>
-                </td>
-                <td>${record.branch ? escapeHtml(record.branch.name) : '<span class="text-muted">Unassigned</span>'}</td>
-                <td class="small">
-                    M: ${escapeHtml(record.male_count)}<br>
-                    F: ${escapeHtml(record.female_count)}<br>
-                    C: ${escapeHtml(record.children_count)}
-                </td>
-                <td><span class="badge text-light-primary">${escapeHtml(record.total_count)}</span></td>
-                <td class="small">
-                    FT: ${escapeHtml(record.first_timers_count)}<br>
-                    NC: ${escapeHtml(record.new_converts_count)}
-                </td>
-                <td>${escapeHtml(formatCurrency(record.offering_amount))}</td>
-                <td>${escapeHtml(record.recorded_by ? record.recorded_by.name : 'System')}</td>
-            </tr>
-        `;
-    }).join('');
+function fillFormFromRecord(record) {
+    currentEditRecordId = record.id;
+    attendanceHomecellInput.value = record.homecell ? String(record.homecell.id) : '';
+    attendanceMeetingDateInput.value = record.meeting_date || '';
+    attendanceMaleInput.value = String(record.male_count || 0);
+    attendanceFemaleInput.value = String(record.female_count || 0);
+    attendanceChildrenInput.value = String(record.children_count || 0);
+    attendanceFirstTimersInput.value = String(record.first_timers_count || 0);
+    attendanceNewConvertsInput.value = String(record.new_converts_count || 0);
+    attendanceOfferingInput.value = record.offering_amount === null || record.offering_amount === undefined ? '' : String(record.offering_amount);
+    attendanceNotesInput.value = record.notes || '';
+    updateSelectedHomecellMeta();
+    updateAttendanceTotal();
+    syncEditState();
 }
 
 function renderSummary(summary) {
@@ -465,72 +430,35 @@ function renderSummary(summary) {
     document.getElementById('summaryPeriodLabel').textContent = summary.period === 'monthly' ? 'Current month' : 'Current week';
 }
 
-function buildListQuery() {
+function buildWeeklySummaryQuery() {
     const params = new URLSearchParams({
         church_id: String(activeChurch.id),
-        limit: '30'
+        period: 'weekly',
+        date: getTodayDate()
     });
 
-    const branchId = Number(branchFilterInput.value || 0) || null;
-    const homecellId = Number(homecellFilterInput.value || 0) || null;
-    const anchorDate = summaryDateInput.value || getTodayDate();
-
-    if (branchId) {
-        params.set('branch_id', String(branchId));
-    }
-
-    if (homecellId) {
-        params.set('homecell_id', String(homecellId));
-    }
-
-    params.set('date_to', anchorDate);
-
-    if (summaryPeriodInput.value === 'monthly') {
-        const date = new Date(anchorDate + 'T00:00:00');
-        date.setDate(1);
-        params.set('date_from', date.toISOString().slice(0, 10));
-    } else {
-        const date = new Date(anchorDate + 'T00:00:00');
-        const dayOfWeek = date.getDay();
-        const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-        date.setDate(date.getDate() + diff);
-        params.set('date_from', date.toISOString().slice(0, 10));
-    }
-
-    return params.toString();
-}
-
-function buildSummaryQuery() {
-    const params = new URLSearchParams({
-        church_id: String(activeChurch.id),
-        period: summaryPeriodInput.value || 'weekly',
-        date: summaryDateInput.value || getTodayDate()
-    });
-
-    const branchId = Number(branchFilterInput.value || 0) || null;
-    const homecellId = Number(homecellFilterInput.value || 0) || null;
-
-    if (branchId) {
-        params.set('branch_id', String(branchId));
-    }
-
-    if (homecellId) {
-        params.set('homecell_id', String(homecellId));
-    }
-
-    return params.toString();
-}
-
-async function loadBranches() {
     if (activeBranch && activeBranch.id) {
-        branches = [activeBranch];
-        renderBranchOptions();
-        return;
+        params.set('branch_id', String(activeBranch.id));
     }
 
-    const response = await window.LFC_API.request('branches?church_id=' + encodeURIComponent(activeChurch.id));
-    branches = response.data || [];
-    renderBranchOptions();
+    return params.toString();
+}
+
+async function loadRecorderContext() {
+    const response = await window.LFC_API.request('churches/' + encodeURIComponent(activeChurch.id));
+    const church = response.data || {};
+    churchUsers = church.users || [];
+    const sessionUser = homecellAttendanceSession ? homecellAttendanceSession.user : null;
+
+    currentRecorder = churchUsers.find(function (user) {
+        return user.role === 'church_admin' && user.name && !looksLikeRoleLabel(user.name);
+    }) || churchUsers.find(function (user) {
+        return sessionUser && user.id === sessionUser.id && user.name && !looksLikeRoleLabel(user.name);
+    }) || churchUsers.find(function (user) {
+        return user.name && !looksLikeRoleLabel(user.name);
+    }) || sessionUser || currentRecorder;
+
+    syncRecorderLabel();
 }
 
 async function loadHomecells() {
@@ -552,19 +480,75 @@ async function loadHomecells() {
 }
 
 async function loadSummary() {
-    const response = await window.LFC_API.request('homecell-attendance/summary?' + buildSummaryQuery());
+    const response = await window.LFC_API.request('homecell-attendance/summary?' + buildWeeklySummaryQuery());
     renderSummary(response.data || {});
 }
 
-async function loadRecords() {
-    const response = await window.LFC_API.request('homecell-attendance?' + buildListQuery());
-    renderRecords(response.data || []);
+async function loadExistingRecordForSelection() {
+    if (!attendanceHomecellInput.value || !attendanceMeetingDateInput.value) {
+        return;
+    }
+
+    const params = new URLSearchParams({
+        church_id: String(activeChurch.id),
+        homecell_id: String(Number(attendanceHomecellInput.value)),
+        date_from: attendanceMeetingDateInput.value,
+        date_to: attendanceMeetingDateInput.value,
+        limit: '1'
+    });
+
+    const selectedHomecell = getSelectedHomecell();
+
+    if (selectedHomecell && selectedHomecell.branch) {
+        params.set('branch_id', String(selectedHomecell.branch.id));
+    }
+
+    const response = await window.LFC_API.request('homecell-attendance?' + params.toString());
+    const existingRecord = (response.data || [])[0] || null;
+
+    if (existingRecord) {
+        fillFormFromRecord(existingRecord);
+        showSuccess('Existing record loaded for editing for this homecell and date.');
+        return;
+    }
+
+    prepareNewEntryForSelection();
 }
 
-async function reloadDashboardData() {
-    hideError();
-    await loadSummary();
-    await loadRecords();
+async function findExistingRecordForSelection() {
+    if (!attendanceHomecellInput.value || !attendanceMeetingDateInput.value) {
+        return null;
+    }
+
+    const params = new URLSearchParams({
+        church_id: String(activeChurch.id),
+        homecell_id: String(Number(attendanceHomecellInput.value)),
+        date_from: attendanceMeetingDateInput.value,
+        date_to: attendanceMeetingDateInput.value,
+        limit: '1'
+    });
+
+    const selectedHomecell = getSelectedHomecell();
+
+    if (selectedHomecell && selectedHomecell.branch) {
+        params.set('branch_id', String(selectedHomecell.branch.id));
+    }
+
+    const response = await window.LFC_API.request('homecell-attendance?' + params.toString());
+
+    return (response.data || [])[0] || null;
+}
+
+async function loadRecordById(recordId) {
+    const response = await window.LFC_API.request('homecell-attendance/' + encodeURIComponent(recordId));
+    const record = response.data || null;
+
+    if (!record) {
+        throw new Error('Unable to load the selected attendance record.');
+    }
+
+    fillFormFromRecord(record);
+    showSuccess('Selected attendance record loaded for editing.');
 }
 
 async function saveAttendance() {
@@ -582,7 +566,7 @@ async function saveAttendance() {
         church_id: activeChurch.id,
         branch_id: selectedHomecell.branch ? selectedHomecell.branch.id : null,
         homecell_id: selectedHomecell.id,
-        recorded_by_user_id: activeUser && activeUser.id ? activeUser.id : null,
+        recorded_by_user_id: currentRecorder && currentRecorder.id ? currentRecorder.id : null,
         meeting_date: attendanceMeetingDateInput.value,
         male_count: toPositiveNumber(attendanceMaleInput.value),
         female_count: toPositiveNumber(attendanceFemaleInput.value),
@@ -601,14 +585,31 @@ async function saveAttendance() {
     saveHomecellAttendanceButton.disabled = true;
 
     try {
-        await window.LFC_API.request('homecell-attendance', {
-            method: 'POST',
+        if (!currentEditRecordId) {
+            const existingRecord = await findExistingRecordForSelection();
+
+            if (existingRecord) {
+                fillFormFromRecord(existingRecord);
+            }
+        }
+
+        const isEditing = Boolean(currentEditRecordId);
+
+        await window.LFC_API.request(currentEditRecordId ? 'homecell-attendance/' + encodeURIComponent(currentEditRecordId) : 'homecell-attendance', {
+            method: currentEditRecordId ? 'PUT' : 'POST',
             body: payload
         });
 
+        clearEditQueryParams();
+
+        if (isEditing && returnToRecords) {
+            window.location.replace('homecell-attendance-records.html?updated=1');
+            return;
+        }
+
         resetForm();
-        showSuccess('Homecell attendance saved successfully.');
-        await reloadDashboardData();
+        showSuccess(isEditing ? 'Homecell attendance updated successfully.' : 'Homecell attendance saved successfully.');
+        await loadSummary();
     } catch (error) {
         showError(error.message || 'Unable to save homecell attendance right now.');
     } finally {
@@ -620,29 +621,45 @@ Array.from(document.querySelectorAll('.attendance-count-input')).forEach(functio
     input.addEventListener('input', updateAttendanceTotal);
 });
 
-attendanceHomecellInput.addEventListener('change', updateSelectedHomecellMeta);
-branchFilterInput.addEventListener('change', async function () {
-    renderHomecellSelectors();
-    await reloadDashboardData();
+attendanceHomecellInput.addEventListener('change', function () {
+    hideSuccess();
+    updateSelectedHomecellMeta();
+    loadExistingRecordForSelection().catch(function (error) {
+        showError(error.message || 'Unable to load the selected homecell record.');
+    });
 });
-homecellFilterInput.addEventListener('change', reloadDashboardData);
-summaryPeriodInput.addEventListener('change', reloadDashboardData);
-summaryDateInput.addEventListener('change', reloadDashboardData);
+
+attendanceMeetingDateInput.addEventListener('change', function () {
+    hideSuccess();
+    loadExistingRecordForSelection().catch(function (error) {
+        showError(error.message || 'Unable to load the selected date record.');
+    });
+});
+
 saveHomecellAttendanceButton.addEventListener('click', saveAttendance);
+cancelEditHomecellAttendanceButton.addEventListener('click', function () {
+    hideError();
+    hideSuccess();
+    clearEditQueryParams();
+    resetForm();
+});
 
 (async function initHomecellAttendancePage() {
     attendanceMeetingDateInput.value = getTodayDate();
-    summaryDateInput.value = getTodayDate();
     updateAttendanceTotal();
+    syncRecorderLabel();
 
     try {
-        await loadBranches();
+        await loadRecorderContext();
         await loadHomecells();
         updateSelectedHomecellMeta();
-        await reloadDashboardData();
+        await loadSummary();
+
+        if (preloadRecordId) {
+            await loadRecordById(preloadRecordId);
+        }
     } catch (error) {
         showError(error.message || 'Unable to load homecell attendance right now.');
-        homecellAttendanceTableBody.innerHTML = '<tr><td class="text-center text-muted py-4" colspan="8">Unable to load homecell attendance right now.</td></tr>';
     }
 })();
 </script>

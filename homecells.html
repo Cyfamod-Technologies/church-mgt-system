@@ -54,6 +54,70 @@
                             <div class="alert alert-danger d-none" id="homecellErrorAlert" role="alert"></div>
                         </div>
 
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                    <div>
+                                        <h5 class="mb-1">Global Homecell Schedule</h5>
+                                        <p class="text-secondary mb-0">Set one monthly meeting schedule for all homecells and lock it so individual cells cannot change it.</p>
+                                    </div>
+                                    <button class="btn btn-primary" id="saveHomecellScheduleButton" type="button">
+                                        <i class="ti ti-device-floppy me-1"></i>Save Schedule
+                                    </button>
+                                </div>
+                                <div class="card-body">
+                                    <div class="alert alert-info mb-3" id="homecellScheduleInfoAlert">
+                                        <i class="ti ti-lock me-2"></i>
+                                        <span id="homecellScheduleInfoText">Loading homecell schedule...</span>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label class="form-label" for="homecellScheduleDayInput">Default Meeting Day</label>
+                                                <select class="form-select" id="homecellScheduleDayInput">
+                                                    <option value="">Select day</option>
+                                                    <option value="Monday">Monday</option>
+                                                    <option value="Tuesday">Tuesday</option>
+                                                    <option value="Wednesday">Wednesday</option>
+                                                    <option value="Thursday">Thursday</option>
+                                                    <option value="Friday">Friday</option>
+                                                    <option value="Saturday">Saturday</option>
+                                                    <option value="Sunday">Sunday</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label class="form-label" for="homecellScheduleTimeInput">Default Meeting Time</label>
+                                                <input class="form-control" id="homecellScheduleTimeInput" type="time">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label class="form-label d-block">&nbsp;</label>
+                                                <div class="form-check mt-2">
+                                                    <input class="form-check-input" id="homecellScheduleLockedInput" type="checkbox">
+                                                    <label class="form-check-label" for="homecellScheduleLockedInput">Lock this schedule for all homecells</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2">
+                                                <div>
+                                                    <label class="form-label mb-0">Monthly Meeting Dates</label>
+                                                    <p class="text-secondary small mb-0">Add the approved dates for this month. All homecells will follow these dates when the schedule is locked.</p>
+                                                </div>
+                                                <button class="btn btn-sm btn-light-primary" id="addMonthlyDateButton" type="button">
+                                                    <i class="ti ti-plus me-1"></i>Add Date
+                                                </button>
+                                            </div>
+                                            <div class="d-grid gap-2" id="homecellMonthlyDatesContainer"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="col-md-4">
                             <div class="card overview-details-box b-s-3-primary">
                                 <div class="card-body">
@@ -295,14 +359,28 @@ const branchFilter = document.getElementById('branchFilter');
 const homecellSearchInput = document.getElementById('homecellSearchInput');
 const homecellBranchInput = document.getElementById('homecellBranchInput');
 const saveHomecellButton = document.getElementById('saveHomecellButton');
+const saveHomecellScheduleButton = document.getElementById('saveHomecellScheduleButton');
 const addHomecellLeaderButton = document.getElementById('addHomecellLeaderButton');
+const addMonthlyDateButton = document.getElementById('addMonthlyDateButton');
 const homecellLeadersContainer = document.getElementById('homecellLeadersContainer');
+const homecellScheduleLockedInput = document.getElementById('homecellScheduleLockedInput');
+const homecellScheduleDayInput = document.getElementById('homecellScheduleDayInput');
+const homecellScheduleTimeInput = document.getElementById('homecellScheduleTimeInput');
+const homecellMonthlyDatesContainer = document.getElementById('homecellMonthlyDatesContainer');
+const homecellScheduleInfoText = document.getElementById('homecellScheduleInfoText');
 
 const homecellFormModal = new bootstrap.Modal(document.getElementById('homecellFormModal'));
 const homecellDetailsModal = new bootstrap.Modal(document.getElementById('homecellDetailsModal'));
 
 let branches = [];
 let homecells = [];
+let activeChurchRecord = null;
+let homecellScheduleConfig = {
+    locked: false,
+    default_day: '',
+    default_time: '',
+    monthly_dates: []
+};
 
 if (!activeChurch || !activeChurch.id) {
     window.location.replace('sign_in.html');
@@ -357,7 +435,7 @@ function formatMeeting(homecell) {
         return '--';
     }
 
-    return [homecell.meeting_day, homecell.meeting_time ? formatTime(homecell.meeting_time) : null]
+    return [homecell.meeting_day, homecell.meeting_time ? formatTime(homecell.meeting_time) : null, homecell.schedule_config && homecell.schedule_config.locked ? 'Locked' : null]
         .filter(Boolean)
         .join(', ');
 }
@@ -509,6 +587,67 @@ function renderLeaderRows(leaders) {
     }).join('');
 }
 
+function renderMonthlyDateRows(values) {
+    const dates = Array.isArray(values) ? values.slice() : [];
+
+    if (!dates.length) {
+        homecellMonthlyDatesContainer.innerHTML = '<div class="text-secondary" id="homecellMonthlyDatesEmptyState">No monthly dates fixed yet.</div>';
+        return;
+    }
+
+    homecellMonthlyDatesContainer.innerHTML = dates.map(function (value, index) {
+        return `
+            <div class="d-flex align-items-center gap-2 monthly-date-item" data-index="${index}">
+                <input class="form-control homecell-monthly-date-input" type="date" value="${escapeHtml(value)}">
+                <button class="btn btn-sm btn-link text-danger remove-monthly-date" type="button">Remove</button>
+            </div>
+        `;
+    }).join('');
+}
+
+function readMonthlyDates() {
+    return Array.from(document.querySelectorAll('.homecell-monthly-date-input'))
+        .map(function (input) {
+            return input.value || null;
+        })
+        .filter(Boolean);
+}
+
+function applyHomecellScheduleLockState() {
+    const isLocked = Boolean(homecellScheduleConfig.locked);
+    const meetingDayInput = document.getElementById('homecellMeetingDayInput');
+    const meetingTimeInput = document.getElementById('homecellMeetingTimeInput');
+
+    meetingDayInput.disabled = isLocked;
+    meetingTimeInput.disabled = isLocked;
+
+    if (isLocked) {
+        meetingDayInput.value = homecellScheduleConfig.default_day || '';
+        meetingTimeInput.value = homecellScheduleConfig.default_time || '';
+        homecellScheduleInfoText.textContent = 'The church-wide homecell schedule is locked. All homecells inherit ' + (homecellScheduleConfig.default_day || '--') + ' at ' + (homecellScheduleConfig.default_time ? formatTime(homecellScheduleConfig.default_time) : '--') + '.';
+    } else {
+        homecellScheduleInfoText.textContent = 'Homecells can manage their own meeting day and time until you lock a church-wide schedule.';
+    }
+}
+
+function fillHomecellScheduleForm(church) {
+    const monthlyDates = Array.isArray(church.homecell_monthly_dates) ? church.homecell_monthly_dates : [];
+
+    activeChurchRecord = church;
+    homecellScheduleConfig = {
+        locked: Boolean(church.homecell_schedule_locked),
+        default_day: church.homecell_default_day || '',
+        default_time: church.homecell_default_time ? church.homecell_default_time.slice(0, 5) : '',
+        monthly_dates: monthlyDates
+    };
+
+    homecellScheduleLockedInput.checked = homecellScheduleConfig.locked;
+    homecellScheduleDayInput.value = homecellScheduleConfig.default_day;
+    homecellScheduleTimeInput.value = homecellScheduleConfig.default_time;
+    renderMonthlyDateRows(homecellScheduleConfig.monthly_dates);
+    applyHomecellScheduleLockState();
+}
+
 function readLeaders() {
     return Array.from(document.querySelectorAll('.homecell-leader-item')).map(function (item) {
         return {
@@ -535,6 +674,9 @@ function resetForm() {
     } else {
         homecellBranchInput.value = '';
     }
+    document.getElementById('homecellMeetingDayInput').value = homecellScheduleConfig.locked ? (homecellScheduleConfig.default_day || '') : '';
+    document.getElementById('homecellMeetingTimeInput').value = homecellScheduleConfig.locked ? (homecellScheduleConfig.default_time || '') : '';
+    applyHomecellScheduleLockState();
     renderLeaderRows([]);
 }
 
@@ -553,6 +695,7 @@ function fillForm(homecell) {
     document.getElementById('homecellNotesInput').value = homecell.notes || '';
     document.getElementById('homecellFormModalTitle').textContent = 'Edit Homecell';
     saveHomecellButton.innerHTML = '<i class="ti ti-device-floppy me-1"></i>Update Homecell';
+    applyHomecellScheduleLockState();
     renderLeaderRows(homecell.leaders || []);
 }
 
@@ -585,6 +728,11 @@ async function loadBranches() {
     const response = await window.LFC_API.request('branches?church_id=' + encodeURIComponent(activeChurch.id));
     branches = response.data || [];
     renderBranchOptions();
+}
+
+async function loadChurchConfig() {
+    const response = await window.LFC_API.request('churches/' + encodeURIComponent(activeChurch.id));
+    fillHomecellScheduleForm(response.data || {});
 }
 
 async function loadHomecells() {
@@ -649,6 +797,15 @@ async function openHomecellDetails(homecellId) {
                     <div class="small text-secondary mt-2">${escapeHtml(homecell.notes || '--')}</div>
                 </div>
             </div>
+            <div class="col-12">
+                <div class="border rounded p-3 h-100">
+                    <span class="text-secondary small d-block mb-1">Monthly Dates</span>
+                    <strong>${(homecell.schedule_config && homecell.schedule_config.monthly_dates && homecell.schedule_config.monthly_dates.length)
+                        ? escapeHtml(homecell.schedule_config.monthly_dates.join(', '))
+                        : '--'}</strong>
+                    <div class="small text-secondary mt-2">${homecell.schedule_config && homecell.schedule_config.locked ? 'Inherited from locked church-wide homecell schedule.' : 'No locked church-wide monthly dates configured.'}</div>
+                </div>
+            </div>
         `;
     } catch (error) {
         detailsBody.innerHTML = `<div class="col-12 text-danger">${escapeHtml(error.message)}</div>`;
@@ -658,6 +815,7 @@ async function openHomecellDetails(homecellId) {
 async function bootstrapHomecellsPage() {
     hideError();
     hideSuccess();
+    await loadChurchConfig();
     await loadBranches();
     await loadHomecells();
 }
@@ -677,6 +835,42 @@ addHomecellLeaderButton.addEventListener('click', function () {
         is_primary: leaders.length === 0
     });
     renderLeaderRows(leaders);
+});
+
+addMonthlyDateButton.addEventListener('click', function () {
+    const dates = readMonthlyDates();
+    dates.push('');
+    renderMonthlyDateRows(dates);
+});
+
+homecellMonthlyDatesContainer.addEventListener('click', function (event) {
+    if (!event.target.classList.contains('remove-monthly-date')) {
+        return;
+    }
+
+    const item = event.target.closest('.monthly-date-item');
+    const index = Number(item.dataset.index);
+    const dates = readMonthlyDates().filter(function (_, dateIndex) {
+        return dateIndex !== index;
+    });
+    renderMonthlyDateRows(dates);
+});
+
+homecellScheduleLockedInput.addEventListener('change', function () {
+    homecellScheduleConfig.locked = homecellScheduleLockedInput.checked;
+    homecellScheduleConfig.default_day = homecellScheduleDayInput.value || '';
+    homecellScheduleConfig.default_time = homecellScheduleTimeInput.value || '';
+    applyHomecellScheduleLockState();
+});
+
+homecellScheduleDayInput.addEventListener('change', function () {
+    homecellScheduleConfig.default_day = homecellScheduleDayInput.value || '';
+    applyHomecellScheduleLockState();
+});
+
+homecellScheduleTimeInput.addEventListener('change', function () {
+    homecellScheduleConfig.default_time = homecellScheduleTimeInput.value || '';
+    applyHomecellScheduleLockState();
 });
 
 homecellLeadersContainer.addEventListener('click', function (event) {
@@ -725,6 +919,37 @@ saveHomecellButton.addEventListener('click', async function () {
     } finally {
         saveHomecellButton.disabled = false;
         saveHomecellButton.innerHTML = originalLabel;
+    }
+});
+
+saveHomecellScheduleButton.addEventListener('click', async function () {
+    hideError();
+    hideSuccess();
+    saveHomecellScheduleButton.disabled = true;
+    const originalLabel = saveHomecellScheduleButton.innerHTML;
+    saveHomecellScheduleButton.innerHTML = '<i class="ti ti-loader me-1"></i>Saving...';
+
+    try {
+        const monthlyDates = readMonthlyDates();
+        await window.LFC_API.request('churches/' + encodeURIComponent(activeChurch.id) + '/homecell-schedule', {
+            method: 'PUT',
+            body: {
+                homecell_schedule: {
+                    locked: homecellScheduleLockedInput.checked,
+                    default_day: homecellScheduleDayInput.value || null,
+                    default_time: homecellScheduleTimeInput.value || null,
+                    monthly_dates: monthlyDates
+                }
+            }
+        });
+
+        await bootstrapHomecellsPage();
+        showSuccess('Homecell schedule updated successfully.');
+    } catch (error) {
+        showError(error.message);
+    } finally {
+        saveHomecellScheduleButton.disabled = false;
+        saveHomecellScheduleButton.innerHTML = originalLabel;
     }
 });
 
